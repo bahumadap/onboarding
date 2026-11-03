@@ -16,6 +16,37 @@
 
 **Esta preparación no crea un proyecto Vercel ni publica la aplicación.**
 
+## Actualizar la demo existente
+
+URL identificada por el propietario: https://onboarding-two-pi.vercel.app/desk.
+La URL fue proporcionada por el propietario; no se verificó desde este entorno,
+cuya política de red impide acceder a ese dominio. No hay una sesión de Vercel
+conectada en el entorno de desarrollo.
+
+Para publicar los cambios en ese proyecto, sin modificar SMB:
+
+1. En Vercel, abrir el proyecto que muestra `onboarding-two-pi.vercel.app` entre
+   sus dominios. No deducir el nombre del proyecto únicamente desde la URL.
+2. Confirmar que su repositorio conectado es `bahumadap/onboarding` y que su rama
+   de producción (**Settings → Environments → Production → Branch Tracking**, o
+   **Settings → Git**, según el panel) es `yol1-enterprise`.
+3. En **Deployments → Create Deployment**, introducir `yol1-enterprise` como
+   referencia Git y crear el despliegue. Confirmar que se usa el último commit de
+   esa rama. No usar **Redeploy** sobre un commit anterior: reconstruye ese commit,
+   no incorpora necesariamente los cambios nuevos.
+4. Si el despliegue queda como Preview, revisarlo y usar **Promote to Production**
+   únicamente dentro de este proyecto para actualizar su dominio estable.
+5. Probar `/desk`, `/org`, `/desk/accounts` y `/desk/products/fx`, incluyendo recarga.
+   Usar **Control de demo → Aplicar y abrir el Desk** para habilitar la navegación.
+
+Configuración de build: Vite, raíz `./`, instalación `npm ci`, build
+`npm run build`, salida `dist`, sin variables de entorno requeridas.
+
+`git.deploymentEnabled: false` desactiva los despliegues automáticos por eventos
+Git; no impide un despliegue manual. Se conserva porque la configuración del
+repositorio puede ser leída por otros proyectos conectados. Para automatizar solo
+Enterprise, revisar primero las conexiones y exclusiones de rama de esos proyectos.
+
 ## Crear el proyecto nuevo, después de aprobar el despliegue
 
 ### Desde el panel de Vercel
