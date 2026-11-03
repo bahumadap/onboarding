@@ -7,37 +7,22 @@
    todavía no permite operar.
    ============================================================= */
 import React, { useEffect, useMemo, useState } from 'react'
-import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
-import {
-  ArrowLeftRight, Building2, ChevronsUpDown, CreditCard, FileCheck2, Gauge,
-  KeyRound, LayoutGrid, Menu, Settings2, ShieldCheck, Sparkles, Users, Wallet,
-  X, Layers,
-} from 'lucide-react'
+import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { ArrowLeftRight, FileCheck2, Gauge, Menu, Sparkles, Wallet, X, Layers, Settings, ArrowLeft } from 'lucide-react'
 import { Avatar, Badge, IconButton } from '../ui'
 import { BrandLockup } from './Brand'
 import { useDemoState } from '../state/DemoState'
-import { ACCOUNT_STATUS_META, canAccessDesk } from '../state/statuses'
+import { ACCOUNT_STATUS_META, PRODUCT_STATUS, canAccessDesk } from '../state/statuses'
 import { countryLabel } from '../mock/countries'
 import { roleLabel } from '../mock/roles'
+import { ADDITIONAL_PRODUCTS } from '../mock/products'
+import { ORG_ITEMS } from './navigation'
 import './shell.css'
 
 const DESK_ITEMS = [
-  { to: '/desk', label: 'Resumen', icon: Gauge, end: true },
-  { to: '/desk/virtual-accounts', label: 'Cuentas virtuales', icon: Layers },
+  { to: '/desk', label: 'Merchant Desk', icon: Gauge, end: true },
+  { to: '/desk/accounts', label: 'Cuentas', icon: Wallet },
   { to: '/desk/transactions', label: 'Movimientos', icon: ArrowLeftRight },
-  { to: '/desk/products', label: 'Productos', icon: Sparkles },
-]
-
-const ORG_ITEMS = [
-  { to: '/org', label: 'Puesta en marcha', icon: LayoutGrid, end: true },
-  { to: '/org/profile', label: 'Perfil de organización', icon: Building2 },
-  { to: '/org/users', label: 'Usuarios y roles', icon: Users },
-  { to: '/org/accounts', label: 'Cuentas', icon: Wallet },
-  { to: '/org/approvals', label: 'Permisos y aprobaciones', icon: ShieldCheck },
-  { to: '/org/api', label: 'API e integraciones', icon: KeyRound },
-  { to: '/org/products', label: 'Productos y servicios', icon: CreditCard },
-  { to: '/org/compliance', label: 'Documentación y cumplimiento', icon: FileCheck2 },
-  { to: '/org/preferences', label: 'Preferencias', icon: Settings2 },
 ]
 
 function NavItem({ item, disabled, onNavigate }) {
@@ -67,23 +52,28 @@ export default function AppShell() {
   const { state } = useDemoState()
   const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
-  const navigate = useNavigate()
 
   // Cierra el menú móvil al cambiar de ruta.
   useEffect(() => { setMenuOpen(false) }, [location.pathname])
 
   const deskEnabled = canAccessDesk(state)
+  const inSettings = location.pathname.startsWith('/org')
+  const productItems = [
+    { to: '/desk/virtual-accounts', label: 'Cuentas virtuales', icon: Layers },
+    ...ADDITIONAL_PRODUCTS.filter(p => state.products[p.id] === PRODUCT_STATUS.ACTIVE)
+      .map(p => ({ to: `/desk/products/${p.id}`, label: p.name, icon: Sparkles })),
+  ]
   const accountMeta = ACCOUNT_STATUS_META[state.accountStatus]
   const admin = state.team[0]
 
   const context = useMemo(() => {
-    const all = [...DESK_ITEMS, ...ORG_ITEMS]
+    const all = [...DESK_ITEMS, ...productItems, ...ADDITIONAL_PRODUCTS.map(p => ({ to: `/desk/products/${p.id}`, label: p.name })), ...ORG_ITEMS, { to: '/org', label: 'Configuración', end: true }, { to: '/desk/products', label: 'Catálogo de productos', end: true }]
     const match = all
       .filter(i => (i.end ? location.pathname === i.to : location.pathname.startsWith(i.to)))
       .sort((a, b) => b.to.length - a.to.length)[0]
-    const area = location.pathname.startsWith('/org') ? 'Config Org' : 'Merchant Desk'
-    return { area, title: match?.label ?? 'Resumen' }
-  }, [location.pathname])
+    const area = location.pathname.startsWith('/org') ? 'Configuración' : 'Merchant Desk'
+    return { area, title: location.pathname === '/desk' ? 'Resumen' : match?.label ?? 'Resumen' }
+  }, [location.pathname, state.products])
 
   return (
     <div className="console">
@@ -97,7 +87,7 @@ export default function AppShell() {
           </span>
         </div>
 
-        <button type="button" className="org-switch" onClick={() => navigate('/org/profile')}>
+        <div className="org-switch">
           <Avatar name={state.organization.tradeName || 'Organización'} size="sm" />
           <span className="grow">
             <span className="org-switch__name truncate" style={{ display: 'block' }}>
@@ -109,29 +99,32 @@ export default function AppShell() {
                 : 'Sin datos legales'}
             </span>
           </span>
-          <ChevronsUpDown size={14} aria-hidden="true" style={{ color: 'var(--ray-color-text-tertiary)' }} />
-        </button>
+        </div>
 
-        <nav className="sidebar__nav" aria-label="Navegación principal">
-          <div className="sidebar__group">
-            <NavItem item={{ to: '/onboarding', label: 'Onboarding', icon: FileCheck2 }} />
-          </div>
-          <div className="sidebar__group">
-            <span className="sidebar__group-label">Merchant Desk · operar</span>
-            {DESK_ITEMS.map(item => (
-              <NavItem key={item.to} item={item} disabled={!deskEnabled} />
-            ))}
-          </div>
-
-          <div className="sidebar__group">
-            <span className="sidebar__group-label">Config Org · administrar</span>
-            {ORG_ITEMS.map(item => (
-              <NavItem key={item.to} item={item} />
-            ))}
-          </div>
+        <nav className="sidebar__nav" aria-label={inSettings ? 'Navegación de configuración' : 'Navegación principal'}>
+          {inSettings ? <>
+            <div className="sidebar__group">
+              <NavItem item={{ to: deskEnabled ? '/desk' : '/onboarding', label: deskEnabled ? 'Volver al Merchant Desk' : 'Volver al onboarding', icon: ArrowLeft, end: true }} />
+            </div>
+            <div className="sidebar__group">
+              <NavItem item={{ to: '/org', label: 'Configuración', icon: Settings, end: true }} />
+              {ORG_ITEMS.map(item => <NavItem key={item.to} item={item} />)}
+            </div>
+          </> : <>
+            <div className="sidebar__group">
+              {DESK_ITEMS.map(item => <NavItem key={item.to} item={item} disabled={!deskEnabled} />)}
+            </div>
+            <div className="sidebar__group">
+              <span className="sidebar__group-label">Tus productos</span>
+              {productItems.map(item => <NavItem key={item.to} item={item} disabled={!deskEnabled} />)}
+              <NavItem item={{ to: '/desk/products', label: 'Explorar productos', icon: Sparkles, end: true }} disabled={!deskEnabled} />
+            </div>
+          </>}
         </nav>
 
         <div className="sidebar__foot">
+          {!inSettings && <NavItem item={{ to: '/org', label: 'Configuración', icon: Settings }} />}
+          <NavItem item={{ to: '/onboarding', label: 'Onboarding', icon: FileCheck2 }} />
           <div className="demo-note">
             <div>
               <p className="demo-note__title">Demo conceptual</p>

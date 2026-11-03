@@ -184,7 +184,7 @@ export default function OrgProfile() {
   return (
     <>
       <header className="page__head">
-        <h1 className="page__title">Perfil de organización</h1>
+        <h1 className="page__title">Empresa y entidades</h1>
         <p className="page__lead">
           Administra los datos y entidades jurídicas de tu empresa.
         </p>

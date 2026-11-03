@@ -5,27 +5,25 @@
    los últimos movimientos. La administración (usuarios, permisos,
    configuración de productos) vive en Config Org y no se duplica acá.
    ============================================================= */
+import AccountCard from './AccountCard'
+import ProductCatalog from './ProductCatalog'
 import React, { useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   Area, AreaChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from 'recharts'
 import {
-  ArrowLeftRight, Layers, Sparkles, Wallet,
+  ArrowLeftRight,
 } from 'lucide-react'
 
 import {
-  Badge, Button, Callout, Card, CardBody, CardFooter, CardHeader, Divider,
+  ContentDetails, Badge, Button, Callout, Card, CardBody, CardFooter,
   EmptyState, Metric, Skeleton, Table,
 } from '../../ui'
-import { MONTHLY_FLOW, formatCompact, formatMoney } from '../../mock/accounts'
-import { VA_STATUS_META } from '../../mock/virtualAccounts'
+import { MONTHLY_FLOW, formatMoney } from '../../mock/accounts'
 import { TX_STATUS_META } from '../../mock/transactions'
-import { ACCOUNT_STATUS_META, PRODUCT_STATUS, isProductOperable } from '../../state/statuses'
-import { ADDITIONAL_PRODUCTS } from '../../mock/products'
-import { useDemoState } from '../../state/DemoState'
 import {
-  CHART_COLORS, SignedAmount, formatDateTime, inoperableReason,
+  CHART_COLORS, SignedAmount, formatDateTime,
   useDeskAccounts, useDeskLoad, useDeskTransactions,
 } from './shared'
 
@@ -39,17 +37,9 @@ const CHART_TOOLTIP_STYLE = {
 
 export default function DeskOverview() {
   const navigate = useNavigate()
-  const { state } = useDemoState()
   const accounts = useDeskAccounts()
   const transactions = useDeskTransactions()
   const { loading, retry } = useDeskLoad()
-
-  const vaStatus = state.products.virtual_accounts ?? PRODUCT_STATUS.NOT_AVAILABLE
-  const vaOperable = isProductOperable(vaStatus)
-
-  const requestable = ADDITIONAL_PRODUCTS.filter(
-    p => (state.products[p.id] ?? PRODUCT_STATUS.NOT_AVAILABLE) === PRODUCT_STATUS.AVAILABLE_TO_REQUEST,
-  )
 
   /* KPIs del último día con movimientos registrados. */
   const today = useMemo(() => {
@@ -64,14 +54,6 @@ export default function DeskOverview() {
       pending: rows.filter(tx => tx.status === 'pending').length,
     }
   }, [transactions])
-
-  const recentVirtual = useMemo(
-    () => state.virtualAccounts
-      .slice()
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-      .slice(0, 4),
-    [state.virtualAccounts],
-  )
 
   const dayLabel = today
     ? new Intl.DateTimeFormat('es-CL', { day: '2-digit', month: 'long' }).format(new Date(today.day))
@@ -119,7 +101,7 @@ export default function DeskOverview() {
                 </CardBody>
               </Card>
             ))
-            : accounts.map(account => (
+            : accounts.filter(account => account.operable).map(account => (
               <AccountCard key={account.id} account={account} />
             ))}
         </div>
@@ -180,7 +162,7 @@ export default function DeskOverview() {
       </section>
 
       {/* -------------------------- Gráfico ------------------------ */}
-      <section className="section" aria-labelledby="sec-flujo">
+      <ContentDetails summary="Ver evolución de abonos y egresos"><section className="section" aria-labelledby="sec-flujo">
         <div className="section__head">
           <div>
             <h2 className="section__title" id="sec-flujo">Abonos y egresos</h2>
@@ -255,65 +237,7 @@ export default function DeskOverview() {
         </Card>
       </section>
 
-      {/* -------------------- Cuentas virtuales -------------------- */}
-      <section className="section" aria-labelledby="sec-cv">
-        <div className="section__head">
-          <div>
-            <h2 className="section__title" id="sec-cv">Cuentas virtuales recientes</h2>
-            <p className="section__desc">Últimas cuentas virtuales creadas.</p>
-          </div>
-          {vaOperable ? (
-            <Button variant="secondary" size="sm" icon={<Layers size={15} aria-hidden="true" />} onClick={() => navigate('/desk/virtual-accounts')}>
-              Gestionar cuentas virtuales
-            </Button>
-          ) : (
-            <Button variant="secondary" size="sm" disabled title="Disponibles al activar la cuenta vista">
-              Gestión no disponible
-            </Button>
-          )}
-        </div>
-
-        <Card level="low">
-          <CardBody>
-            {loading ? (
-              <div className="stack gap-3">
-                {[0, 1, 2].map(i => <Skeleton key={i} width="100%" height={20} />)}
-              </div>
-            ) : !vaOperable ? (
-              <EmptyState
-                icon={<Layers size={20} aria-hidden="true" />}
-                title="Cuentas virtuales no habilitadas"
-                description="Activa el producto para crear y usar cuentas virtuales."
-              />
-            ) : recentVirtual.length === 0 ? (
-              <EmptyState
-                icon={<Layers size={20} aria-hidden="true" />}
-                title="Sin cuentas virtuales"
-                description="Crea una cuenta virtual para separar saldos."
-                action={<Button variant="brand" size="sm" onClick={() => navigate('/desk/virtual-accounts')}>Crear la primera</Button>}
-              />
-            ) : (
-              <ul className="desk-stack-rows">
-                {recentVirtual.map(va => {
-                  const meta = VA_STATUS_META[va.status] ?? VA_STATUS_META.closed
-                  return (
-                    <li key={va.id}>
-                      <div className="grow">
-                        <p className="ray-label truncate">{va.alias}</p>
-                        <p className="desk-id">{va.id} · {va.purpose}</p>
-                      </div>
-                      <Badge tone={meta.tone}>{meta.label}</Badge>
-                      <span className="ray-num" style={{ minWidth: 'var(--ray-space-16)', textAlign: 'right' }}>
-                        {formatMoney(va.balance, va.currency)}
-                      </span>
-                    </li>
-                  )
-                })}
-              </ul>
-            )}
-          </CardBody>
-        </Card>
-      </section>
+      </ContentDetails>
 
       {/* --------------------- Últimos movimientos ------------------ */}
       <section className="section" aria-labelledby="sec-movimientos">
@@ -384,33 +308,9 @@ export default function DeskOverview() {
         </Card>
       </section>
 
-      {/* ------------------------ Descubrimiento -------------------- */}
-      {requestable.length > 0 && (
-        <section className="section" aria-labelledby="sec-productos">
-          <Card level="medium">
-            <CardHeader
-              title="Productos que puedes solicitar"
-              description="Cada producto requiere evaluación y activación."
-            />
-            <Divider />
-            <CardBody>
-              <div className="row wrap gap-2">
-                {requestable.map(p => (
-                  <Badge key={p.id} tone="brand">{p.name}</Badge>
-                ))}
-              </div>
-              <p className="ray-body-sm text-secondary" style={{ marginTop: 'var(--ray-space-3)' }}>
-                Consulta los requisitos antes de solicitar un producto.
-              </p>
-            </CardBody>
-            <CardFooter>
-              <Button variant="brand" icon={<Sparkles size={15} aria-hidden="true" />} onClick={() => navigate('/desk/products')}>
-                Ver catálogo de productos
-              </Button>
-            </CardFooter>
-          </Card>
-        </section>
-      )}
+      <section className="section" aria-label="Productos">
+        <ProductCatalog embedded />
+      </section>
     </>
   )
 }
@@ -425,68 +325,5 @@ function PageHead() {
         Consulta los saldos y movimientos de tu empresa.
       </p>
     </div>
-  )
-}
-
-function AccountCard({ account }) {
-  const { state } = useDemoState()
-  const accountMeta = ACCOUNT_STATUS_META[state.accountStatus]
-  const navigate = useNavigate()
-  const reason = inoperableReason(account)
-
-  if (!account.operable) {
-    return (
-      <Card level="low">
-        <CardBody>
-          <div className="row between gap-3">
-            <div className="grow">
-              <p className="ray-subtitle truncate">{account.label}</p>
-              <p className="desk-id">{account.currency} · {account.number}</p>
-            </div>
-            <Badge tone="neutral">No habilitada</Badge>
-          </div>
-          <p className="ray-body-sm text-secondary" style={{ marginTop: 'var(--ray-space-3)' }}>{reason}</p>
-        </CardBody>
-        <CardFooter>
-          <Button variant="secondary" size="sm" onClick={() => navigate('/desk/products')}>
-            Ver producto
-          </Button>
-        </CardFooter>
-      </Card>
-    )
-  }
-
-  const primary = account.kind === 'primary'
-
-  return (
-    <Card level={primary ? 'high' : 'low'}>
-      <CardBody>
-        <div className="row between gap-3">
-          <div className="grow">
-            <p className="ray-subtitle truncate">{account.label}</p>
-            <p className="desk-id">{account.currency} · {account.number}</p>
-          </div>
-          <Badge tone={accountMeta.tone} dot>{accountMeta.label}</Badge>
-        </div>
-
-        <p className="ray-display" style={{ fontSize: 'var(--ray-text-h3)', marginTop: 'var(--ray-space-4)' }}>
-          {formatCompact(account.balanceTotal, account.currency)}
-        </p>
-        <p className="ray-caption text-tertiary">
-          Disponible {formatMoney(account.balanceAvailable, account.currency)}
-          {account.balanceReserved > 0 && ` · reservado ${formatMoney(account.balanceReserved, account.currency)}`}
-        </p>
-      </CardBody>
-      <CardFooter>
-        <Button
-          variant={primary ? 'primary' : 'secondary'}
-          size="sm"
-          icon={<Wallet size={15} aria-hidden="true" />}
-          onClick={() => navigate(`/desk/accounts/${account.id}`)}
-        >
-          Ver cuenta
-        </Button>
-      </CardFooter>
-    </Card>
   )
 }

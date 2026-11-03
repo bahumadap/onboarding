@@ -1,41 +1,25 @@
 /* =============================================================
-   Config Org — puesta en marcha (/org).
+   Configuración — puesta en marcha (/org/setup).
 
    La puesta en marcha NO es el onboarding regulatorio: el KYB ya se
    aprobó para habilitar la cuenta. Acá solo quedan los pasos de
    configuración, clasificados por tipo. Los opcionales no bloquean
    nada: una empresa puede usar el dashboard sin integrar su API.
 
-   El módulo es permanente: cuando el checklist se completa, las
-   herramientas administrativas siguen disponibles más abajo.
+   Las herramientas administrativas viven en la portada de configuración.
    ============================================================= */
 import React, { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import {
-  Building2, Check, CreditCard, FileCheck2, KeyRound, Layers,
-  Settings2, ShieldCheck, Users, Wallet,
-} from 'lucide-react'
+import { Check } from 'lucide-react'
 
 import {
-  Badge, Callout, Card, CardBody, CardHeader, Checkbox, Metric, Progress, useToast,
+  Badge, Callout, Card, CardBody, Checkbox, Metric, Progress, useToast,
 } from '../../ui'
 import { useDemoState } from '../../state/DemoState'
 import {
   ACCOUNT_STATUS, ACCOUNT_STATUS_META, PRODUCT_STATUS, TASK_KIND, TASK_KIND_META,
 } from '../../state/statuses'
 import './org.css'
-
-/* Herramientas administrativas permanentes de la consola. */
-const TOOLS = [
-  { to: '/org/profile', icon: Building2, title: 'Perfil de organización', desc: 'Datos generales, entidades jurídicas y países de operación.' },
-  { to: '/org/users', icon: Users, title: 'Usuarios y roles', desc: 'Invitaciones, roles y acceso del equipo.' },
-  { to: '/org/accounts', icon: Wallet, title: 'Cuentas', desc: 'Estructura de cuentas y quién puede usarlas.' },
-  { to: '/org/approvals', icon: ShieldCheck, title: 'Permisos y aprobaciones', desc: 'Quién inicia, quién aprueba y con qué límites.' },
-  { to: '/org/api', icon: KeyRound, title: 'API e integraciones', desc: 'Credenciales, webhooks y recursos técnicos.' },
-  { to: '/org/products', icon: CreditCard, title: 'Productos y servicios', desc: 'Configuración y permisos de los productos habilitados.' },
-  { to: '/org/compliance', icon: FileCheck2, title: 'Documentación y cumplimiento', desc: 'Expediente KYB, documentos y contratos.' },
-  { to: '/org/preferences', icon: Settings2, title: 'Preferencias', desc: 'Visualización, notificaciones, seguridad e idioma.' },
-]
 
 /**
  * Construye los pasos con su estado real.
@@ -60,7 +44,7 @@ function buildSteps(state) {
       kind: TASK_KIND.AUTOMATIC,
       title: 'Cuenta vista',
       description: 'Se habilita automáticamente tras la aprobación.',
-      to: '/org/accounts',
+      to: '/desk/accounts',
       cta: 'Ver cuentas',
       derived: state.accountStatus === ACCOUNT_STATUS.ACTIVE,
       derivedLabel: `Cuenta vista: ${accountMeta.label.toLowerCase()}`,
@@ -259,50 +243,7 @@ export default function OrgChecklist() {
         </Card>
       </section>
 
-      <section className="section">
-        <div className="section__head">
-          <div>
-            <h2 className="section__title">Herramientas de administración</h2>
-            <p className="section__desc">
-              Accede a la configuración cuando lo necesites.
-            </p>
-          </div>
-        </div>
-
-        <div className="grid grid-2">
-          {TOOLS.map(tool => {
-            const Icon = tool.icon
-            return (
-              <Link key={tool.to} to={tool.to} className="org-tool">
-                <span className="org-tool__icon" aria-hidden="true"><Icon size={17} /></span>
-                <span className="grow">
-                  <span className="org-tool__title" style={{ display: 'block' }}>{tool.title}</span>
-                  <span className="org-tool__desc" style={{ display: 'block' }}>{tool.desc}</span>
-                </span>
-              </Link>
-            )
-          })}
-        </div>
-      </section>
-
-      <section className="section">
-        <Card level="medium">
-          <CardHeader
-            title="Operar es otra cosa"
-            description="Para consultar saldos y movimientos, ve a Merchant Desk."
-            actions={<Link className="btn btn--secondary btn--sm" to="/desk">Ir al Merchant Desk</Link>}
-          />
-          <CardBody>
-            <div className="row wrap gap-2">
-              <Link className="btn btn--ghost btn--sm" to="/desk/virtual-accounts">
-                <Layers size={15} aria-hidden="true" /> Cuentas virtuales
-              </Link>
-              <Link className="btn btn--ghost btn--sm" to="/desk/transactions">Movimientos</Link>
-              <Link className="btn btn--ghost btn--sm" to="/desk/products">Catálogo de productos</Link>
-            </div>
-          </CardBody>
-        </Card>
-      </section>
+      <p className="section"><Link to="/org">Volver a configuración</Link></p>
     </>
   )
 }

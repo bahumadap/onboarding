@@ -125,21 +125,11 @@ export default function OrgAccounts() {
   return (
     <>
       <header className="page__head">
-        <h1 className="page__title">Cuentas</h1>
+        <h1 className="page__title">Ajustes de cuentas</h1>
         <p className="page__lead">
           Asigna entidades, alias y permisos a las cuentas.
         </p>
       </header>
-
-      <Callout
-        tone="info"
-        title="Configurar no es operar"
-        action={<Link className="btn btn--secondary btn--sm" to="/desk">Ir al Merchant Desk</Link>}
-      >
-        <p className="ray-body-sm">
-          Consulta saldos y opera cuentas virtuales en Merchant Desk.
-        </p>
-      </Callout>
 
       {state.accountStatus !== ACCOUNT_STATUS.ACTIVE && (
         <div style={{ marginTop: 'var(--ray-space-4)' }}>

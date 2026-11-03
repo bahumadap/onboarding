@@ -8,24 +8,26 @@ import { ContentDetails } from '../../ui'
    producto cambia a la vista.
    ============================================================= */
 import React, { useMemo, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { CircleSlash, Layers, Sparkles, Wallet } from 'lucide-react'
 
 import {
   Badge, Button, Callout, Card, CardBody, CardFooter, CardHeader, Dialog,
   Divider, Field, Skeleton, Textarea, useToast,
 } from '../../ui'
-import { ADDITIONAL_PRODUCTS, CORE_PRODUCTS } from '../../mock/products'
+import { ADDITIONAL_PRODUCTS, CORE_PRODUCTS, productById } from '../../mock/products'
 import { PRODUCT_STATUS, PRODUCT_STATUS_META } from '../../state/statuses'
 import { useDemoState } from '../../state/DemoState'
 import { formatDate, useDeskLoad } from './shared'
 
 const CORE_LINK = {
-  core_account: { to: '/desk', label: 'Ver saldos y cuentas', icon: Wallet },
+  core_account: { to: '/desk/accounts', label: 'Ver saldos y cuentas', icon: Wallet },
   virtual_accounts: { to: '/desk/virtual-accounts', label: 'Gestionar cuentas virtuales', icon: Layers },
 }
 
-export default function ProductCatalog() {
+export default function ProductCatalog({ embedded = false }) {
+  const { productId } = useParams()
+  const selectedProduct = productId ? productById(productId) : null
   const { state, actions } = useDemoState()
   const toast = useToast()
   const { loading } = useDeskLoad()
@@ -53,17 +55,20 @@ export default function ProductCatalog() {
     })
   }
 
+  if (productId && (!selectedProduct || selectedProduct.core)) return <Callout tone="warning" title="Producto no encontrado"><Link to="/desk/products">Volver a productos</Link></Callout>
+
   return (
     <>
-      <div className="page__head">
-        <h1 className="page__title">Productos</h1>
+      {!embedded && <div className="page__head">
+        {selectedProduct && <p style={{ marginBottom: 'var(--ray-space-3)' }}><Link to="/desk/products">Volver a productos</Link></p>}
+        <h1 className="page__title">{selectedProduct?.name ?? 'Productos'}</h1>
         <p className="page__lead">
-          Consulta tus productos y solicita nuevos servicios.
+          {selectedProduct?.summary ?? 'Consulta tus productos y solicita nuevos servicios.'}
         </p>
-      </div>
+      </div>}
 
       {/* --------------------------- Base --------------------------- */}
-      <section className="section" aria-labelledby="sec-base">
+      {!selectedProduct && !embedded && <section className="section" aria-labelledby="sec-base">
         <div className="section__head">
           <div>
             <h2 className="section__title" id="sec-base">Incluidos con la cuenta habilitada</h2>
@@ -82,12 +87,14 @@ export default function ProductCatalog() {
         </div>
       </section>
 
+      }
+
       {/* ------------------------ Adicionales ------------------------ */}
       <section className="section" aria-labelledby="sec-adicionales">
         <div className="section__head">
           <div>
-            <h2 className="section__title" id="sec-adicionales">Productos adicionales</h2>
-            <p className="section__desc">Cada producto requiere evaluación y activación.</p>
+            <h2 className="section__title" id="sec-adicionales">{selectedProduct ? 'Estado del producto' : embedded ? 'Productos' : 'Productos adicionales'}</h2>
+            <p className="section__desc">{embedded ? 'Abre un producto para consultar su estado y requisitos.' : 'Los productos adicionales requieren evaluación y activación.'}</p>
           </div>
         </div>
 
@@ -104,7 +111,14 @@ export default function ProductCatalog() {
                 </CardBody>
               </Card>
             ))
-            : ADDITIONAL_PRODUCTS.map(product => (
+            : [...(embedded ? CORE_PRODUCTS.filter(p => p.id === 'virtual_accounts') : []), ...(selectedProduct ? [selectedProduct] : ADDITIONAL_PRODUCTS)].map(product => embedded ? (
+              <Card key={product.id} level="low">
+                <CardHeader title={product.name} description={product.summary} actions={<Badge tone={PRODUCT_STATUS_META[statusOf(product.id)].tone} dot>{PRODUCT_STATUS_META[statusOf(product.id)].label}</Badge>} />
+                <CardFooter><Link to={product.id === 'virtual_accounts' ? '/desk/virtual-accounts' : `/desk/products/${product.id}`}>Ver producto</Link></CardFooter>
+              </Card>
+            ) : product.core ? (
+              <CoreCard key={product.id} product={product} status={statusOf(product.id)} />
+            ) : (
               <ProductCard
                 key={product.id}
                 product={product}
@@ -167,9 +181,9 @@ function CoreCard({ product, status }) {
       </CardFooter>
     </Card>
   )
-          }
+}
 
-          function ProductCard({ product, status, request, onRequest }) {
+function ProductCard({ product, status, request, onRequest }) {
   const meta = PRODUCT_STATUS_META[status]
 
   return (
@@ -215,10 +229,10 @@ function CoreCard({ product, status }) {
       </CardFooter>
     </Card>
   )
-          }
+}
 
-          /** Explica, en una frase, en qué punto del proceso está el producto. */
-          function ProductStateNote({ product, status, request }) {
+/** Explica, en una frase, en qué punto del proceso está el producto. */
+function ProductStateNote({ product, status, request }) {
   if (status === PRODUCT_STATUS.NOT_AVAILABLE) {
     return (
       <div style={{ marginTop: 'var(--ray-space-4)' }}>
@@ -252,7 +266,7 @@ function CoreCard({ product, status }) {
       <div style={{ marginTop: 'var(--ray-space-4)' }}>
         <Callout tone="warning" title="Falta configurarlo">
           <p className="ray-body-sm">
-            Evaluación aprobada. Completa la configuración en Config Org para operar.
+            Evaluación aprobada. Completa la configuración en Configuración para operar.
           </p>
         </Callout>
       </div>
@@ -282,10 +296,11 @@ function CoreCard({ product, status }) {
   }
 
   return null
-          }
+}
 
-          /** El control que corresponde al estado: nunca un botón decorativo. */
-          function ProductAction({ product, status, onRequest }) {
+/** El control que corresponde al estado: nunca un botón decorativo. */
+function ProductAction({ product, status, onRequest }) {
+  const { productId } = useParams()
   if (status === PRODUCT_STATUS.AVAILABLE_TO_REQUEST) {
     return (
       <Button variant="brand" size="sm" icon={<Sparkles size={15} aria-hidden="true" />} onClick={onRequest}>
@@ -303,14 +318,14 @@ function CoreCard({ product, status }) {
   }
 
   if (status === PRODUCT_STATUS.PENDING_CONFIGURATION) {
-    return <Link to="/org/products">Configurar en Config Org</Link>
+    return <Link to="/org/products">Configurar en Configuración</Link>
   }
 
   if (status === PRODUCT_STATUS.ACTIVE) {
     return (
       <div className="row wrap gap-3">
-        <Link to="/desk">Ver cuentas que lo usan</Link>
-        <Link to="/org/products">Administrar en Config Org</Link>
+        {productId ? (product.id === 'fx' ? <Link to="/desk/accounts">Ver cuentas en divisas</Link> : <span className="ray-body-sm text-secondary">La demo permite revisar la habilitación. Las operaciones de este producto aún no están implementadas.</span>) : <Link to={`/desk/products/${product.id}`}>Ver producto</Link>}
+        <Link to="/org/products">Administrar en Configuración</Link>
       </div>
     )
   }
@@ -328,9 +343,9 @@ function CoreCard({ product, status }) {
   }
 
   return <p className="ray-body-sm text-secondary">Sin acciones disponibles en este estado.</p>
-          }
+}
 
-          function RequestDialog({ product, onClose, onConfirm }) {
+function RequestDialog({ product, onClose, onConfirm }) {
   const [note, setNote] = useState('')
 
   const close = () => { setNote(''); onClose() }
@@ -356,7 +371,7 @@ function CoreCard({ product, status }) {
             <ol className="desk-list" style={{ marginTop: 'var(--ray-space-2)' }}>
               <li><span className="desk-list__marker" aria-hidden="true" />Registramos tu solicitud.</li>
               <li><span className="desk-list__marker" aria-hidden="true" />Riesgo evalúa los requisitos.</li>
-              <li><span className="desk-list__marker" aria-hidden="true" />Si se aprueba, configuras el producto en Config Org.</li>
+              <li><span className="desk-list__marker" aria-hidden="true" />Si se aprueba, configuras el producto en Configuración.</li>
               <li><span className="desk-list__marker" aria-hidden="true" />Después de activarlo, puedes usarlo en Merchant Desk.</li>
             </ol>
           </div>
@@ -394,4 +409,4 @@ function CoreCard({ product, status }) {
       )}
     </Dialog>
   )
-          }
+}

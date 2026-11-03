@@ -99,7 +99,7 @@ const FAILURE_COPY = {
     tone: 'warning',
     title: 'Cuenta restringida',
     body: 'Puedes recibir abonos y consultar movimientos. Los egresos están bloqueados.',
-    next: 'Revisa los requisitos pendientes en Config Org.',
+    next: 'Revisa los requisitos pendientes en Configuración.',
     code: 'core.account.restricted',
   },
 }

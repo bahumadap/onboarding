@@ -28,6 +28,8 @@ import VirtualAccounts from './features/desk/VirtualAccounts'
 import Transactions from './features/desk/Transactions'
 import ProductCatalog from './features/desk/ProductCatalog'
 
+import OrgHome from './features/org/OrgHome'
+import Accounts from './features/desk/Accounts'
 import OrgChecklist from './features/org/OrgChecklist'
 import OrgProfile from './features/org/OrgProfile'
 import OrgUsers from './features/org/OrgUsers'
@@ -95,12 +97,15 @@ function Shell() {
       {/* D y E — consola */}
       <Route element={<RequireOrganization><AppShell /></RequireOrganization>}>
         <Route path="/desk" element={<RequireOperableAccount><DeskOverview /></RequireOperableAccount>} />
+        <Route path="/desk/accounts" element={<RequireOperableAccount><Accounts /></RequireOperableAccount>} />
+        <Route path="/desk/products/:productId" element={<RequireOperableAccount><ProductCatalog /></RequireOperableAccount>} />
         <Route path="/desk/accounts/:accountId" element={<RequireOperableAccount><AccountDetail /></RequireOperableAccount>} />
         <Route path="/desk/virtual-accounts" element={<RequireOperableAccount><VirtualAccounts /></RequireOperableAccount>} />
         <Route path="/desk/transactions" element={<RequireOperableAccount><Transactions /></RequireOperableAccount>} />
         <Route path="/desk/products" element={<RequireOperableAccount><ProductCatalog /></RequireOperableAccount>} />
 
-        <Route path="/org" element={<OrgChecklist />} />
+        <Route path="/org" element={<OrgHome />} />
+        <Route path="/org/setup" element={<OrgChecklist />} />
         <Route path="/org/profile" element={<OrgProfile />} />
         <Route path="/org/users" element={<OrgUsers />} />
         <Route path="/org/accounts" element={<OrgAccounts />} />

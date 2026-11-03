@@ -105,7 +105,7 @@ export default function OrgApprovals() {
   return (
     <>
       <header className="page__head">
-        <h1 className="page__title">Permisos y aprobaciones</h1>
+        <h1 className="page__title">Reglas de aprobación</h1>
         <p className="page__lead">
           Define quién inicia y aprueba operaciones. La política aplica a todas las cuentas.
         </p>

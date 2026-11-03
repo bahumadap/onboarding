@@ -267,3 +267,12 @@
 
 .flow-brand-mobile { display: inline-flex; }
 @media (min-width: 900px) { .flow-brand-mobile { display: none; } }
+
+/* Separate settings workspace, using the existing design tokens. */
+.settings-grid { display: grid; gap: var(--ray-space-4); grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr)); }
+.settings-card { display: flex; align-items: flex-start; gap: var(--ray-space-3); padding: var(--ray-space-5); border: 1px solid var(--ray-color-border-base); border-radius: var(--ray-radius-lg); color: var(--ray-color-text-primary); text-decoration: none; background: var(--ray-color-bg-default); }
+.settings-card > svg { flex: none; }
+.settings-card > div { flex: 1; min-width: 0; }
+.settings-card p { margin-top: var(--ray-space-2); }
+.settings-card:hover { border-color: var(--ray-color-border-hover); background: var(--ray-sidebar-bg); }
+.org-switch { cursor: default; }

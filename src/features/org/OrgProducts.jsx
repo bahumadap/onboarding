@@ -97,7 +97,7 @@ export default function OrgProducts() {
   return (
     <>
       <header className="page__head">
-        <h1 className="page__title">Productos y servicios</h1>
+        <h1 className="page__title">Configuración de productos</h1>
         <p className="page__lead">
           Configura los permisos y límites de tus productos aprobados.
         </p>
