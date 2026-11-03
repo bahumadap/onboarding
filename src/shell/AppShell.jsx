@@ -114,6 +114,9 @@ export default function AppShell() {
 
         <nav className="sidebar__nav" aria-label="Navegación principal">
           <div className="sidebar__group">
+            <NavItem item={{ to: '/onboarding', label: 'Onboarding', icon: FileCheck2 }} />
+          </div>
+          <div className="sidebar__group">
             <span className="sidebar__group-label">Merchant Desk · operar</span>
             {DESK_ITEMS.map(item => (
               <NavItem key={item.to} item={item} disabled={!deskEnabled} />

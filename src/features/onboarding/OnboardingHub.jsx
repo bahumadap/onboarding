@@ -19,7 +19,7 @@ import {
 import { useDemoState, useOnboardingProgress } from '../../state/DemoState'
 import {
   IDENTITY_STATUS, IDENTITY_STATUS_META, KYB_STATUS, KYB_STATUS_META,
-  canProvisionAccount,
+  canAccessDesk, canProvisionAccount,
 } from '../../state/statuses'
 import { KYB_SECTIONS } from '../../mock/compliance'
 import { countryLabel, industryLabel } from '../../mock/countries'
@@ -146,7 +146,12 @@ export default function OnboardingHub() {
           { title: 'Activación de la cuenta', description: 'Se habilita cuando ambas validaciones están aprobadas.', marker: 'C' },
         ],
       }}
-      topRight={<Badge tone={readyForActivation ? 'success' : 'neutral'}>{`Avance general ${progress.percent}%`}</Badge>}
+      topRight={
+        <div className="row gap-2">
+          {canAccessDesk(state) && <Button variant="secondary" size="sm" onClick={() => navigate('/desk')}>Volver al Merchant Desk</Button>}
+          <Badge tone={readyForActivation ? 'success' : 'neutral'}>{`Avance general ${progress.percent}%`}</Badge>
+        </div>
+      }
     >
       <div className="ob-stack">
         <div className="ob-head">

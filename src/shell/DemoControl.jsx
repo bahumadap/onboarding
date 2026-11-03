@@ -121,6 +121,11 @@ export default function DemoControl() {
             >
               Reiniciar demo
             </Button>
+            {state.organization.id && (
+              <Button variant="secondary" onClick={() => { setOpen(false); navigate('/onboarding') }}>
+                Ver onboarding
+              </Button>
+            )}
             <Button variant="primary" onClick={() => setOpen(false)}>Listo</Button>
           </>
         }
