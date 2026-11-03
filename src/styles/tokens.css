@@ -1,0 +1,313 @@
+/* =============================================================
+   YOL1 Design System — design tokens
+   Fuente: yol1-tokens.json. No editar valores a mano: si cambia
+   el Design System, se regenera este archivo.
+   ============================================================= */
+
+:root {
+  /* ---- radius ---- */
+  --ray-radius-none: 0px;
+  --ray-radius-sm: 2px;
+  --ray-radius-md: 4px;
+  --ray-radius-lg: 8px;
+  --ray-radius-xl: 16px;
+  --ray-radius-pill: 9999px;
+
+  /* ---- escala de espaciado (derivada, base 4) ---- */
+  --ray-space-1: 4px;
+  --ray-space-2: 8px;
+  --ray-space-3: 12px;
+  --ray-space-4: 16px;
+  --ray-space-5: 20px;
+  --ray-space-6: 24px;
+  --ray-space-8: 32px;
+  --ray-space-10: 40px;
+  --ray-space-12: 48px;
+  --ray-space-16: 64px;
+
+  /* ---- tipografía ---- */
+  --ray-font-display: "Söhne Breit", "Geist", system-ui, sans-serif;
+  --ray-font-sans: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --ray-font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --ray-text-display: 64px;
+  --ray-text-h1: 40px;
+  --ray-text-h2: 32px;
+  --ray-text-h3: 24px;
+  --ray-text-h4: 20px;
+  --ray-text-h5: 16px;
+  --ray-text-h6: 14px;
+  --ray-text-subtitle-lg: 18px;
+  --ray-text-subtitle-md: 16px;
+  --ray-text-subtitle-sm: 14px;
+  --ray-text-label-lg: 16px;
+  --ray-text-label-md: 14px;
+  --ray-text-label-sm: 13px;
+  --ray-text-body-lg: 16px;
+  --ray-text-body-md: 14px;
+  --ray-text-body-sm: 13px;
+  --ray-text-overline-lg: 13px;
+  --ray-text-overline-md: 12px;
+  --ray-text-caption: 12px;
+
+  --ray-weight-regular: 400;
+  --ray-weight-medium: 500;
+  --ray-weight-semibold: 600;
+  --ray-weight-bold: 700;
+
+  /* ---- paleta cruda ---- */
+  --ray-brand-50: #f0f9f6;
+  --ray-brand-100: #e6efed;
+  --ray-brand-200: #d5dfdc;
+  --ray-brand-300: #afcbc4;
+  --ray-brand-400: #7db1a4;
+  --ray-brand-500: #4d9685;
+  --ray-brand-600: #1f7c6b;
+  --ray-brand-700: #006152;
+  --ray-brand-800: #00483c;
+  --ray-brand-900: #0a332b;
+  --ray-brand-950: #001e18;
+
+  --ray-accent-50: #f0ffc7;
+  --ray-accent-100: #ddff52;
+  --ray-accent-200: #daff00;
+  --ray-accent-300: #b5d500;
+  --ray-accent-400: #98b300;
+  --ray-accent-500: #7d9130;
+
+  --ray-neutral-50: #f9f6f1;
+  --ray-neutral-100: #f3f0ea;
+  --ray-neutral-200: #e8e3da;
+  --ray-neutral-300: #d6d0c6;
+  --ray-neutral-400: #b0aaa0;
+  --ray-neutral-500: #8b857c;
+  --ray-neutral-600: #6d685f;
+  --ray-neutral-700: #534f49;
+  --ray-neutral-800: #3b3731;
+  --ray-neutral-900: #24211b;
+  --ray-neutral-950: #14110c;
+}
+
+/* =========================== LIGHT =========================== */
+:root,
+:root[data-theme="light"] {
+  --ray-color-bg-default: #ffffff;
+  --ray-color-bg-subtle: #f9f6f1;
+
+  --ray-color-surface-alt: #ffffff;
+  --ray-color-surface-default: #f3f0ea;
+  --ray-color-surface-low: #e8e3da;
+
+  --ray-color-border-base: #d6d0c6;
+  --ray-color-border-hover: rgba(130, 147, 171, 0.40);
+  --ray-color-border-active: rgba(130, 147, 171, 0.56);
+
+  --ray-color-text-primary: #24211b;
+  --ray-color-text-secondary: #534f49;
+  --ray-color-text-tertiary: #6d685f;
+  --ray-color-text-inverse: #ffffff;
+  --ray-color-text-white: #ffffff;
+
+  --ray-color-interaction-brand-subtle: #f0ffc7;
+  --ray-color-interaction-brand-low: #afcbc4;
+  --ray-color-interaction-brand-medium: #1f7c6b;
+  --ray-color-interaction-brand-high: #006152;
+  --ray-color-interaction-brand-strong: #00483c;
+
+  --ray-color-interaction-accent-subtle: #f0ffc7;
+  --ray-color-interaction-accent-low: #ddff52;
+  --ray-color-interaction-accent-medium: #daff00;
+  --ray-color-interaction-accent-strong: #00483c;
+
+  --ray-color-interaction-neutral-subtle: color-mix(in srgb, var(--ray-color-surface-low) 50%, transparent);
+  --ray-color-interaction-neutral-low: var(--ray-color-surface-low);
+  --ray-color-interaction-neutral-medium: rgba(130, 147, 171, 0.32);
+  --ray-color-interaction-neutral-high: rgba(130, 147, 171, 0.40);
+  --ray-color-interaction-neutral-strong: rgba(130, 147, 171, 0.48);
+
+  --ray-color-state-info-subtle: #f6f6ff;
+  --ray-color-state-info-low: #c1bbff;
+  --ray-color-state-info-medium: #754cf0;
+  --ray-color-state-info-strong: #542eb7;
+
+  --ray-color-state-warning-subtle: rgba(255, 193, 0, 0.10);
+  --ray-color-state-warning-low: #fde272;
+  --ray-color-state-warning-medium: #eaaa08;
+  --ray-color-state-warning-strong: #a15c07;
+
+  --ray-color-state-success-subtle: rgba(83, 201, 95, 0.10);
+  --ray-color-state-success-low: #73e085;
+  --ray-color-state-success-medium: #158225;
+  --ray-color-state-success-strong: #0d5711;
+
+  --ray-color-state-danger-subtle: rgba(220, 38, 38, 0.10);
+  --ray-color-state-danger-low: #fca5a5;
+  --ray-color-state-danger-medium: #dc2626;
+  --ray-color-state-danger-strong: #991b1b;
+  --ray-color-state-danger-high: #b91c1c;
+
+  --ray-color-focus-ring: var(--ray-color-interaction-brand-high);
+
+  --ray-shadow-blur-bottom: 0 4px 8px rgba(130, 147, 171, 0.16);
+  --ray-shadow-blur-center: 0 0 16px rgba(130, 147, 171, 0.24);
+
+  --ray-card-low-bg: var(--ray-color-bg-default);
+  --ray-card-low-border: color-mix(in srgb, var(--ray-color-text-tertiary) 28%, var(--ray-color-bg-default));
+  --ray-card-low-shadow: 0 1px 2px rgba(24, 29, 37, 0.06);
+  --ray-card-medium-bg: var(--ray-color-bg-subtle);
+  --ray-card-medium-shadow: 0 2px 8px rgba(24, 29, 37, 0.10);
+  --ray-card-high-bg: color-mix(in srgb, var(--ray-color-text-tertiary) 10%, var(--ray-color-bg-default));
+  --ray-card-high-border: color-mix(in srgb, var(--ray-color-text-tertiary) 40%, var(--ray-color-bg-default));
+  --ray-card-high-shadow: 0 8px 24px rgba(24, 29, 37, 0.16);
+  --ray-card-radius: 8px;
+
+  --ray-button-primary-bg: #000000;
+  --ray-button-primary-bg-hover: #3b3731;
+  --ray-button-primary-bg-active: #534f49;
+  --ray-button-primary-text: #ffffff;
+  --ray-button-secondary-bg: #ffffff;
+  --ray-button-secondary-bg-hover: #f9f6f1;
+  --ray-button-secondary-bg-active: #f3f0ea;
+  --ray-button-secondary-text: #24211b;
+  --ray-button-secondary-border: #b0aaa0;
+  --ray-button-brand-bg: #daff00;
+  --ray-button-brand-bg-hover: #b5d500;
+  --ray-button-brand-bg-active: #98b300;
+  --ray-button-brand-text: #0a332b;
+  --ray-button-ghost-bg-hover: #f0ffc7;
+  --ray-button-ghost-bg-active: #d6d0c6;
+  --ray-button-ghost-text: #24211b;
+  --ray-button-error-bg: #b91c1c;
+  --ray-button-error-bg-hover: #991b1b;
+  --ray-button-error-text: #ffffff;
+
+  --ray-input-bg: transparent;
+  --ray-input-border-focus: #6d685f;
+  --ray-input-text: #24211b;
+  --ray-input-placeholder: #6d685f;
+
+  --ray-checkbox-default-bg: #6d685f;
+  --ray-checkbox-brand-bg: #1f7c6b;
+  --ray-checkbox-border: #6d685f;
+  --ray-checkbox-check: #ffffff;
+
+  --ray-toast-bg: #ffffff;
+  --ray-toast-border: #e8e3da;
+  --ray-toast-text: #24211b;
+  --ray-toast-description: #6d685f;
+
+  --ray-sidebar-bg: var(--ray-color-bg-subtle);
+  --ray-sidebar-border: var(--ray-color-border-base);
+  --ray-sidebar-text: var(--ray-color-text-secondary);
+  --ray-sidebar-text-muted: var(--ray-color-text-tertiary);
+  --ray-sidebar-item-hover-bg: var(--ray-color-surface-default);
+  --ray-sidebar-item-active-bg: color-mix(in srgb, var(--ray-color-interaction-brand-strong) 5%, transparent);
+  --ray-sidebar-item-active-text: var(--ray-color-interaction-brand-strong);
+
+  --ray-dropdown-bg: var(--ray-color-bg-default);
+  --ray-dropdown-border: color-mix(in srgb, var(--ray-color-text-primary) 9%, transparent);
+  --ray-dropdown-option-selected-bg: var(--ray-color-interaction-accent-subtle);
+
+  --ray-stepper-accent: var(--ray-color-state-success-medium);
+  --ray-stepper-track: var(--ray-color-border-base);
+  --ray-stepper-active-bg: var(--ray-color-interaction-neutral-low);
+  --ray-stepper-active-text: var(--ray-color-text-primary);
+  --ray-stepper-active-border: var(--ray-color-interaction-neutral-medium);
+  --ray-stepper-upcoming-bg: var(--ray-color-bg-default);
+  --ray-stepper-upcoming-text: var(--ray-color-text-secondary);
+  --ray-stepper-completed-text: var(--ray-color-text-white);
+
+  --ray-progress-track-bg: var(--ray-color-surface-low);
+  --ray-progress-indicator-bg: var(--ray-color-text-primary);
+
+  --ray-switch-track-off: var(--ray-color-surface-low);
+  --ray-switch-track-on: var(--ray-color-interaction-accent-strong);
+  --ray-switch-brand-track-on: var(--ray-color-interaction-brand-medium);
+
+  --ray-opacity-disabled: 0.5;
+  --ray-opacity-overlay: 0.5;
+}
+
+/* =========================== DARK ============================ */
+:root[data-theme="dark"] {
+  --ray-color-bg-default: #14110c;
+  --ray-color-bg-subtle: #24211b;
+
+  --ray-color-surface-alt: #24211b;
+  --ray-color-surface-default: #3b3731;
+  --ray-color-surface-low: #534f49;
+
+  --ray-color-border-base: #534f49;
+  --ray-color-border-hover: rgba(130, 147, 171, 0.40);
+  --ray-color-border-active: rgba(130, 147, 171, 0.56);
+
+  --ray-color-text-primary: #f9f6f1;
+  --ray-color-text-secondary: #e8e3da;
+  --ray-color-text-tertiary: #b0aaa0;
+  --ray-color-text-inverse: #000000;
+  --ray-color-text-white: #ffffff;
+
+  --ray-color-interaction-brand-subtle: #171a0b;
+  --ray-color-interaction-brand-low: #3b3f2f;
+  --ray-color-interaction-brand-medium: #98b300;
+  --ray-color-interaction-brand-high: #b5d500;
+  --ray-color-interaction-brand-strong: #daff00;
+
+  --ray-color-interaction-accent-subtle: #171a0b;
+  --ray-color-interaction-accent-low: #272b1b;
+  --ray-color-interaction-accent-medium: #b5d500;
+  --ray-color-interaction-accent-strong: #daff00;
+
+  --ray-color-state-info-subtle: #181331;
+  --ray-color-state-info-low: #3e228a;
+  --ray-color-state-info-medium: #a192ff;
+  --ray-color-state-info-strong: #c1bbff;
+
+  --ray-color-state-warning-subtle: rgba(255, 193, 0, 0.15);
+  --ray-color-state-warning-low: #854a0e;
+  --ray-color-state-warning-medium: #a15c07;
+  --ray-color-state-warning-strong: #fde272;
+
+  --ray-color-state-success-subtle: rgba(83, 201, 95, 0.15);
+  --ray-color-state-success-low: #09460c;
+  --ray-color-state-success-medium: #0d5711;
+  --ray-color-state-success-strong: #73e085;
+
+  --ray-color-state-danger-subtle: rgba(220, 38, 38, 0.15);
+  --ray-color-state-danger-low: #7f1d1d;
+  --ray-color-state-danger-medium: #991b1b;
+  --ray-color-state-danger-strong: #fca5a5;
+  --ray-color-state-danger-high: #dc2626;
+
+  --ray-shadow-blur-bottom: 0 4px 8px rgba(0, 0, 0, 0.55);
+  --ray-shadow-blur-center: 0 0 16px rgba(0, 0, 0, 0.70);
+  --ray-card-low-shadow: 0 1px 2px rgba(0, 0, 0, 0.40);
+  --ray-card-medium-shadow: 0 2px 8px rgba(0, 0, 0, 0.50);
+  --ray-card-high-shadow: 0 8px 24px rgba(0, 0, 0, 0.60);
+
+  --ray-button-primary-bg: #f9f6f1;
+  --ray-button-primary-bg-hover: #f3f0ea;
+  --ray-button-primary-bg-active: #e8e3da;
+  --ray-button-primary-text: #000000;
+  --ray-button-secondary-bg: #14110c;
+  --ray-button-secondary-bg-hover: #24211b;
+  --ray-button-secondary-bg-active: #3b3731;
+  --ray-button-secondary-text: #f9f6f1;
+  --ray-button-secondary-border: #6d685f;
+  --ray-button-brand-bg: #daff00;
+  --ray-button-brand-bg-hover: #ddff52;
+  --ray-button-brand-bg-active: #b5d500;
+  --ray-button-brand-text: #0a332b;
+  --ray-button-ghost-bg-hover: #272b1b;
+  --ray-button-ghost-bg-active: #3b3f2f;
+  --ray-button-ghost-text: #f9f6f1;
+
+  --ray-input-border-focus: #daff00;
+  --ray-input-text: #f9f6f1;
+  --ray-input-placeholder: #b0aaa0;
+
+  --ray-checkbox-default-bg: #f9f6f1;
+  --ray-checkbox-brand-bg: #daff00;
+  --ray-checkbox-border: #b0aaa0;
+  --ray-checkbox-check: #000000;
+}

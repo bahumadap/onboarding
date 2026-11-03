@@ -1,0 +1,311 @@
+/* =============================================================
+   Config Org — puesta en marcha (/org).
+
+   La puesta en marcha NO es el onboarding regulatorio: el KYB ya se
+   aprobó para habilitar la cuenta. Acá solo quedan los pasos de
+   configuración, clasificados por tipo. Los opcionales no bloquean
+   nada: una empresa puede usar el dashboard sin integrar su API.
+
+   El módulo es permanente: cuando el checklist se completa, las
+   herramientas administrativas siguen disponibles más abajo.
+   ============================================================= */
+import React, { useMemo } from 'react'
+import { Link } from 'react-router-dom'
+import {
+  Building2, Check, CreditCard, FileCheck2, KeyRound, Layers,
+  Settings2, ShieldCheck, Users, Wallet,
+} from 'lucide-react'
+
+import {
+  Badge, Callout, Card, CardBody, CardHeader, Checkbox, Metric, Progress, useToast,
+} from '../../ui'
+import { useDemoState } from '../../state/DemoState'
+import {
+  ACCOUNT_STATUS, ACCOUNT_STATUS_META, PRODUCT_STATUS, TASK_KIND, TASK_KIND_META,
+} from '../../state/statuses'
+import './org.css'
+
+/* Herramientas administrativas permanentes de la consola. */
+const TOOLS = [
+  { to: '/org/profile', icon: Building2, title: 'Perfil de organización', desc: 'Datos generales, entidades jurídicas y países de operación.' },
+  { to: '/org/users', icon: Users, title: 'Usuarios y roles', desc: 'Invitaciones, roles y acceso del equipo.' },
+  { to: '/org/accounts', icon: Wallet, title: 'Cuentas', desc: 'Estructura de cuentas y quién puede usarlas.' },
+  { to: '/org/approvals', icon: ShieldCheck, title: 'Permisos y aprobaciones', desc: 'Quién inicia, quién aprueba y con qué límites.' },
+  { to: '/org/api', icon: KeyRound, title: 'API e integraciones', desc: 'Credenciales, webhooks y recursos técnicos.' },
+  { to: '/org/products', icon: CreditCard, title: 'Productos y servicios', desc: 'Configuración y permisos de los productos habilitados.' },
+  { to: '/org/compliance', icon: FileCheck2, title: 'Documentación y compliance', desc: 'Expediente KYB, documentos y contratos.' },
+  { to: '/org/preferences', icon: Settings2, title: 'Preferencias', desc: 'Visualización, notificaciones, seguridad e idioma.' },
+]
+
+/**
+ * Construye los pasos con su estado real.
+ * `derived` presente ⇒ el sistema resuelve el estado y no se marca a mano.
+ */
+function buildSteps(state) {
+  const accountMeta = ACCOUNT_STATUS_META[state.accountStatus]
+  const hasTeam = state.team.length > 1 || state.invitations.length > 0
+  const hasVirtual = state.virtualAccounts.length > 0
+
+  return [
+    {
+      id: 'profile',
+      kind: TASK_KIND.REQUIRED,
+      title: 'Revisar el perfil de la organización',
+      description: 'Confirma nombre comercial, actividad y países de operación. Los datos legales quedan como solo lectura: cambiarlos abre una nueva revisión.',
+      to: '/org/profile',
+      cta: 'Revisar perfil',
+    },
+    {
+      id: 'account',
+      kind: TASK_KIND.AUTOMATIC,
+      title: 'Confirmar el estado de la cuenta empresarial',
+      description: 'Lo resuelve el sistema al aprovisionar la cuenta vista. No requiere ninguna acción de tu parte.',
+      to: '/org/accounts',
+      cta: 'Ver cuentas',
+      derived: state.accountStatus === ACCOUNT_STATUS.ACTIVE,
+      derivedLabel: `Cuenta vista: ${accountMeta.label.toLowerCase()}`,
+      derivedTone: accountMeta.tone,
+    },
+    {
+      id: 'invite',
+      kind: TASK_KIND.REQUIRED,
+      title: 'Invitar a las personas del equipo',
+      description: 'Mientras seas la única persona con acceso, nadie más puede operar ni aprobar movimientos.',
+      to: '/org/users',
+      cta: 'Invitar miembros',
+      derived: hasTeam,
+      derivedLabel: hasTeam
+        ? `${state.team.length} ${state.team.length === 1 ? 'persona' : 'personas'} con acceso`
+        : 'Solo tú tienes acceso',
+      derivedTone: hasTeam ? 'success' : 'warning',
+    },
+    {
+      id: 'roles',
+      kind: TASK_KIND.REQUIRED,
+      title: 'Configurar roles y permisos',
+      description: 'Define quién inicia operaciones, quién las aprueba y desde qué monto se exige doble aprobación.',
+      to: '/org/approvals',
+      cta: 'Configurar permisos',
+    },
+    {
+      id: 'virtual_account',
+      kind: TASK_KIND.RECOMMENDED,
+      title: 'Crear la primera cuenta virtual',
+      description: 'Las cuentas virtuales separan saldos por usuario final, proyecto o flujo de cobro. Se crean en el Merchant Desk.',
+      to: '/desk/virtual-accounts',
+      cta: 'Ir al Merchant Desk',
+      derived: hasVirtual,
+      derivedLabel: hasVirtual
+        ? `${state.virtualAccounts.length} cuentas virtuales`
+        : 'Todavía sin cuentas virtuales',
+      derivedTone: hasVirtual ? 'success' : 'neutral',
+      disabled: state.accountStatus !== ACCOUNT_STATUS.ACTIVE,
+      disabledHint: 'Disponible cuando la cuenta vista esté activa.',
+    },
+    {
+      id: 'api',
+      kind: TASK_KIND.OPTIONAL,
+      title: 'Configurar las integraciones de API',
+      description: 'Solo si vas a operar desde tus propios sistemas. Puedes usar el dashboard sin integrar nada.',
+      to: '/org/api',
+      cta: 'Ver credenciales',
+    },
+    {
+      id: 'products',
+      kind: TASK_KIND.OPTIONAL,
+      title: 'Explorar otros productos',
+      description: 'FX, payouts e iniciación de pagos tienen su propia evaluación. Revisa cuáles aplican a tu operación.',
+      to: '/org/products',
+      cta: 'Ver productos',
+    },
+  ]
+}
+
+function TaskRow({ step, done, onToggle }) {
+  const kindMeta = TASK_KIND_META[step.kind]
+  const isDerived = step.derived !== undefined
+
+  return (
+    <li className="org-task">
+      <span className={`org-task__marker${done ? ' org-task__marker--done' : ''}`} aria-hidden="true">
+        {done ? <Check size={14} strokeWidth={3} /> : <span className="ray-caption">·</span>}
+      </span>
+
+      <div>
+        <div className="row wrap gap-2">
+          <p className="org-task__title grow">{step.title}</p>
+          <Badge tone={kindMeta.tone}>{kindMeta.label}</Badge>
+        </div>
+        <p className="org-task__desc">{step.description}</p>
+
+        <div className="org-task__foot">
+          {isDerived
+            ? <Badge tone={step.derivedTone} dot>{step.derivedLabel}</Badge>
+            : (
+              <Checkbox
+                label={done ? 'Paso marcado como listo' : 'Marcar como listo'}
+                checked={done}
+                onChange={e => onToggle(step.id, e.target.checked)}
+              />
+            )}
+
+          {step.disabled
+            ? <span className="org-inline-note">{step.disabledHint}</span>
+            : <Link className="btn btn--secondary btn--sm" to={step.to}>{step.cta}</Link>}
+        </div>
+      </div>
+    </li>
+  )
+}
+
+export default function OrgChecklist() {
+  const { state, actions } = useDemoState()
+  const toast = useToast()
+
+  const steps = useMemo(() => buildSteps(state), [state])
+
+  const isDone = step => (step.derived !== undefined ? step.derived : Boolean(state.checklistDone[step.id]))
+
+  const stats = useMemo(() => {
+    const done = steps.filter(isDone).length
+    const blocking = steps.filter(s => s.kind !== TASK_KIND.OPTIONAL && !isDone(s))
+    return {
+      done,
+      total: steps.length,
+      percent: Math.round((done / steps.length) * 100),
+      blocking: blocking.length,
+    }
+  }, [steps, state.checklistDone])
+
+  const pendingProducts = Object.entries(state.products)
+    .filter(([, status]) => status === PRODUCT_STATUS.REQUESTED || status === PRODUCT_STATUS.IN_REVIEW)
+    .length
+
+  return (
+    <>
+      <header className="page__head">
+        <h1 className="page__title">Puesta en marcha</h1>
+        <p className="page__lead">
+          La validación de empresa ya está resuelta. Lo que queda acá es configuración: dejar el
+          equipo, los permisos y las cuentas listos para operar. Esta consola no desaparece cuando
+          termines de configurarla.
+        </p>
+      </header>
+
+      <Card>
+        <CardBody>
+          <div className="grid grid-3">
+            <Metric
+              label="Pasos completados"
+              value={`${stats.done} de ${stats.total}`}
+              meta={stats.blocking === 0
+                ? 'Configuración base completa'
+                : `${stats.blocking} ${stats.blocking === 1 ? 'paso pendiente' : 'pasos pendientes'} fuera de los opcionales`}
+            />
+            <Metric
+              label="Cuenta vista"
+              value={ACCOUNT_STATUS_META[state.accountStatus].label}
+              meta={ACCOUNT_STATUS_META[state.accountStatus].description}
+            />
+            <Metric
+              label="Solicitudes de producto"
+              value={String(pendingProducts)}
+              meta={pendingProducts === 0 ? 'Sin solicitudes en evaluación' : 'En evaluación por el equipo de riesgo'}
+            />
+          </div>
+          <div className="stack gap-2" style={{ marginTop: 'var(--ray-space-5)' }}>
+            <Progress value={stats.percent} tone="brand" label="Avance de la puesta en marcha" />
+            <p className="org-inline-note">{stats.percent}% de la configuración sugerida.</p>
+          </div>
+        </CardBody>
+      </Card>
+
+      <section className="section">
+        <div className="section__head">
+          <div>
+            <h2 className="section__title">Pasos de configuración</h2>
+            <p className="section__desc">
+              Los pasos automáticos los resuelve el sistema. Los opcionales no bloquean el uso de la plataforma.
+            </p>
+          </div>
+        </div>
+
+        {stats.blocking === 0 && (
+          <Callout tone="success" title="Configuración base lista">
+            <p className="ray-body-sm">
+              Tu organización ya puede operar con los permisos definidos. Los pasos opcionales
+              siguen disponibles por si más adelante decides integrarte por API o sumar productos.
+            </p>
+          </Callout>
+        )}
+
+        <Card style={{ marginTop: 'var(--ray-space-4)' }}>
+          <CardBody>
+            <ul className="org-tasks">
+              {steps.map(step => (
+                <TaskRow
+                  key={step.id}
+                  step={step}
+                  done={isDone(step)}
+                  onToggle={(id, done) => {
+                    actions.toggleChecklistItem(id, done)
+                    toast.push({
+                      tone: done ? 'success' : 'info',
+                      title: done ? 'Paso marcado como listo' : 'Paso marcado como pendiente',
+                      description: step.title,
+                    })
+                  }}
+                />
+              ))}
+            </ul>
+          </CardBody>
+        </Card>
+      </section>
+
+      <section className="section">
+        <div className="section__head">
+          <div>
+            <h2 className="section__title">Herramientas de administración</h2>
+            <p className="section__desc">
+              Config Org es permanente: acá administras la organización, no solo la pones en marcha.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-2">
+          {TOOLS.map(tool => {
+            const Icon = tool.icon
+            return (
+              <Link key={tool.to} to={tool.to} className="org-tool">
+                <span className="org-tool__icon" aria-hidden="true"><Icon size={17} /></span>
+                <span className="grow">
+                  <span className="org-tool__title" style={{ display: 'block' }}>{tool.title}</span>
+                  <span className="org-tool__desc" style={{ display: 'block' }}>{tool.desc}</span>
+                </span>
+              </Link>
+            )
+          })}
+        </div>
+      </section>
+
+      <section className="section">
+        <Card level="medium">
+          <CardHeader
+            title="Operar es otra cosa"
+            description="Config Org configura y administra. Saldos, movimientos y cuentas virtuales se consultan y se operan en el Merchant Desk."
+            actions={<Link className="btn btn--secondary btn--sm" to="/desk">Ir al Merchant Desk</Link>}
+          />
+          <CardBody>
+            <div className="row wrap gap-2">
+              <Link className="btn btn--ghost btn--sm" to="/desk/virtual-accounts">
+                <Layers size={15} aria-hidden="true" /> Cuentas virtuales
+              </Link>
+              <Link className="btn btn--ghost btn--sm" to="/desk/transactions">Movimientos</Link>
+              <Link className="btn btn--ghost btn--sm" to="/desk/products">Catálogo de productos</Link>
+            </div>
+          </CardBody>
+        </Card>
+      </section>
+    </>
+  )
+}

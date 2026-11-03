@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import yol1Mark from './assets/yol1-mark.svg'
+import yol1Mark from '../assets/yol1-mark.svg'
 import {
   Activity, AlertCircle, Award, ArrowDownLeft, ArrowLeftRight, ArrowRight, ArrowUpRight,
   Bell, Check, CheckCircle2, ChevronDown, ChevronRight, Coffee, Coins, Copy, CreditCard,

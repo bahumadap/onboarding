@@ -1,0 +1,99 @@
+/* Estilos propios del signup. Todo sale de los tokens. */
+
+/* El título recibe el foco en cada paso para que lectores de pantalla
+   anuncien el cambio. No necesita anillo: no es un control, y el
+   siguiente Tab va al primer campo. */
+.flow__title:focus,
+.flow__title:focus-visible { outline: none; }
+
+.signup__requirements {
+  display: grid;
+  gap: 6px;
+  margin-top: var(--ray-space-2);
+}
+.signup__requirement {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: var(--ray-text-caption);
+  color: var(--ray-color-text-tertiary);
+}
+.signup__requirement--met { color: var(--ray-color-state-success-medium); }
+.signup__requirement-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  flex: none;
+  border-radius: var(--ray-radius-pill);
+  border: 1px solid currentColor;
+}
+
+.signup__terms {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ray-space-3);
+  max-height: 240px;
+  overflow-y: auto;
+  padding: var(--ray-space-4);
+  background: var(--ray-color-bg-subtle);
+  border: 1px solid var(--ray-color-border-base);
+  border-radius: var(--ray-radius-lg);
+}
+.signup__terms-item b {
+  display: block;
+  font-size: var(--ray-text-label-md);
+  font-weight: var(--ray-weight-semibold);
+  margin-bottom: 2px;
+}
+.signup__terms-item span {
+  font-size: var(--ray-text-body-sm);
+  color: var(--ray-color-text-secondary);
+}
+
+.signup__summary {
+  display: grid;
+  gap: var(--ray-space-2);
+  margin-top: var(--ray-space-5);
+}
+.signup__summary-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ray-space-3);
+  padding: 12px 14px;
+  background: var(--ray-color-bg-subtle);
+  border: 1px solid var(--ray-color-border-base);
+  border-radius: var(--ray-radius-lg);
+}
+.signup__summary-row b {
+  display: block;
+  font-size: var(--ray-text-label-md);
+  font-weight: var(--ray-weight-semibold);
+}
+.signup__summary-row span {
+  font-size: var(--ray-text-caption);
+  color: var(--ray-color-text-tertiary);
+}
+.signup__summary-id {
+  margin-left: auto;
+  font-family: var(--ray-font-mono);
+  font-size: var(--ray-text-caption);
+  color: var(--ray-color-text-tertiary);
+}
+
+.signup__otp-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ray-space-3);
+  margin-top: var(--ray-space-4);
+  flex-wrap: wrap;
+}
+
+.signup__countries-note {
+  display: flex;
+  gap: 8px;
+  font-size: var(--ray-text-caption);
+  color: var(--ray-color-text-tertiary);
+}

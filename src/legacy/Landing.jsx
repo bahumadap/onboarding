@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
-import yol1Mark from './assets/yol1-mark.svg'
-import brandImg5 from './assets/brand/img5.jpg'
-import brandImg7 from './assets/brand/img7.jpg'
+import yol1Mark from '../assets/yol1-mark.svg'
+import brandImg5 from '../assets/brand/img5.jpg'
+import brandImg7 from '../assets/brand/img7.jpg'
 import './landing.css'
 import {
   ArrowLeftRight, ArrowRight, BarChart3, Building2, CheckCircle2, ChevronDown,

@@ -1,0 +1,52 @@
+/* =============================================================
+   Estilos propios del macroproceso C (core activation).
+   Solo tokens --ray-*.
+   ============================================================= */
+
+.ac-stack { display: flex; flex-direction: column; gap: var(--ray-space-5); }
+.ac-head { display: flex; flex-direction: column; gap: var(--ray-space-2); }
+
+.ac-row { display: flex; align-items: flex-start; gap: var(--ray-space-3); }
+.ac-row__icon {
+  width: 36px; height: 36px; flex: none;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: var(--ray-radius-lg);
+  background: var(--ray-color-interaction-neutral-low);
+  color: var(--ray-color-text-secondary);
+}
+.ac-row__icon--ok { background: var(--ray-color-state-success-subtle); color: var(--ray-color-state-success-medium); }
+.ac-row__icon--warn { background: var(--ray-color-state-warning-subtle); color: var(--ray-color-state-warning-strong); }
+.ac-row__icon--error { background: var(--ray-color-state-danger-subtle); color: var(--ray-color-state-danger-medium); }
+
+.ac-title { font-size: var(--ray-text-label-lg); font-weight: var(--ray-weight-semibold); }
+.ac-desc { font-size: var(--ray-text-body-sm); color: var(--ray-color-text-tertiary); margin-top: var(--ray-space-1); }
+
+.ac-caps { display: flex; flex-direction: column; gap: var(--ray-space-3); }
+.ac-cap {
+  display: flex; align-items: flex-start; gap: var(--ray-space-3);
+  padding: var(--ray-space-3);
+  border: 1px solid var(--ray-color-border-base);
+  border-radius: var(--ray-radius-md);
+}
+.ac-cap__name { font-size: var(--ray-text-label-md); font-weight: var(--ray-weight-medium); }
+.ac-cap__list { margin-top: var(--ray-space-1); font-size: var(--ray-text-body-sm); color: var(--ray-color-text-tertiary); }
+
+.ac-grid { display: grid; gap: var(--ray-space-4); grid-template-columns: 1fr; }
+@media (min-width: 640px) {
+  .ac-grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.ac-sim { display: flex; flex-wrap: wrap; gap: var(--ray-space-2); }
+.ac-checks { display: flex; flex-direction: column; gap: var(--ray-space-3); }
+.ac-check {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--ray-space-3); flex-wrap: wrap;
+  padding: var(--ray-space-3);
+  border: 1px solid var(--ray-color-border-base);
+  border-radius: var(--ray-radius-md);
+}
+.ac-code {
+  font-family: var(--ray-font-mono);
+  font-size: var(--ray-text-body-sm);
+  color: var(--ray-color-text-secondary);
+}

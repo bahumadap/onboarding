@@ -1,315 +1,131 @@
-import React, { useState } from 'react'
-import { Routes, Route, useNavigate } from 'react-router-dom'
-import yol1Logo from './assets/yol1-logo.svg'
-import yol1Mark from './assets/yol1-mark.svg'
-import Landing from './Landing'
-import Personas from './Personas'
-import PersonasBusiness from './PersonasBusiness'
-import {
-  Activity, AlertCircle, ArrowDownLeft, ArrowRight, ArrowUpRight, BarChart3,
-  Bell, Building2, Check, CheckCircle2, ChevronDown, ChevronRight, CircleDollarSign,
-  ClipboardCheck, CreditCard, Download, FileBarChart, Filter, GitBranch, Landmark,
-  Layers3, LayoutDashboard, Link2, ListFilter, LockKeyhole, Menu, MoreHorizontal,
-  Plus, ReceiptText, Search, Settings, ShieldCheck, Sparkles, Users, WalletCards,
-  X, Zap, ArrowLeftRight, Globe2, Send, Repeat2, FileText, Mail, ScanLine,
-  CalendarClock, UserPlus, Camera, Paperclip, Pause, Play, Receipt
-} from 'lucide-react'
-import {
-  Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Pie, PieChart,
-  ResponsiveContainer, Tooltip, XAxis, YAxis
-} from 'recharts'
+/* =============================================================
+   Rutas de YOL1 Enterprise.
 
-const money = value => `$${Number(value).toLocaleString('es-CL')}`
-const chartData = [
-  { name: 'Ene', entradas: 590, salidas: 370 }, { name: 'Feb', entradas: 650, salidas: 430 },
-  { name: 'Mar', entradas: 720, salidas: 510 }, { name: 'Abr', entradas: 680, salidas: 470 },
-  { name: 'May', entradas: 810, salidas: 590 }, { name: 'Jun', entradas: 890, salidas: 640 },
-]
-const accounts = [
-  { name: 'Juan Pérez', id: 'CV-10021', type: 'Usuario final', balance: 185400, status: 'Activa', activity: 'Hace 4 min' },
-  { name: 'Camila Rojas', id: 'CV-10022', type: 'Usuario final', balance: 92100, status: 'Activa', activity: 'Hace 12 min' },
-  { name: 'Diego Morales', id: 'CV-10023', type: 'Usuario final', balance: 340800, status: 'Pendiente revisión', activity: 'Hace 18 min' },
-  { name: 'Sofía Castillo', id: 'CV-10024', type: 'Usuario final', balance: 56700, status: 'Activa', activity: 'Hace 26 min' },
-  { name: 'Martín Silva', id: 'CV-10025', type: 'Usuario final', balance: 720000, status: 'Activa', activity: 'Hace 35 min' },
-  { name: 'Retiros Pendientes', id: 'CV-OPS-01', type: 'Operativa', balance: 128900000, status: 'Activa', activity: 'Hace 2 min' },
-  { name: 'Recaudación Tarjetas', id: 'CV-OPS-02', type: 'Recaudación', balance: 274500000, status: 'Activa', activity: 'Hace 1 min' },
-  { name: 'Conciliación Diaria', id: 'CV-OPS-03', type: 'Conciliación', balance: 38200000, status: 'Activa', activity: 'Hace 8 min' },
-  { name: 'Proveedores Operacionales', id: 'CV-OPS-04', type: 'Proveedores', balance: 64800000, status: 'Activa', activity: 'Ayer' },
-]
-const users = [
-  { name: 'Juan Pérez', id: 'USR-10021', account: 'CV Usuario Juan Pérez', available: 185400, held: 0, state: 'Retiro pendiente', last: 'Retiro solicitado', alert: 'Retiro pendiente' },
-  { name: 'Camila Rojas', id: 'USR-10022', account: 'CV Usuario Camila Rojas', available: 92100, held: 0, state: 'Activa', last: 'Abono recibido', alert: 'Sin alertas' },
-  { name: 'Diego Morales', id: 'USR-10023', account: 'CV Usuario Diego Morales', available: 340800, held: 120000, state: 'Pendiente revisión', last: 'Movimiento retenido', alert: 'Saldo retenido' },
-  { name: 'Sofía Castillo', id: 'USR-10024', account: 'CV Usuario Sofía Castillo', available: 56700, held: 0, state: 'Activa', last: 'Retiro ejecutado', alert: 'Sin alertas' },
-  { name: 'Martín Silva', id: 'USR-10025', account: 'CV Usuario Martín Silva', available: 720000, held: 0, state: 'Activa', last: 'Abono recibido', alert: 'Sin alertas' },
-]
-const movements = [
-  { date: 'Hoy, 10:42', user: 'Juan Pérez', account: 'CV-10021', type: 'Abono recibido', amount: 185400, status: 'Completado', id: 'OP-948201' },
-  { date: 'Hoy, 10:38', user: 'Juan Pérez', account: 'CV-10021', type: 'Retiro solicitado', amount: -185400, status: 'Pendiente', id: 'OP-948199' },
-  { date: 'Hoy, 10:21', user: 'Sofía Castillo', account: 'CV-10024', type: 'Retiro ejecutado', amount: -56700, status: 'Completado', id: 'OP-948183' },
-  { date: 'Hoy, 09:58', user: 'Camila Rojas', account: 'CV-10022', type: 'Transferencia interna', amount: 92100, status: 'Completado', id: 'OP-948174' },
-  { date: 'Hoy, 09:44', user: 'Operación interna', account: 'CV-OPS-02', type: 'Comisión ProntoPaga', amount: -128000, status: 'Completado', id: 'OP-948166' },
-  { date: 'Hoy, 09:31', user: 'Diego Morales', account: 'CV-10023', type: 'Movimiento retenido', amount: 120000, status: 'En revisión', id: 'OP-948151' },
-]
-const nav = [
-  ['Vista general', LayoutDashboard], ['Cuentas virtuales', Layers3], ['Usuarios finales', Users],
-  ['Movimientos', Activity], ['Transferencias', ArrowLeftRight], ['Retiros y pagos', CircleDollarSign], ['Conciliación', ClipboardCheck],
-  ['Facturación', FileText], ['Rendición de gastos', Receipt], ['Tarjetas', CreditCard], ['Reportes', BarChart3], ['Usuarios y permisos', ShieldCheck],
-  ['Integraciones', Link2], ['Configuración', Settings],
-]
+   Los guards derivan de los selectores de estado, nunca de un flag
+   de "onboarding completo": por eso una organización con KYB
+   aprobado y cuenta en aprovisionamiento ve la pantalla de
+   activación, y no un dashboard que miente sobre una cuenta activa.
+   ============================================================= */
+import React from 'react'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 
-function StatusBadge({ children }) {
-  const text = String(children)
-  const tone = /Activa|Completado|Conectado|Conciliado|Aprobado|Ejecutado|Sin alertas|Operativa|Principal|Cobrada|Pagada|Completo|Adjunto/.test(text) ? 'success'
-    : /Pendiente|revisión|Revisión|Retiro|Próximamente|Futura|Procesando|Programada|Borrador|Faltan datos|Lista para pagar/.test(text) ? 'warning'
-    : /Rechazado|Bloqueada|retenido|alerta|Alerta/.test(text) ? 'danger' : 'neutral'
-  return <span className={`badge ${tone}`}><span />{text}</span>
-}
-function Avatar({ name, small = false }) {
-  return <span className={`avatar ${small ? 'small' : ''}`}>{name.split(' ').map(x => x[0]).slice(0, 2).join('')}</span>
-}
-function Button({ children, icon: Icon, secondary = false, ghost = false, onClick, className = '' }) {
-  return <button className={`button ${secondary ? 'secondary' : ''} ${ghost ? 'ghost' : ''} ${className}`} onClick={onClick}>{Icon && <Icon size={16} />}{children}</button>
-}
-function MetricCard({ label, value, icon: Icon, detail, tone = 'green' }) {
-  return <div className="metric-card">
-    <div className={`metric-icon ${tone}`}><Icon size={18} /></div>
-    <div className="metric-label">{label}</div><div className="metric-value">{value}</div>
-    <div className="metric-detail">{detail}</div>
-  </div>
-}
-function PageTitle({ eyebrow, title, subtitle, actions }) {
-  return <div className="page-title"><div><span className="eyebrow">{eyebrow}</span><h1>{title}</h1><p>{subtitle}</p></div>{actions && <div className="page-actions">{actions}</div>}</div>
-}
-function Card({ title, subtitle, action, children, className = '' }) {
-  return <section className={`card ${className}`}><div className="card-head"><div><h3>{title}</h3>{subtitle && <p>{subtitle}</p>}</div>{action}</div>{children}</section>
-}
-function DataTable({ headers, children }) {
-  return <div className="table-wrap"><table><thead><tr>{headers.map(h => <th key={h}>{h}</th>)}</tr></thead><tbody>{children}</tbody></table></div>
-}
-function SearchFilters({ account = false }) {
-  return <div className="filters"><div className="filter-search"><Search size={16} /><input placeholder={account ? 'Buscar por nombre o ID de cuenta...' : 'Buscar en esta vista...'} /></div><button><ListFilter size={15} /> Estado <ChevronDown size={14} /></button><button><Filter size={15} /> Tipo <ChevronDown size={14} /></button><button>Última actividad <ChevronDown size={14} /></button></div>
-}
-function Timeline({ compact = false }) {
-  const steps = ['Fondos recibidos', 'Asignado a cuenta virtual', 'Retiro solicitado', 'Aprobación pendiente', 'Pago ejecutado', 'Conciliado']
-  return <div className={`timeline ${compact ? 'compact' : ''}`}>{steps.map((s, i) => <div className={`timeline-step ${i < 3 ? 'done' : i === 3 ? 'current' : ''}`} key={s}><span>{i < 3 ? <Check size={13} /> : i + 1}</span><div><strong>{s}</strong>{!compact && <small>{i < 3 ? 'Completado' : i === 3 ? 'En curso' : 'Pendiente'}</small>}</div>{i < steps.length - 1 && <i />}</div>)}</div>
-}
-function Modal({ type, onClose, onConfirm }) {
-  const transferType = type?.startsWith('transfer-')
-  const billingType = type?.startsWith('billing-')
-  const title = type === 'create' ? 'Crear cuenta virtual' : type === 'trace' ? 'Trazabilidad de operación' : type === 'withdraw' ? 'Aprobar retiro' : type === 'card' ? 'Crear tarjeta' : type === 'transfer-national' ? 'Transferencia nacional' : type === 'transfer-global' ? 'Transferencia internacional' : type === 'transfer-fx' ? 'Cambiar divisas' : type === 'billing-client' ? 'Nuevo cliente' : type === 'billing-invoice' ? 'Nueva factura' : type === 'billing-supplier' ? 'Importar factura de proveedor' : type === 'billing-pay' ? 'Programar pago' : type === 'billing-email' ? 'Enviar factura por correo' : type === 'billing-recurring' ? 'Nueva factura recurrente' : type === 'expense-new' ? 'Nueva rendición de gastos' : type === 'expense-detail' ? 'Detalle de rendición · RG-1042' : 'Adjuntar ticket'
-  return <div className="modal-backdrop" onMouseDown={onClose}><div className="modal" onMouseDown={e => e.stopPropagation()}>
-    <div className="modal-head"><div><span className="eyebrow">Yol1 Business</span><h2>{title}</h2></div><button onClick={onClose}><X size={20} /></button></div>
-    {type === 'create' && <div className="form-grid"><label>Nombre de cuenta<input placeholder="Ej. CV Proyecto Norte" /></label><label>Tipo de cuenta<select><option>Usuario final</option><option>Operativa</option><option>Proyecto</option></select></label><label>Moneda<select><option>CLP</option><option>USD</option><option>EUR</option></select></label><label>Usuario o proyecto asociado<input placeholder="Buscar usuario o proyecto" /></label><label className="wide">Estado inicial<select><option>Activa</option><option>Pendiente revisión</option></select></label></div>}
-    {type === 'trace' && <><div className="trace-summary"><div><small>Usuario</small><strong>Juan Pérez</strong><span>USR-10021</span></div><div><small>Cuenta virtual</small><strong>CV Usuario · Juan Pérez</strong><span>CV-10021</span></div><div><small>Monto</small><strong>$185.400</strong><StatusBadge>Retiro pendiente</StatusBadge></div></div><Timeline /></>}
-    {type === 'withdraw' && <div className="confirm-box"><div className="confirm-icon"><CheckCircle2 size={25} /></div><h3>¿Aprobar retiro por $185.400?</h3><p>Esta es una acción visual de demo. No ejecuta pagos reales.</p><div className="detail-list"><span>Usuario <b>Juan Pérez</b></span><span>Cuenta origen <b>CV-10021</b></span><span>Destino <b>Banco ficticio ···· 4192</b></span></div></div>}
-    {type === 'card' && <div className="confirm-box"><div className="confirm-icon"><CreditCard size={25} /></div><h3>Nueva tarjeta sobre cuenta virtual</h3><p>Demo conceptual. Las tarjetas serán una capa futura sobre cuentas virtuales.</p></div>}
-    {type === 'transfer-national' && <div className="transfer-form"><div className="transfer-route"><span className="country-flag">CL</span><div><small>Desde</small><b>Cuenta madre · CLP</b><em>Disponible $845.320.000</em></div><ArrowRight/><span className="country-flag">CL</span><div><small>Hacia</small><b>Banco de Chile · ···· 9281</b><em>Constructora Andes SpA</em></div></div><div className="form-grid transfer-fields"><label>Monto<input defaultValue="$ 8.500.000" /></label><label>Cuenta virtual origen<select><option>Cuenta madre ArenaPlay</option><option>CV Proveedores Operacionales</option></select></label><label className="wide">Mensaje al destinatario<input defaultValue="Pago servicios junio" /></label></div><div className="transfer-cost"><span>Costo transferencia <b>$0</b></span><span>Llegada estimada <b>Hoy, en minutos</b></span></div></div>}
-    {type === 'transfer-global' && <div className="transfer-form"><div className="transfer-route"><span className="country-flag">CL</span><div><small>Desde</small><b>Cuenta madre · CLP</b><em>ArenaPlay Demo SpA</em></div><ArrowRight/><span className="country-flag peru">PE</span><div><small>Hacia Perú</small><b>BCP · ···· 4108</b><em>Servicios Lima SAC</em></div></div><div className="form-grid transfer-fields"><label>Envías<input defaultValue="$ 12.000.000 CLP" /></label><label>Recibe<input defaultValue="S/ 48.720 PEN" /></label><label className="wide">Cuenta virtual origen<select><option>Cuenta madre ArenaPlay</option><option>CV Proveedores Operacionales</option></select></label></div><div className="transfer-cost"><span>Tipo de cambio <b>1 CLP = 0,00406 PEN</b></span><span>Costo total <b>$38.400 CLP</b></span><span>Llegada estimada <b>Hoy</b></span></div></div>}
-    {type === 'transfer-fx' && <div className="transfer-form"><div className="fx-converter"><div><small>Conviertes</small><strong>$25.000.000</strong><span>CLP · Cuenta madre</span></div><Repeat2/><div><small>Recibes</small><strong>USD 26.315</strong><span>USD · Cuenta empresa</span></div></div><div className="transfer-cost"><span>Tipo de cambio Yol1 <b>1 USD = $950 CLP</b></span><span>Costo de conversión <b>$0</b></span><span>Disponible inmediatamente <b>USD 26.315</b></span></div></div>}
-    {type === 'billing-client' && <div className="billing-modal"><label className="smart-search">Buscar por RUT o razón social<div><Search size={16}/><input defaultValue="Constructora Andes" /></div><span><Sparkles size={13}/> Datos encontrados en registro empresarial</span></label><div className="form-grid billing-fields"><label>Razón social<input defaultValue="Constructora Andes SpA"/></label><label>RUT<input defaultValue="76.882.190-4"/></label><label>Email de facturación<input defaultValue="pagos@andes.cl"/></label><label>Dirección<input defaultValue="Av. Apoquindo 4501, Las Condes"/></label></div></div>}
-    {type === 'billing-invoice' && <div className="billing-modal"><div className="invoice-preview-mini"><div><img src={yol1Logo} alt="Yol1"/><span>FACTURA ELECTRÓNICA</span></div><b>ArenaPlay Demo SpA</b><small>Para: Constructora Andes SpA</small></div><div className="form-grid billing-fields"><label>Cliente<select><option>Constructora Andes SpA</option><option>Servicios Lima SAC</option></select></label><label>Fecha vencimiento<input defaultValue="30-06-2026"/></label><label className="wide">Concepto<input defaultValue="Servicios plataforma digital · Junio"/></label><label>Cantidad<input defaultValue="1"/></label><label>IVA<select><option>19%</option><option>Exento</option></select></label><label className="wide">Total<input defaultValue="$ 8.500.000 CLP"/></label></div></div>}
-    {type === 'billing-supplier' && <div className="billing-modal"><div className="ocr-drop"><ScanLine size={26}/><b>Factura escaneada</b><small>OCR simulado · cloud-services-junio.pdf</small></div><div className="ocr-results"><span><small>Proveedor</small><b>Cloud Services Inc.</b></span><span><small>Total</small><b>USD 4.200</b></span><span><small>IVA</small><b>USD 0</b></span><span><small>Vencimiento</small><b>25 jun 2026</b></span></div></div>}
-    {type === 'billing-pay' && <div className="billing-modal"><div className="confirm-box compact-confirm"><div className="confirm-icon"><CalendarClock size={25}/></div><h3>Programar pago por $12.840.000</h3><p>Factura Proveedores Unidos SpA · PROV-2091</p></div><div className="form-grid billing-fields"><label>Cuenta origen<select><option>CV Proveedores Operacionales</option><option>Cuenta madre ArenaPlay</option></select></label><label>Fecha de pago<input defaultValue="24-06-2026"/></label></div></div>}
-    {type === 'billing-email' && <div className="billing-modal"><div className="form-grid billing-fields"><label>Para<input defaultValue="pagos@andes.cl"/></label><label>Factura<input defaultValue="F-2026-041 · $8.500.000"/></label><label className="wide">Asunto<input defaultValue="Factura ArenaPlay Demo SpA · Junio 2026"/></label><label className="wide">Mensaje<textarea defaultValue="Hola, adjuntamos la factura correspondiente a los servicios de junio. Puedes pagar usando los datos incluidos en el documento."/></label></div><div className="email-attachment"><FileText size={18}/><span><b>F-2026-041.pdf</b><small>Factura personalizada con logo Yol1 · 184 KB</small></span><CheckCircle2 size={16}/></div></div>}
-    {type === 'billing-recurring' && <div className="billing-modal"><div className="recurring-modal-intro"><Repeat2 size={22}/><span><b>Automatiza una factura para un cliente</b><small>Yol1 creará el borrador y lo enviará automáticamente en cada ciclo.</small></span></div><div className="form-grid billing-fields"><label>Cliente<select><option>Constructora Andes SpA</option><option>Operaciones Norte SpA</option><option>Servicios Lima SAC</option></select></label><label>Frecuencia<select><option>Cada 1 mes</option><option>Cada 2 meses</option><option>Cada 3 meses</option><option>Cada 6 meses</option><option>Cada 12 meses</option></select></label><label>Primera emisión<input defaultValue="01-07-2026"/></label><label>Finalización<select><option>Sin fecha de término</option><option>Después de 6 emisiones</option><option>Después de 12 emisiones</option></select></label><label className="wide">Concepto<input defaultValue="Servicio plataforma digital mensual"/></label><label>Monto<input defaultValue="$ 8.500.000 CLP"/></label><label>Envío<select><option>Crear y enviar automáticamente</option><option>Crear como borrador</option></select></label></div></div>}
-    {type === 'billing-receipt' && <div className="billing-modal"><div className="ocr-drop"><Camera size={26}/><b>Ticket leído correctamente</b><small>Foto mockeada · gasto tarjeta Operaciones</small></div><div className="ocr-results"><span><small>Comercio</small><b>Hotel Plaza</b></span><span><small>Total</small><b>$184.900</b></span><span><small>IVA</small><b>$29.522</b></span><span><small>Matching</small><b>Movimiento encontrado</b></span></div></div>}
-    {type === 'expense-new' && <div className="billing-modal expense-new-modal">
-      <div className="form-grid">
-        <label>Nombre de la rendición<input defaultValue="Viaje comercial Santiago"/></label>
-        <label>Centro de costo<select><option>Ventas</option><option>Marketing</option><option>Operaciones</option><option>Dirección</option></select></label>
-        <label>Periodo<input defaultValue="05-09 jun 2026"/></label>
-        <label>Moneda<select><option>CLP</option><option>USD</option></select></label>
-      </div>
-      <div className="ocr-drop"><Camera size={26}/><b>Adjunta las boletas del gasto</b><small>OCR simulado · extrae comercio, monto y categoría automáticamente</small></div>
-      <div className="expense-line-items">
-        <div className="expense-line-item"><Receipt size={14}/><div><b>Hotel Director Vitacura</b><small>Alojamiento · 05 jun</small></div><span className="policy-flag"><AlertCircle size={11}/> Excede límite</span><b>$96.000</b></div>
-        <div className="expense-line-item"><Receipt size={14}/><div><b>Uber</b><small>Transporte · 04 jun</small></div><span className="match-pill"><Check size={11}/> OK</span><b>$8.500</b></div>
-        <button type="button" className="expense-add-line"><Plus size={13}/> Agregar gasto manual</button>
-      </div>
-    </div>}
-    {type === 'expense-detail' && <div className="billing-modal expense-detail-modal">
-      <div className="trace-summary expense-summary">
-        <div><small>Empleado</small><strong>Felipe Torres</strong><span>Ventas · Hoy, 09:12</span></div>
-        <div><small>Rendición</small><strong>RG-1042 · 8 ítems</strong><span>01–05 jun 2026</span></div>
-        <div><small>Total</small><strong>$284.500</strong><StatusBadge>Enviada</StatusBadge></div>
-      </div>
-      <div className="expense-line-items">
-        {expenseItems.map((it,i)=><div className="expense-line-item" key={i}><Receipt size={14}/><div><b>{it.merchant}</b><small>{it.category} · {it.date}</small></div>{it.alert?<span className="policy-flag"><AlertCircle size={11}/> Excede límite</span>:<span className="match-pill"><Check size={11}/> OK</span>}<b>{money(it.amount)}</b></div>)}
-      </div>
-    </div>}
-    <div className="modal-footer"><Button secondary onClick={onClose}>Cancelar</Button><Button onClick={() => { onConfirm?.(); onClose() }}>{type === 'trace' ? 'Cerrar' : type === 'withdraw' ? 'Aprobar retiro' : transferType ? 'Confirmar operación' : type === 'billing-pay' ? 'Programar pago' : type === 'billing-receipt' ? 'Vincular ticket' : type === 'billing-email' ? 'Enviar correo' : type === 'expense-new' ? 'Enviar a aprobación' : type === 'expense-detail' ? 'Aprobar rendición' : billingType ? 'Guardar' : 'Crear'}</Button></div>
-  </div></div>
+import AppShell from './shell/AppShell'
+import DemoControl from './shell/DemoControl'
+import NotFound from './shell/NotFound'
+import { DemoStateProvider, useDemoState } from './state/DemoState'
+import { ToastProvider } from './ui'
+import { ACCOUNT_STATUS, canAccessDesk, canProvisionAccount, resolveStage } from './state/statuses'
+
+import SignupFlow from './features/signup/SignupFlow'
+import OnboardingHub from './features/onboarding/OnboardingHub'
+import IdentityVerification from './features/onboarding/IdentityVerification'
+import BusinessVerification from './features/onboarding/BusinessVerification'
+import CoreActivation from './features/activation/CoreActivation'
+
+import DeskOverview from './features/desk/DeskOverview'
+import AccountDetail from './features/desk/AccountDetail'
+import VirtualAccounts from './features/desk/VirtualAccounts'
+import Transactions from './features/desk/Transactions'
+import ProductCatalog from './features/desk/ProductCatalog'
+
+import OrgChecklist from './features/org/OrgChecklist'
+import OrgProfile from './features/org/OrgProfile'
+import OrgUsers from './features/org/OrgUsers'
+import OrgAccounts from './features/org/OrgAccounts'
+import OrgApprovals from './features/org/OrgApprovals'
+import OrgApi from './features/org/OrgApi'
+import OrgProducts from './features/org/OrgProducts'
+import OrgCompliance from './features/org/OrgCompliance'
+import OrgPreferences from './features/org/OrgPreferences'
+
+import LegacyApp from './legacy/LegacyApp'
+
+import './styles/tokens.css'
+import './styles/base.css'
+
+const STAGE_ROUTE = {
+  signup: '/signup',
+  onboarding: '/onboarding',
+  activation: '/activation',
+  desk: '/desk',
 }
 
-function Overview({ open, navigate }) {
-  return <><PageTitle eyebrow="Miércoles, 10 de junio" title="Hola, Benja" subtitle="Tu plata, ordenada. Tu operación, visible." actions={<><Button secondary icon={Download}>Reporte</Button><Button icon={Plus} onClick={() => open('create')}>Crear cuenta virtual</Button></>} />
-    <div className="hero-balance"><div><span className="eyebrow light">Cuenta madre · CLP</span><h2>$845.320.000</h2><p><span className="live-dot" /> Balance total disponible</p></div><div className="hero-stats"><div><span>Entradas hoy</span><b>+$184.300.000</b></div><div><span>Salidas hoy</span><b>−$96.700.000</b></div><div><span>Variación</span><b>+8,4%</b></div></div><img className="hero-brand-mark" src={yol1Mark} alt="" /></div>
-    <div className="quick-actions"><button onClick={() => open('create')}><Plus /><span>Crear cuenta virtual</span><small>Nueva subcuenta</small></button><button onClick={() => navigate('Transferencias')}><Send /><span>Nueva transferencia</span><small>Chile o internacional</small></button><button onClick={() => navigate('Facturación')}><FileText /><span>Nueva factura</span><small>Cobrar a clientes</small></button><button onClick={() => navigate('Conciliación')}><ClipboardCheck /><span>Ver conciliación</span><small>Cierre diario</small></button></div>
-    <div className="metric-grid"><MetricCard label="Cuentas virtuales activas" value="18.420" icon={Layers3} detail="+182 este mes" /><MetricCard label="Recaudación hoy" value="$184,3M" icon={ArrowDownLeft} detail="+12,5% vs. ayer" /><MetricCard label="Retiros pendientes" value="$42,6M" icon={ArrowUpRight} detail="4 requieren aprobación" tone="amber" /><MetricCard label="Pendiente por conciliar" value="$4,8M" icon={ClipboardCheck} detail="98,2% conciliado" tone="blue" /><MetricCard label="Alertas operativas" value="12" icon={AlertCircle} detail="3 de alta prioridad" tone="red" /></div>
-    <div className="two-col wide-left"><Card title="Entradas vs. salidas" subtitle="Flujo mensual · MM CLP" action={<button className="text-action">Últimos 6 meses <ChevronDown size={14} /></button>}><div className="chart"><ResponsiveContainer><AreaChart data={chartData}><defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#80EF0C" stopOpacity=".42"/><stop offset="100%" stopColor="#80EF0C" stopOpacity="0"/></linearGradient></defs><CartesianGrid stroke="#e5e2d8" vertical={false}/><XAxis dataKey="name" axisLine={false} tickLine={false}/><YAxis axisLine={false} tickLine={false}/><Tooltip/><Area dataKey="entradas" stroke="#80EF0C" fill="url(#g1)" strokeWidth={2.5}/><Area dataKey="salidas" stroke="#112E3C" fill="transparent" strokeWidth={2}/></AreaChart></ResponsiveContainer></div></Card>
-    <Card title="Salud operativa" subtitle="Estado de la operación hoy"><div className="health-score"><div className="score-ring"><b>94</b><span>/100</span></div><div><strong>Operación saludable</strong><p>La cuenta madre y sus cuentas virtuales están operando dentro de los parámetros definidos.</p></div></div><div className="health-bars"><span><b>Asignación de fondos</b><i><em style={{width:'98%'}} /></i><small>98%</small></span><span><b>Conciliación diaria</b><i><em style={{width:'94%'}} /></i><small>94%</small></span><span><b>Retiros procesados</b><i><em style={{width:'91%'}} /></i><small>91%</small></span></div></Card></div>
-    <div className="billing-dashboard-strip"><div><span><FileText size={18}/></span><div><small>Facturas por cobrar</small><b>$24,8M</b></div></div><div><span><ReceiptText size={18}/></span><div><small>Proveedores por pagar</small><b>$18,4M</b></div></div><div><span><Paperclip size={18}/></span><div><small>Matching automático</small><b>96%</b></div></div><button onClick={()=>navigate('Facturación')}>Ir a facturación <ArrowRight size={15}/></button></div>
-    <Card title="Últimas transacciones" subtitle="Actividad consolidada de la cuenta madre y cuentas virtuales" action={<button className="text-action" onClick={() => navigate('Movimientos')}>Ver todos <ArrowRight size={14}/></button>}><MovementTable rows={movements.slice(0,4)} /></Card>
-    <div className="concept-note"><Sparkles size={20}/><div><strong>Una cuenta madre. Miles de operaciones trazables.</strong><p>Yol1 Business permite operar una cuenta madre y crear cuentas virtuales por usuario final, proyecto o flujo, con control de saldos, trazabilidad, conciliación y pagos desde una sola plataforma.</p></div></div>
-  </>
+/** Exige que exista una organización (es decir, signup completado). */
+function RequireOrganization({ children }) {
+  const { state } = useDemoState()
+  const location = useLocation()
+  if (!state.organization.id) return <Navigate to="/signup" replace state={{ from: location.pathname }} />
+  return children
 }
-function MovementTable({ rows = movements }) {
-  return <DataTable headers={['Fecha', 'Usuario / origen', 'Cuenta virtual', 'Movimiento', 'Monto', 'Estado', 'Documento', 'ID operación']} >{rows.map((m,i) => <tr key={m.id}><td className="muted">{m.date}</td><td><div className="person"><Avatar name={m.user} small/><b>{m.user}</b></div></td><td><code>{m.account}</code></td><td>{m.type}</td><td className={m.amount > 0 ? 'positive' : 'negative'}><b>{m.amount > 0 ? '+' : '−'}{money(Math.abs(m.amount))}</b></td><td><StatusBadge>{m.status}</StatusBadge></td><td>{i===0||i===2?<span className="match-pill"><Paperclip size={11}/> Factura vinculada</span>:<span className="muted">Sin documento</span>}</td><td className="muted">{m.id}</td></tr>)}</DataTable>
-}
-function VirtualAccounts({ open }) {
-  return <><PageTitle eyebrow="Producto central" title="Cuentas virtuales" subtitle="Administra los fondos de cada usuario y flujo operativo desde una cuenta madre." actions={<><Button secondary icon={Download}>Exportar saldos</Button><Button icon={Plus} onClick={() => open('create')}>Crear cuenta virtual</Button></>} />
-    <div className="mother-account"><div className="mother-top"><div className="mother-logo"><Building2/></div><div><span className="eyebrow light">Cuenta madre</span><h2>ArenaPlay Demo SpA</h2><p>RUT 76.555.123-9 · Banco BICE · CLP</p></div><StatusBadge>Activa</StatusBadge></div><div className="mother-balance"><span>Balance consolidado</span><strong>$845.320.000</strong><small>18.420 cuentas virtuales activas</small></div><div className="mother-actions"><Button secondary icon={Users}>Asignar a usuario</Button><Button secondary icon={GitBranch} onClick={() => open('trace')}>Ver trazabilidad</Button></div></div>
-    <div className="account-flow"><div className="flow-root"><Landmark/><span>Cuenta madre</span><b>$845,3M</b></div><ChevronRight/><div className="flow-group"><Users/><span>Usuarios finales</span><b>18.415 cuentas</b></div><div className="flow-group"><WalletCards/><span>Operación interna</span><b>5 cuentas</b></div><ChevronRight/><div className="flow-group"><Activity/><span>Movimientos</span><b>32.890 hoy</b></div><div className="flow-group"><ClipboardCheck/><span>Conciliación</span><b>98,2%</b></div></div>
-    <div className="metric-grid four"><MetricCard label="Balance usuarios finales" value="$339,7M" icon={Users} detail="40,2% del total" /><MetricCard label="Balance cuentas operativas" value="$506,8M" icon={Building2} detail="59,8% del total" tone="blue" /><MetricCard label="Saldos retenidos" value="$1,2M" icon={LockKeyhole} detail="8 cuentas en revisión" tone="amber" /><MetricCard label="Actividad hoy" value="32.890" icon={Activity} detail="+18,2% vs. promedio" /></div>
-    <Card title="Directorio de cuentas virtuales" subtitle="Saldos y actividad en tiempo real"><SearchFilters account/><DataTable headers={['Cuenta virtual', 'ID cuenta', 'Tipo', 'Saldo disponible', 'Estado', 'Última actividad', '']} >{accounts.map(a => <tr key={a.id}><td><div className="person"><Avatar name={a.name} small/><b>{a.name}</b></div></td><td><code>{a.id}</code></td><td>{a.type}</td><td><b>{money(a.balance)}</b></td><td><StatusBadge>{a.status}</StatusBadge></td><td className="muted">{a.activity}</td><td><button className="more" onClick={() => open('trace')}><MoreHorizontal size={18}/></button></td></tr>)}</DataTable></Card>
-  </>
-}
-function UsersView({ open }) {
-  return <><PageTitle eyebrow="Identidades vinculadas" title="Usuarios finales" subtitle="Cada usuario tiene su propia cuenta virtual, saldo y trazabilidad." actions={<><Button secondary icon={Download}>Exportar historial</Button><Button icon={Users}>Asignar cuenta</Button></>} /><div className="metric-grid four"><MetricCard label="Usuarios con cuenta activa" value="18.420" icon={Users} detail="99,4% del total"/><MetricCard label="Saldo total usuarios" value="$339,7M" icon={WalletCards} detail="$18.441 promedio"/><MetricCard label="Saldo retenido" value="$1,2M" icon={LockKeyhole} detail="8 cuentas afectadas" tone="amber"/><MetricCard label="Alertas abiertas" value="12" icon={AlertCircle} detail="3 alta prioridad" tone="red"/></div>
-  <Card title="Directorio de usuarios" subtitle="Vista unificada de identidad, cuenta virtual y riesgo"><SearchFilters/><DataTable headers={['Usuario final','Cuenta virtual asociada','Disponible','Retenido','Estado','Último movimiento','Riesgo / alerta','']} >{users.map(u=><tr key={u.id}><td><div className="person"><Avatar name={u.name} small/><span><b>{u.name}</b><small>{u.id}</small></span></div></td><td>{u.account}</td><td><b>{money(u.available)}</b></td><td>{money(u.held)}</td><td><StatusBadge>{u.state}</StatusBadge></td><td>{u.last}</td><td><StatusBadge>{u.alert}</StatusBadge></td><td><button className="more" onClick={()=>open('trace')}><MoreHorizontal size={18}/></button></td></tr>)}</DataTable></Card></>
-}
-function MovementsView({ open }) { return <><PageTitle eyebrow="Ledger operativo" title="Movimientos" subtitle="Todas las entradas, salidas y transferencias internas con trazabilidad completa." actions={<><Button secondary icon={Download}>Exportar</Button><Button icon={GitBranch} onClick={()=>open('trace')}>Ver trazabilidad</Button></>} /><div className="metric-grid four"><MetricCard label="Movimientos hoy" value="32.890" icon={Activity} detail="+18,2% vs. promedio"/><MetricCard label="Entradas hoy" value="$184,3M" icon={ArrowDownLeft} detail="18.204 operaciones"/><MetricCard label="Salidas hoy" value="$96,7M" icon={ArrowUpRight} detail="14.686 operaciones" tone="blue"/><MetricCard label="En revisión" value="8" icon={AlertCircle} detail="$1,2M retenidos" tone="amber"/></div><Card title="Todos los movimientos" subtitle="Actividad de la cuenta madre y sus cuentas virtuales"><SearchFilters/><MovementTable/></Card></> }
-const transferHistory = [
-  { id:'TRF-82041', destination:'Constructora Andes SpA', country:'Chile', route:'Banco de Chile · ···· 9281', source:'CV Proveedores', amount:'$8.500.000 CLP', type:'Nacional', status:'Completado', date:'Hoy, 11:18' },
-  { id:'TRF-82040', destination:'Servicios Lima SAC', country:'Perú', route:'BCP · ···· 4108', source:'Cuenta madre CLP', amount:'S/ 48.720 PEN', type:'Internacional', status:'Procesando', date:'Hoy, 10:56' },
-  { id:'FX-30218', destination:'Cuenta empresa USD', country:'Yol1', route:'CLP → USD', source:'Cuenta madre CLP', amount:'USD 26.315', type:'Cambio divisa', status:'Completado', date:'Hoy, 09:34' },
-  { id:'TRF-82037', destination:'Cloud Services Inc.', country:'Estados Unidos', route:'Bank of America · ···· 6012', source:'Cuenta empresa USD', amount:'USD 4.200', type:'Internacional', status:'Completado', date:'Ayer, 16:20' },
-  { id:'TRF-82035', destination:'Operaciones Norte SpA', country:'Chile', route:'Banco BICE · ···· 1170', source:'CV Operaciones', amount:'$2.840.000 CLP', type:'Nacional', status:'Programada', date:'Ayer, 14:05' },
-]
-function Transfers({ open }) {
-  const [notice,setNotice]=useState('')
-  const launch=type=>{setNotice('');open(type)}
-  return <><PageTitle eyebrow="Cuenta empresa global" title="Transferencias" subtitle="Mueve dinero en Chile, paga al extranjero o cambia divisas desde una sola cuenta." actions={<Button icon={Send} onClick={()=>launch('transfer-national')}>Nueva transferencia</Button>}/>
-    {notice&&<div className="transfer-notice"><CheckCircle2 size={17}/><span>{notice}</span></div>}
-    <div className="transfer-actions">
-      <button onClick={()=>launch('transfer-national')}><span className="transfer-action-icon"><Landmark/></span><div><b>Transferir en Chile</b><small>A cualquier banco chileno, desde CLP</small></div><ArrowRight/></button>
-      <button onClick={()=>launch('transfer-global')}><span className="transfer-action-icon global"><Globe2/></span><div><b>Transferencia internacional</b><small>Envía a Perú, EE.UU. y más países</small></div><ArrowRight/></button>
-      <button onClick={()=>launch('transfer-fx')}><span className="transfer-action-icon fx"><Repeat2/></span><div><b>Cambiar divisas</b><small>Convierte entre tus saldos CLP, USD y PEN</small></div><ArrowRight/></button>
-    </div>
-    <div className="currency-grid">
-      <div className="currency-account primary"><div><span className="currency-code">CLP</span><StatusBadge>Principal</StatusBadge></div><small>Cuenta madre · ArenaPlay Demo SpA</small><strong>$845.320.000</strong><span>Disponible para transferir</span></div>
-      <div className="currency-account"><div><span className="currency-code">USD</span><StatusBadge>Activa</StatusBadge></div><small>Cuenta empresa USD</small><strong>USD 128.450</strong><span>≈ $122.027.500 CLP</span></div>
-      <div className="currency-account"><div><span className="currency-code">PEN</span><StatusBadge>Activa</StatusBadge></div><small>Cuenta empresa PEN</small><strong>S/ 84.720</strong><span>≈ $20.867.000 CLP</span></div>
-    </div>
-    <div className="two-col transfer-columns"><Card title="Tipo de cambio Yol1" subtitle="Cotización indicativa para ArenaPlay"><div className="rate-list"><div><span>USD / CLP<small>Dólar estadounidense</small></span><b>$950,00</b><em>−0,18%</em></div><div><span>PEN / CLP<small>Sol peruano</small></span><b>$246,30</b><em className="up">+0,12%</em></div><div><span>EUR / CLP<small>Euro</small></span><b>$1.024,80</b><em className="up">+0,06%</em></div></div></Card><Card title="Rutas habilitadas" subtitle="Transferencias desde tu cuenta empresa"><div className="route-list"><div><span className="country-flag">CL</span><span><b>Chile</b><small>Todos los bancos · llegada inmediata</small></span><StatusBadge>Operativa</StatusBadge></div><div><span className="country-flag peru">PE</span><span><b>Perú</b><small>BCP, Interbank, BBVA y más</small></span><StatusBadge>Operativa</StatusBadge></div><div><span className="country-flag usa">US</span><span><b>Estados Unidos</b><small>Red ACH · mismo día hábil</small></span><StatusBadge>Operativa</StatusBadge></div></div></Card></div>
-    <Card title="Últimas transferencias" subtitle="Pagos nacionales, internacionales y conversiones"><div className="filters"><div className="filter-search"><Search size={16}/><input placeholder="Buscar destinatario o ID..."/></div><button><Filter size={15}/> Tipo <ChevronDown size={14}/></button><button>País <ChevronDown size={14}/></button></div><DataTable headers={['ID','Destinatario','Ruta / banco','Cuenta origen','Monto recibido','Tipo','Estado','Fecha']}>{transferHistory.map(t=><tr key={t.id}><td><code>{t.id}</code></td><td><div className="person"><Avatar name={t.destination} small/><span><b>{t.destination}</b><small>{t.country}</small></span></div></td><td>{t.route}</td><td>{t.source}</td><td><b>{t.amount}</b></td><td>{t.type}</td><td><StatusBadge>{t.status}</StatusBadge></td><td className="muted">{t.date}</td></tr>)}</DataTable></Card>
-    <div className="concept-note"><Globe2 size={20}/><div><strong>Una cuenta bancaria empresarial, conectada a LATAM.</strong><p>Las transferencias usan datos mockeados. En una operación real, cada ruta internacional tendría validaciones regulatorias, límites, costos y tiempos propios.</p></div></div>
-  </>
-}
-function Withdrawals({ open }) {
-  const [rows,setRows]=useState([{id:'RET-12042',user:'Juan Pérez',account:'CV-10021',amount:185400,status:'Pendiente',date:'Hoy, 10:38'},{id:'RET-12041',user:'Laura Méndez',account:'CV-10087',amount:850000,status:'Pendiente',date:'Hoy, 10:12'},{id:'RET-12039',user:'Sofía Castillo',account:'CV-10024',amount:56700,status:'Ejecutado',date:'Hoy, 09:41'},{id:'RET-12038',user:'Tomás Fuentes',account:'CV-10062',amount:240000,status:'Rechazado',date:'Hoy, 09:20'}])
-  const change=(id,status)=>setRows(r=>r.map(x=>x.id===id?{...x,status}:x))
-  return <><PageTitle eyebrow="Flujo de aprobación" title="Retiros y pagos" subtitle="Controla y aprueba salidas desde cada cuenta virtual." actions={<Button secondary icon={Settings}>Reglas de aprobación</Button>}/><div className="metric-grid four"><MetricCard label="Pendientes de aprobación" value="$42,6M" icon={ClipboardCheck} detail="4 solicitudes" tone="amber"/><MetricCard label="Ejecutados hoy" value="$96,7M" icon={CheckCircle2} detail="14.682 operaciones"/><MetricCard label="Tiempo promedio" value="3m 42s" icon={Activity} detail="Dentro del SLA" tone="blue"/><MetricCard label="Rechazados hoy" value="$1,4M" icon={X} detail="6 operaciones" tone="red"/></div><Card title="Solicitudes de retiro" subtitle="Acciones visuales de demo · no ejecutan pagos reales"><SearchFilters/><DataTable headers={['Solicitud','Usuario destino','Cuenta origen','Monto','Estado','Fecha solicitud','Acciones']}>{rows.map(r=><tr key={r.id}><td><code>{r.id}</code></td><td><div className="person"><Avatar name={r.user} small/><b>{r.user}</b></div></td><td>{r.account}</td><td><b>{money(r.amount)}</b></td><td><StatusBadge>{r.status}</StatusBadge></td><td className="muted">{r.date}</td><td><div className="row-actions">{r.status==='Pendiente'?<><button className="approve" onClick={()=>change(r.id,'Aprobado')}><Check size={14}/> Aprobar</button><button className="reject" onClick={()=>change(r.id,'Rechazado')}><X size={14}/></button></>:<button onClick={()=>open('trace')}>Trazabilidad</button>}</div></td></tr>)}</DataTable></Card></>
-}
-function Reconciliation() {
-  const [pending,setPending]=useState(true)
-  return <><PageTitle eyebrow="Cierre financiero" title="Conciliación" subtitle="Conecta cada movimiento de la cuenta madre con su cuenta virtual y destino final." actions={<Button icon={CheckCircle2} onClick={()=>setPending(false)}>Conciliar pendientes</Button>}/><div className="metric-grid four"><MetricCard label="Recaudación del día" value="$184,3M" icon={ArrowDownLeft} detail="100% registrado"/><MetricCard label="Retiros ejecutados" value="$96,7M" icon={ArrowUpRight} detail="14.682 operaciones" tone="blue"/><MetricCard label="Pendiente por conciliar" value={pending?'$4,8M':'$0'} icon={ClipboardCheck} detail={pending?'48 movimientos':'Todo conciliado'} tone="amber"/><MetricCard label="Cuentas con alerta" value={pending?'12':'3'} icon={AlertCircle} detail="Requieren revisión" tone="red"/></div><Card title="Ruta de conciliación" subtitle="Trazabilidad punta a punta"><Timeline compact/></Card><div className="two-col"><Card title="Progreso de conciliación" subtitle="Cierre diario de hoy"><div className="recon-ring"><div className="score-ring large"><b>{pending?'98,2':'100'}%</b><span>conciliado</span></div><div className="recon-detail"><span><i className="green-dot"/>Conciliado <b>{pending?'$276,2M':'$281,0M'}</b></span><span><i className="amber-dot"/>Pendiente <b>{pending?'$4,8M':'$0'}</b></span><span><i className="gray-dot"/>Alertas <b>{pending?'12':'3'} cuentas</b></span></div></div></Card><Card title="Pendientes prioritarios" subtitle="Movimientos que requieren atención"><div className="pending-list">{['Diferencia comisión ProntoPaga','Retiro Juan Pérez','Movimiento retenido Diego Morales'].map((x,i)=><div key={x}><span className={`severity s${i}`}/><div><b>{x}</b><small>{i===0?'OP-948166 · $128.000':i===1?'OP-948199 · $185.400':'OP-948151 · $120.000'}</small></div><StatusBadge>{pending?'Pendiente':'Conciliado'}</StatusBadge></div>)}</div></Card></div></>
-}
-const customerInvoices=[
-  {id:'F-2026-041',name:'Constructora Andes SpA',issued:'10 jun 2026',due:'30 jun 2026',amount:'$8.500.000',status:'Pendiente de cobro',match:'Esperando pago'},
-  {id:'F-2026-040',name:'Operaciones Norte SpA',issued:'08 jun 2026',due:'22 jun 2026',amount:'$4.280.000',status:'Cobrada',match:'Conciliada automáticamente'},
-  {id:'F-2026-039',name:'Servicios Lima SAC',issued:'05 jun 2026',due:'25 jun 2026',amount:'S/ 22.400',status:'Pendiente de cobro',match:'Esperando pago'},
-  {id:'F-2026-038',name:'Cloud Services Inc.',issued:'02 jun 2026',due:'20 jun 2026',amount:'USD 3.800',status:'Borrador',match:'Sin enviar'},
-]
-const supplierInvoices=[
-  {id:'PROV-2091',name:'Proveedores Unidos SpA',due:'24 jun 2026',amount:'$12.840.000',status:'Lista para pagar',ocr:'Datos extraídos'},
-  {id:'PROV-2088',name:'Cloud Services Inc.',due:'25 jun 2026',amount:'USD 4.200',status:'Pago programado',ocr:'Datos extraídos'},
-  {id:'PROV-2081',name:'Servicios de Oficina Ltda.',due:'18 jun 2026',amount:'$1.220.000',status:'Pagada',ocr:'Conciliada'},
-]
-const recurringInvoices=[
-  {id:'REC-001',name:'Constructora Andes SpA',concept:'Servicio plataforma digital',frequency:'Cada 1 mes',next:'01 jul 2026',amount:'$8.500.000',status:'Activa',sent:'6 emitidas'},
-  {id:'REC-002',name:'Operaciones Norte SpA',concept:'Soporte y operación',frequency:'Cada 2 meses',next:'15 jul 2026',amount:'$4.280.000',status:'Activa',sent:'3 emitidas'},
-  {id:'REC-003',name:'Servicios Lima SAC',concept:'Licencia regional',frequency:'Cada 3 meses',next:'05 ago 2026',amount:'S/ 22.400',status:'Pausada',sent:'2 emitidas'},
-]
-function Billing({open}) {
-  const [tab,setTab]=useState('Clientes'), [quote,setQuote]=useState('Presupuesto'), [paid,setPaid]=useState(false), [recurring,setRecurring]=useState(recurringInvoices)
-  const tabs=[['Clientes',FileText],['Presupuestos',ReceiptText],['Proveedores',Building2],['Lista de clientes',Users],['Tickets',Camera],['Recurrentes',Repeat2]]
-  const toggleRecurring=id=>setRecurring(rows=>rows.map(row=>row.id===id?{...row,status:row.status==='Activa'?'Pausada':'Activa'}:row))
-  return <><PageTitle eyebrow="Administración financiera" title="Facturación" subtitle="Cobra, paga y concilia documentos sin salir de tu cuenta empresa." actions={<><Button secondary icon={UserPlus} onClick={()=>open('billing-client')}>Nuevo cliente</Button><Button icon={Plus} onClick={()=>open('billing-invoice')}>Nueva factura</Button></>}/>
-    <div className="billing-inbox"><Mail size={19}/><div><b>Buzón inteligente de proveedores</b><span>Reenvía facturas a <strong>facturas.arenaplay@yol1.com</strong> y aparecerán listas para revisar.</span></div><StatusBadge>Activo</StatusBadge></div>
-    <div className="billing-tabs">{tabs.map(([name,Icon])=><button key={name} onClick={()=>setTab(name)} className={tab===name?'active':''}><Icon size={15}/>{name}{name==='Proveedores'&&<em>2</em>}{name==='Recurrentes'&&<em>3</em>}</button>)}</div>
-    {tab==='Clientes'&&<><div className="metric-grid four"><MetricCard label="Por cobrar" value="$24,8M" icon={FileText} detail="3 facturas pendientes" tone="amber"/><MetricCard label="Cobrado este mes" value="$86,4M" icon={CheckCircle2} detail="+14% vs. mes anterior"/><MetricCard label="Vencidas" value="$2,1M" icon={AlertCircle} detail="1 factura requiere atención" tone="red"/><MetricCard label="Matching automático" value="96%" icon={Paperclip} detail="Pagos vinculados" tone="blue"/></div><Card title="Facturas para clientes" subtitle="Ventas y estados de cobro" action={<button className="text-action" onClick={()=>open('billing-invoice')}>Crear factura <Plus size={14}/></button>}><div className="invoice-status-tabs"><button className="active">Todas <b>4</b></button><button>Borradores <b>1</b></button><button>A cobrar <b>2</b></button><button>Completadas <b>1</b></button></div><SearchFilters/><DataTable headers={['Factura','Cliente','Emisión','Vencimiento','Importe','Estado','Matching','Acción']}>{customerInvoices.map(x=><tr key={x.id}><td><code>{x.id}</code></td><td><div className="person"><Avatar name={x.name} small/><b>{x.name}</b></div></td><td>{x.issued}</td><td>{x.due}</td><td><b>{x.amount}</b></td><td><StatusBadge>{x.status}</StatusBadge></td><td><span className={x.status==='Cobrada'?'match-pill':''}>{x.status==='Cobrada'&&<Paperclip size={11}/>} {x.match}</span></td><td><button className="table-action" onClick={()=>open('billing-email')}>Enviar</button></td></tr>)}</DataTable></Card></>}
-    {tab==='Presupuestos'&&<div className="two-col billing-quote-layout"><Card title="Presupuesto P-2026-018" subtitle="Constructora Andes SpA"><div className="quote-preview"><div><img src={yol1Logo}/><StatusBadge>{quote}</StatusBadge></div><h3>Servicios plataforma digital</h3><span>Implementación y operación · Junio 2026</span><div><small>Neto</small><b>$7.142.857</b></div><div><small>IVA 19%</small><b>$1.357.143</b></div><div className="quote-total"><small>Total</small><b>$8.500.000</b></div></div><Button icon={FileText} onClick={()=>setQuote('Factura creada')}>Convertir en factura</Button></Card><Card title="Flujo presupuesto → factura" subtitle="Simple y trazable"><div className="simple-steps">{['Presupuesto creado','Enviado al cliente','Aceptado','Convertido en factura'].map((x,i)=><div className={i<3||quote==='Factura creada'?'done':''} key={x}><span>{i<3||quote==='Factura creada'?<Check size={13}/>:4}</span><b>{x}</b></div>)}</div></Card></div>}
-    {tab==='Proveedores'&&<><div className="supplier-hero"><div><ScanLine size={22}/><span><b>2 facturas nuevas detectadas</b><small>Los datos fueron extraídos automáticamente mediante OCR simulado.</small></span></div><Button icon={Download} onClick={()=>open('billing-supplier')}>Importar factura</Button></div><Card title="Facturas de proveedores" subtitle="Compras y pagos programados"><DataTable headers={['Factura','Proveedor','Vencimiento','Importe','Digitalización','Estado','Acción']}>{supplierInvoices.map(x=><tr key={x.id}><td><code>{x.id}</code></td><td><div className="person"><Avatar name={x.name} small/><b>{x.name}</b></div></td><td>{x.due}</td><td><b>{x.amount}</b></td><td><span className="match-pill"><ScanLine size={11}/>{x.ocr}</span></td><td><StatusBadge>{paid&&x.id==='PROV-2091'?'Pago programado':x.status}</StatusBadge></td><td><button className="table-action" onClick={()=>{open('billing-pay');setPaid(true)}}>{x.status==='Pagada'?'Ver pago':'Pagar factura'}</button></td></tr>)}</DataTable></Card></>}
-    {tab==='Lista de clientes'&&<Card title="Lista de clientes" subtitle="Datos fiscales y contacto"><div className="client-search-banner"><Search size={16}/><span>Escribe un RUT o razón social para autocompletar datos fiscales</span><Button icon={UserPlus} onClick={()=>open('billing-client')}>Añadir cliente</Button></div><DataTable headers={['Cliente','RUT','Email facturación','País','Estado']}>{[['Constructora Andes SpA','76.882.190-4','pagos@andes.cl','Chile','Completo'],['Servicios Lima SAC','PE-20549012881','finanzas@servicioslima.pe','Perú','Completo'],['Operaciones Norte SpA','77.101.228-9','admin@opnorte.cl','Chile','Faltan datos'],['Cloud Services Inc.','US-94-1820041','billing@cloudservices.com','EE.UU.','Completo']].map(x=><tr key={x[0]}><td><div className="person"><Avatar name={x[0]} small/><b>{x[0]}</b></div></td><td><code>{x[1]}</code></td><td>{x[2]}</td><td>{x[3]}</td><td><StatusBadge>{x[4]}</StatusBadge></td></tr>)}</DataTable></Card>}
-    {tab==='Tickets'&&<><div className="ticket-flow"><div><CreditCard/><span><b>Gasto realizado</b><small>Tarjeta Operaciones · $184.900</small></span></div><ArrowRight/><div><Camera/><span><b>Foto del ticket</b><small>OCR simulado</small></span></div><ArrowRight/><div><Paperclip/><span><b>Matching automático</b><small>Movimiento vinculado</small></span></div><Button icon={Camera} onClick={()=>open('billing-receipt')}>Adjuntar ticket</Button></div><Card title="Gastos de equipo" subtitle="Tickets vinculados a movimientos de tarjeta"><DataTable headers={['Movimiento','Responsable','Comercio','Monto','Ticket','Matching']}>{[['CARD-8821','Felipe Torres','Hotel Plaza','$184.900','Adjunto','Conciliado'],['CARD-8818','Camila Rojas','Publicidad Digital','$620.000','Pendiente','Sin documento'],['CARD-8812','Benja','Servicios Cloud','USD 180','Adjunto','Conciliado']].map(x=><tr key={x[0]}><td><code>{x[0]}</code></td><td>{x[1]}</td><td>{x[2]}</td><td><b>{x[3]}</b></td><td><StatusBadge>{x[4]}</StatusBadge></td><td><span className={x[5]==='Conciliado'?'match-pill':''}>{x[5]==='Conciliado'&&<Paperclip size={11}/>} {x[5]}</span></td></tr>)}</DataTable></Card></>}
-    {tab==='Recurrentes'&&<><div className="recurring-hero"><div className="recurring-hero-icon"><Repeat2 size={24}/></div><div><b>Facturación automática para ingresos predecibles</b><span>Programa la creación y envío de facturas cada 1, 2, 3, 6 o 12 meses.</span></div><Button icon={Plus} onClick={()=>open('billing-recurring')}>Nueva recurrente</Button></div><div className="metric-grid four"><MetricCard label="Automatizaciones activas" value="2" icon={Repeat2} detail="1 pausada"/><MetricCard label="Próxima emisión" value="01 jul" icon={CalendarClock} detail="Constructora Andes"/><MetricCard label="Ingreso programado" value="$12,8M" icon={CircleDollarSign} detail="Próximos 30 días" tone="blue"/><MetricCard label="Facturas emitidas" value="11" icon={CheckCircle2} detail="Sin errores este año"/></div><Card title="Facturas recurrentes" subtitle="Automatizaciones de cobro a clientes" action={<button className="text-action" onClick={()=>open('billing-recurring')}>Crear automatización <Plus size={14}/></button>}><DataTable headers={['Automatización','Cliente / concepto','Frecuencia','Próxima emisión','Importe','Historial','Estado','Acción']}>{recurring.map(x=><tr key={x.id}><td><code>{x.id}</code></td><td><div className="person"><Avatar name={x.name} small/><span><b>{x.name}</b><small>{x.concept}</small></span></div></td><td><span className="recurring-frequency"><Repeat2 size={11}/>{x.frequency}</span></td><td><b>{x.next}</b></td><td><b>{x.amount}</b></td><td>{x.sent}</td><td><StatusBadge>{x.status}</StatusBadge></td><td><button className={`table-action recurring-toggle ${x.status==='Pausada'?'resume':''}`} onClick={()=>toggleRecurring(x.id)}>{x.status==='Activa'?<><Pause size={11}/> Pausar</>:<><Play size={11}/> Reactivar</>}</button></td></tr>)}</DataTable></Card><div className="concept-note"><Sparkles size={20}/><div><strong>Un flujo simple y completamente mockeado.</strong><p>En cada fecha programada, Yol1 simula la creación de la factura, aplica el IVA configurado y la envía al correo de facturación del cliente.</p></div></div></>}
-  </>
-}
-const expenseCategories=[
-  {name:'Alojamiento',limit:80000,unit:'Por noche'},
-  {name:'Alimentación',limit:15000,unit:'Por día'},
-  {name:'Transporte',limit:20000,unit:'Por trayecto'},
-  {name:'Combustible',limit:30000,unit:'Por carga'},
-  {name:'Otros',limit:null,unit:'Sujeto a revisión'},
-]
-const expenseReports=[
-  {id:'RG-1042',employee:'Felipe Torres',costCenter:'Ventas',period:'01–05 jun 2026',items:8,total:284500,status:'Enviada',alert:true,date:'Hoy, 09:12'},
-  {id:'RG-1041',employee:'Camila Rojas',costCenter:'Marketing',period:'27–31 may 2026',items:5,total:162300,status:'Aprobada',alert:false,date:'Ayer, 17:40'},
-  {id:'RG-1040',employee:'Valentina Soto',costCenter:'Ventas',period:'20–22 may 2026',items:4,total:210000,status:'Enviada',alert:true,date:'Ayer, 12:15'},
-  {id:'RG-1039',employee:'Diego Pérez',costCenter:'Operaciones',period:'24–26 may 2026',items:3,total:94800,status:'Pagada',alert:false,date:'Lun, 11:05'},
-  {id:'RG-1035',employee:'Benja',costCenter:'Dirección',period:'12–16 may 2026',items:6,total:458200,status:'Pagada',alert:false,date:'13 may'},
-  {id:'RG-1033',employee:'Camila Rojas',costCenter:'Marketing',period:'05–08 may 2026',items:2,total:38200,status:'Rechazada',alert:true,date:'06 may'},
-]
-const expenseItems=[
-  {date:'05 jun',category:'Alojamiento',merchant:'Hotel Director Vitacura',amount:96000,alert:true},
-  {date:'05 jun',category:'Alimentación',merchant:'Restaurante Boragó',amount:32000,alert:true},
-  {date:'04 jun',category:'Transporte',merchant:'Uber',amount:8500,alert:false},
-  {date:'04 jun',category:'Alimentación',merchant:'Café Melba',amount:6200,alert:false},
-  {date:'03 jun',category:'Combustible',merchant:'Copec Ruta 5',amount:45000,alert:false},
-  {date:'02 jun',category:'Transporte',merchant:'Uber',amount:7200,alert:false},
-  {date:'02 jun',category:'Alimentación',merchant:'Emporio Rústico',amount:14400,alert:false},
-  {date:'01 jun',category:'Otros',merchant:'Estacionamiento Costanera',amount:5200,alert:false},
-]
-function ExpenseReports({open}) {
-  const [tab,setTab]=useState('Por aprobar')
-  const [rows,setRows]=useState(expenseReports)
-  const change=(id,status)=>setRows(r=>r.map(x=>x.id===id?{...x,status}:x))
-  const pending=rows.filter(r=>r.status==='Enviada')
-  const pendingTotal=pending.reduce((s,r)=>s+r.total,0)
-  const approvedMonth=rows.filter(r=>r.status==='Aprobada'||r.status==='Pagada').reduce((s,r)=>s+r.total,0)
-  const paidMonth=rows.filter(r=>r.status==='Pagada').reduce((s,r)=>s+r.total,0)
-  const tabs=['Por aprobar','Todas las rendiciones','Políticas de gasto']
-  return <><PageTitle eyebrow="Reembolso a empleados" title="Rendición de gastos" subtitle="Recibe, revisa y aprueba los gastos que tu equipo rinde en viajes y operación diaria." actions={<><Button secondary icon={Download}>Exportar</Button><Button icon={Plus} onClick={()=>open('expense-new')}>Nueva rendición</Button></>}/>
-    {pending.some(r=>r.alert)&&<div className="billing-inbox expense-alert-inbox"><AlertCircle size={19}/><div><b>Hay rendiciones que exceden la política de gastos</b><span>Revisa los ítems marcados antes de aprobar.</span></div><StatusBadge>Requiere revisión</StatusBadge></div>}
-    <div className="metric-grid four">
-      <MetricCard label="Por aprobar" value={money(pendingTotal)} icon={Receipt} detail={`${pending.length} rendición${pending.length===1?'':'es'} pendiente${pending.length===1?'':'s'}`} tone="amber"/>
-      <MetricCard label="Aprobado este mes" value={money(approvedMonth)} icon={CheckCircle2} detail="+9,2% vs. mes anterior"/>
-      <MetricCard label="Reembolsado este mes" value={money(paidMonth)} icon={CircleDollarSign} detail="2 pagos ejecutados" tone="blue"/>
-      <MetricCard label="Tiempo promedio aprobación" value="1d 4h" icon={Activity} detail="Dentro del SLA interno"/>
-    </div>
-    <div className="billing-tabs">{tabs.map(t=><button key={t} className={tab===t?'active':''} onClick={()=>setTab(t)}>{t}{t==='Por aprobar'&&<em>{pending.length}</em>}</button>)}</div>
-    {tab==='Por aprobar'&&<Card title="Rendiciones pendientes de aprobación" subtitle="Acciones visuales de demo · no ejecutan pagos reales"><SearchFilters/><DataTable headers={['Rendición','Empleado','Centro de costo','Periodo','Ítems','Monto','Política','Acciones']}>{pending.map(r=><tr key={r.id}><td><code>{r.id}</code></td><td><div className="person"><Avatar name={r.employee} small/><b>{r.employee}</b></div></td><td>{r.costCenter}</td><td className="muted">{r.period}</td><td>{r.items}</td><td><b>{money(r.total)}</b></td><td>{r.alert?<span className="policy-flag"><AlertCircle size={11}/> Excede límite</span>:<span className="match-pill"><Check size={11}/> Dentro de política</span>}</td><td><div className="row-actions"><button className="approve" onClick={()=>change(r.id,'Aprobada')}><Check size={14}/> Aprobar</button><button className="reject" onClick={()=>change(r.id,'Rechazada')}><X size={14}/></button><button onClick={()=>open('expense-detail')}>Ver detalle</button></div></td></tr>)}</DataTable>{pending.length===0&&<div className="empty-state">Todas las rendiciones están al día. No hay nada pendiente de aprobación.</div>}</Card>}
-    {tab==='Todas las rendiciones'&&<Card title="Historial de rendiciones" subtitle="Todas las rendiciones enviadas por el equipo"><SearchFilters/><DataTable headers={['Rendición','Empleado','Centro de costo','Periodo','Ítems','Monto','Estado','']}>{rows.map(r=><tr key={r.id}><td><code>{r.id}</code></td><td><div className="person"><Avatar name={r.employee} small/><b>{r.employee}</b></div></td><td>{r.costCenter}</td><td className="muted">{r.period}</td><td>{r.items}</td><td><b>{money(r.total)}</b></td><td><StatusBadge>{r.status}</StatusBadge></td><td><button className="more" onClick={()=>open('expense-detail')}><MoreHorizontal size={18}/></button></td></tr>)}</DataTable></Card>}
-    {tab==='Políticas de gasto'&&<Card title="Políticas de gasto" subtitle="Límites por categoría, validados automáticamente al momento de rendir cada gasto"><DataTable headers={['Categoría','Límite','Aplicación','Estado']}>{expenseCategories.map(c=><tr key={c.name}><td><b>{c.name}</b></td><td>{c.limit?money(c.limit):'Sin límite fijo'}</td><td className="muted">{c.unit}</td><td><StatusBadge>Activa</StatusBadge></td></tr>)}</DataTable></Card>}
-    <div className="concept-note"><Receipt size={20}/><div><strong>De la boleta al reembolso, en un solo flujo.</strong><p>Cada gasto se fotografía, se extraen comercio, monto y fecha automáticamente (OCR simulado), se valida contra la política de la empresa y queda listo para aprobación y pago.</p></div></div>
-  </>
-}
-const cardItems=[['Tarjeta Operaciones','Física','CV Proveedores','$12.000.000','$4.280.400','Activa','Felipe Torres'],['Tarjeta Retiros','Virtual','CV Retiros','$20.000.000','$8.620.000','Activa','Benja'],['Tarjeta Marketing','Virtual','CV Marketing','$8.000.000','$5.120.000','Activa','Camila Rojas'],['Tarjeta Proyecto USD','Virtual','CV Proyecto USD','USD 15.000','USD 2.840','Próximamente','Felipe Torres']]
-function CardsView({open}) { return <><PageTitle eyebrow="Capa futura" title="Tarjetas" subtitle="Extensiones operativas asociadas a cuentas virtuales." actions={<Button icon={Plus} onClick={()=>open('card')}>Crear tarjeta</Button>}/><div className="concept-note"><CreditCard size={20}/><div><strong>Las tarjetas son una extensión operativa.</strong><p>Se construyen sobre las cuentas virtuales y no son el producto principal de Yol1 Business.</p></div></div><div className="cards-grid">{cardItems.map((c,i)=><div className={`payment-card pc${i}`} key={c[0]}><div className="pc-top"><span>Yol1 <b>Business</b></span><Zap size={19}/></div><small>{c[1]} · {c[2]}</small><h3>{c[0]}</h3><div className="pc-number">•••• &nbsp;•••• &nbsp;•••• &nbsp;{4192+i*117}</div><div className="pc-spend"><span><small>Gasto del mes</small><b>{c[4]}</b></span><span><small>Límite mensual</small><b>{c[3]}</b></span></div><div className="pc-bottom"><StatusBadge>{c[5]}</StatusBadge><span>{c[6]}</span></div></div>)}</div></> }
-function Reports() { const pie=[{name:'Usuarios finales',value:340,color:'#80EF0C'},{name:'Recaudación',value:275,color:'#112E3C'},{name:'Operación',value:129,color:'#00D4AF'},{name:'Conciliación',value:101,color:'#A2A682'}];return <><PageTitle eyebrow="Inteligencia financiera" title="Reportes" subtitle="Una vista ejecutiva del desempeño de todas tus cuentas." actions={<Button icon={Download} onClick={()=>alert('Demo conceptual: el reporte no se descarga realmente.')}>Exportar reporte</Button>}/><div className="filters report-filters"><button><Filter size={15}/> Todas las cuentas <ChevronDown size={14}/></button><button>Últimos 6 meses <ChevronDown size={14}/></button><button>CLP <ChevronDown size={14}/></button></div><div className="two-col"><Card title="Entradas vs. salidas" subtitle="MM CLP por mes"><div className="chart"><ResponsiveContainer><BarChart data={chartData}><CartesianGrid stroke="#e5e2d8" vertical={false}/><XAxis dataKey="name" axisLine={false} tickLine={false}/><YAxis axisLine={false} tickLine={false}/><Tooltip/><Bar dataKey="entradas" fill="#80EF0C" radius={[5,5,0,0]}/><Bar dataKey="salidas" fill="#112E3C" radius={[5,5,0,0]}/></BarChart></ResponsiveContainer></div></Card><Card title="Saldo por tipo de cuenta" subtitle="Distribución consolidada"><div className="pie-chart"><ResponsiveContainer><PieChart><Pie data={pie} innerRadius={65} outerRadius={95} dataKey="value">{pie.map(x=><Cell key={x.name} fill={x.color}/>)}</Pie><Tooltip/></PieChart></ResponsiveContainer><div className="pie-legend">{pie.map(x=><span key={x.name}><i style={{background:x.color}}/>{x.name}<b>${x.value}M</b></span>)}</div></div></Card></div><div className="metric-grid four"><MetricCard label="Top usuario por saldo" value="$4,8M" icon={Users} detail="Valentina Soto"/><MetricCard label="Retiros aprobados" value="91,4%" icon={CheckCircle2} detail="+2,1 pts este mes"/><MetricCard label="Pendiente por conciliar" value="$4,8M" icon={ClipboardCheck} detail="1,8% del flujo" tone="amber"/><MetricCard label="Eficiencia operativa" value="94/100" icon={Activity} detail="+6 pts este mes" tone="blue"/></div></> }
-function Permissions(){const rows=[['Benja','Administrador','$500.000.000','Activa'],['Felipe Torres','Finanzas','$100.000.000','Activa'],['Camila Rojas','Aprobador','$25.000.000','Activa'],['Diego Pérez','Visualizador','Sin aprobación','Activa'],['Contador externo','Contador externo','Sin aprobación','Pendiente']];return <><PageTitle eyebrow="Control de acceso" title="Usuarios y permisos" subtitle="Define quién puede ver, operar y aprobar en la cuenta empresa." actions={<Button icon={Plus}>Invitar usuario</Button>}/><Card title="Equipo ArenaPlay Demo SpA" subtitle="5 usuarios con acceso"><DataTable headers={['Usuario','Rol','Límite de aprobación','Estado','Permisos','']}>{rows.map(r=><tr key={r[0]}><td><div className="person"><Avatar name={r[0]} small/><b>{r[0]}</b></div></td><td><StatusBadge>{r[1]}</StatusBadge></td><td>{r[2]}</td><td><StatusBadge>{r[3]}</StatusBadge></td><td><div className="permission-dots"><i/><i/><i/><i className={r[1]==='Visualizador'?'off':''}/></div></td><td><button className="more"><MoreHorizontal size={18}/></button></td></tr>)}</DataTable></Card></>}
-const integrations=[['ProntoPaga','Infraestructura transaccional','Conectado','PP'],['Banco BICE','Estructura inicial de cuentas','Conectado','BI'],['ILP','Habilitador futuro de tarjetas','Próximamente','IL'],['SII','Integración tributaria futura','Futura','SII'],['API Yol1','Conexión programática segura','Próximamente','API'],['Webhooks','Eventos operativos en tiempo real','Próximamente','WH']]
-function Integrations(){return <><PageTitle eyebrow="Ecosistema conectado" title="Integraciones" subtitle="Infraestructura que habilita la operación visible de Yol1 Business." actions={<Button secondary icon={ReceiptText}>Documentación API</Button>}/><div className="integration-highlight"><div className="yol1-orbit">Yol1 <b>Business</b></div><p>El producto visible para empresas</p><div className="orbit-lines"><span>Infraestructura</span><span>Cuentas</span><span>Tarjetas futuras</span></div></div><div className="integration-grid">{integrations.map((x,i)=><Card key={x[0]} className="integration-card"><div className={`integration-logo il${i}`}>{x[3]}</div><h3>{x[0]}</h3><p>{x[1]}</p><StatusBadge>{x[2]}</StatusBadge><button className="text-action">Ver detalle <ArrowRight size={14}/></button></Card>)}</div></>}
-function SettingsView(){const items=[[Building2,'Datos de empresa','Razón social, RUT e información corporativa'],[ReceiptText,'Documentación','Documentos legales y operativos'],[ShieldCheck,'Seguridad','Autenticación y políticas de acceso'],[Activity,'Límites operativos','Montos y reglas de operación'],[ClipboardCheck,'Auditoría','Registro de eventos y acciones'],[CircleDollarSign,'Preferencias de moneda','CLP principal, USD y EUR'],[Landmark,'Cuentas vinculadas','Banco BICE · cuenta terminada en 0182']];return <><PageTitle eyebrow="Administración" title="Configuración" subtitle="Preferencias y controles de ArenaPlay Demo SpA."/><div className="settings-grid">{items.map(([Icon,title,sub])=><button key={title} className="settings-item"><span><Icon size={19}/></span><div><b>{title}</b><small>{sub}</small></div><ChevronRight size={18}/></button>)}</div></>}
 
-function Sidebar({active,setActive,mobile,setMobile}) { return <aside className={`sidebar ${mobile?'mobile-open':''}`}><div className="brand"><img src={yol1Logo} alt="Yol1 Business"/><button className="mobile-close" onClick={()=>setMobile(false)}><X/></button></div><div className="company-switch"><div className="company-icon">AP</div><div><b>ArenaPlay Demo SpA</b><span>Cuenta empresa · CLP</span></div><ChevronDown size={15}/></div><nav><span className="nav-label">OPERACIÓN</span>{nav.slice(0,11).map(([name,Icon])=><button key={name} className={active===name?'active':''} onClick={()=>{setActive(name);setMobile(false)}}><Icon size={17}/><span>{name}</span>{name==='Retiros y pagos'&&<em>4</em>}{name==='Conciliación'&&<em>12</em>}{name==='Rendición de gastos'&&<em>2</em>}</button>)}<span className="nav-label">ADMINISTRACIÓN</span>{nav.slice(11).map(([name,Icon])=><button key={name} className={active===name?'active':''} onClick={()=>{setActive(name);setMobile(false)}}><Icon size={17}/><span>{name}</span></button>)}</nav><div className="sidebar-footer"><div className="demo-tag"><Sparkles size={15}/><span><b>Demo conceptual</b><small>No procesa datos reales</small></span></div><div className="profile"><Avatar name="Benja" small/><div><b>Benja</b><span>Administrador</span></div><MoreHorizontal size={17}/></div></div></aside> }
-function Header({setMobile,onLanding}) { return <header><button className="menu-btn" onClick={()=>setMobile(true)}><Menu/></button><div className="global-search"><Search size={17}/><span>Buscar transacciones o iniciar una acción</span><kbd>⌘ K</kbd></div><div className="header-right"><button className="demo-back" onClick={onLanding}>Yol1 Landing</button><div className="system-ok"><span/> Sistemas operativos</div><button className="icon-btn"><Bell size={18}/><i/></button><Avatar name="Benja" small/></div></header> }
-function SMBDemo() {
-  const navigate = useNavigate()
-  const [active,setActive]=useState('Vista general'), [modal,setModal]=useState(null), [mobile,setMobile]=useState(false)
-  const props={open:setModal,navigate:setActive}
-  const views={'Vista general':<Overview {...props}/>, 'Cuentas virtuales':<VirtualAccounts {...props}/>, 'Usuarios finales':<UsersView {...props}/>, 'Movimientos':<MovementsView {...props}/>, 'Transferencias':<Transfers {...props}/>, 'Retiros y pagos':<Withdrawals {...props}/>, 'Conciliación':<Reconciliation {...props}/>, 'Facturación':<Billing {...props}/>, 'Rendición de gastos':<ExpenseReports {...props}/>, 'Tarjetas':<CardsView {...props}/>, 'Reportes':<Reports {...props}/>, 'Usuarios y permisos':<Permissions {...props}/>, 'Integraciones':<Integrations {...props}/>, 'Configuración':<SettingsView {...props}/>}
-  return <div className="app"><Sidebar active={active} setActive={setActive} mobile={mobile} setMobile={setMobile}/><div className="main"><Header setMobile={setMobile} onLanding={()=>navigate('/')}/><main>{views[active]}</main></div>{modal&&<Modal type={modal} onClose={()=>setModal(null)}/>}</div>
+/** Exige cuenta vista operable; si no, manda a la etapa que corresponde. */
+function RequireOperableAccount({ children }) {
+  const { state } = useDemoState()
+  if (!state.organization.id) return <Navigate to="/signup" replace />
+  if (!canAccessDesk(state)) {
+    const target = canProvisionAccount(state) || state.accountStatus !== ACCOUNT_STATUS.NOT_PROVISIONED
+      ? '/activation'
+      : '/onboarding'
+    return <Navigate to={target} replace />
+  }
+  return children
 }
-function App() {
-  const navigate = useNavigate()
-  return <Routes>
-    <Route path="/" element={<Landing onDemo={()=>navigate('/smb')} onPersonas={()=>navigate('/personas')} onPersonasWeb={()=>navigate('/personas-web')} />} />
-    <Route path="/smb" element={<SMBDemo />} />
-    <Route path="/personas" element={<Personas onBack={()=>navigate('/')} />} />
-    <Route path="/personas-web" element={<PersonasBusiness onBack={()=>navigate('/')} />} />
-  </Routes>
+
+function Landing() {
+  const { state } = useDemoState()
+  return <Navigate to={STAGE_ROUTE[resolveStage(state)] ?? '/signup'} replace />
 }
-export default App
+
+function Shell() {
+  return (
+    <Routes>
+      <Route path="/" element={<Landing />} />
+
+      {/* A — Signup */}
+      <Route path="/signup/*" element={<SignupFlow />} />
+
+      {/* B — Onboarding empresarial */}
+      <Route path="/onboarding" element={<RequireOrganization><OnboardingHub /></RequireOrganization>} />
+      <Route path="/onboarding/identity" element={<RequireOrganization><IdentityVerification /></RequireOrganization>} />
+      <Route path="/onboarding/business" element={<RequireOrganization><BusinessVerification /></RequireOrganization>} />
+
+      {/* C — Core Activation */}
+      <Route path="/activation" element={<RequireOrganization><CoreActivation /></RequireOrganization>} />
+
+      {/* D y E — consola */}
+      <Route element={<RequireOrganization><AppShell /></RequireOrganization>}>
+        <Route path="/desk" element={<RequireOperableAccount><DeskOverview /></RequireOperableAccount>} />
+        <Route path="/desk/accounts/:accountId" element={<RequireOperableAccount><AccountDetail /></RequireOperableAccount>} />
+        <Route path="/desk/virtual-accounts" element={<RequireOperableAccount><VirtualAccounts /></RequireOperableAccount>} />
+        <Route path="/desk/transactions" element={<RequireOperableAccount><Transactions /></RequireOperableAccount>} />
+        <Route path="/desk/products" element={<RequireOperableAccount><ProductCatalog /></RequireOperableAccount>} />
+
+        <Route path="/org" element={<OrgChecklist />} />
+        <Route path="/org/profile" element={<OrgProfile />} />
+        <Route path="/org/users" element={<OrgUsers />} />
+        <Route path="/org/accounts" element={<OrgAccounts />} />
+        <Route path="/org/approvals" element={<OrgApprovals />} />
+        <Route path="/org/api" element={<OrgApi />} />
+        <Route path="/org/products" element={<OrgProducts />} />
+        <Route path="/org/compliance" element={<OrgCompliance />} />
+        <Route path="/org/preferences" element={<OrgPreferences />} />
+      </Route>
+
+      {/* Prototipo anterior, preservado como referencia */}
+      <Route path="/legacy/*" element={<LegacyApp />} />
+
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  )
+}
+
+export default function App() {
+  return (
+    <DemoStateProvider>
+      <ToastProvider>
+        <Shell />
+        <DemoControl />
+      </ToastProvider>
+    </DemoStateProvider>
+  )
+}

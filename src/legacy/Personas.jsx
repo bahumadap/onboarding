@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import yol1Mark from './assets/yol1-mark.svg'
+import yol1Mark from '../assets/yol1-mark.svg'
 import './personas.css'
 import {
   ArrowDownLeft, ArrowLeft, ArrowRight, Bell, Check, ChevronRight,

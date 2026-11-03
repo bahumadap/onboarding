@@ -1,0 +1,100 @@
+/* =============================================================
+   Merchant Desk · estilos propios de las pantallas de operación.
+   Solo tokens del Design System: ningún color, radio ni tamaño
+   literal vive en este archivo.
+   ============================================================= */
+
+/* ----------------------------- Gráfico ---------------------------- */
+.desk-chart { width: 100%; height: 260px; }
+.desk-chart__foot {
+  margin-top: var(--ray-space-3);
+  font-size: var(--ray-text-caption);
+  color: var(--ray-color-text-tertiary);
+}
+
+@media (min-width: 720px) {
+  .desk-chart { height: 300px; }
+}
+
+/* ------------------------------ Montos ---------------------------- */
+.desk-amount {
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--ray-weight-medium);
+  white-space: nowrap;
+}
+.desk-amount--in { color: var(--ray-color-state-success-medium); }
+.desk-amount--out { color: var(--ray-color-state-danger-medium); }
+
+/* ----------------------------- Saldos ----------------------------- */
+.desk-balances {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+  gap: var(--ray-space-3) var(--ray-space-5);
+}
+.desk-balance__label {
+  font-size: var(--ray-text-caption);
+  color: var(--ray-color-text-tertiary);
+}
+.desk-balance__value {
+  font-size: var(--ray-text-subtitle-md);
+  font-weight: var(--ray-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+.desk-balance__value--muted { color: var(--ray-color-text-tertiary); }
+
+/* ----------------------------- Filtros ---------------------------- */
+.desk-filters {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--ray-space-3);
+}
+@media (min-width: 720px) {
+  .desk-filters { grid-template-columns: minmax(0, 1.6fr) repeat(2, minmax(0, 1fr)); }
+  .desk-filters--4 { grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr)); }
+}
+
+/* --------------------------- Identificador ------------------------ */
+.desk-id {
+  font-family: var(--ray-font-mono);
+  font-size: var(--ray-text-body-sm);
+  color: var(--ray-color-text-secondary);
+}
+
+/* ---------------------------- Productos --------------------------- */
+.desk-list { display: flex; flex-direction: column; gap: var(--ray-space-2); }
+.desk-list li {
+  display: flex;
+  gap: var(--ray-space-2);
+  align-items: flex-start;
+  font-size: var(--ray-text-body-sm);
+  color: var(--ray-color-text-secondary);
+}
+.desk-list__marker {
+  flex: none;
+  margin-top: var(--ray-space-1);
+  width: var(--ray-space-1);
+  height: var(--ray-space-1);
+  border-radius: var(--ray-radius-pill);
+  background: var(--ray-color-interaction-brand-medium);
+}
+
+.desk-product-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--ray-space-4);
+}
+@media (min-width: 960px) {
+  .desk-product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* --------------------------- Lista simple ------------------------- */
+.desk-stack-rows { display: flex; flex-direction: column; }
+.desk-stack-rows > li + li { border-top: 1px solid var(--ray-color-border-base); }
+.desk-stack-rows > li {
+  display: flex;
+  align-items: center;
+  gap: var(--ray-space-3);
+  padding: var(--ray-space-3) 0;
+}
+.desk-stack-rows > li:first-child { padding-top: 0; }
+.desk-stack-rows > li:last-child { padding-bottom: 0; }

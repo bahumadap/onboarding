@@ -1,0 +1,170 @@
+/* =============================================================
+   Config Org — estilos propios del macroproceso E.
+
+   Solo composición: ningún color, radio, espaciado ni tamaño de
+   texto literal. Todo sale de los tokens del Design System.
+   ============================================================= */
+
+/* ------------------------- listas de tareas ----------------------- */
+.org-tasks { display: flex; flex-direction: column; }
+.org-task {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--ray-space-3);
+  padding: var(--ray-space-4) 0;
+  border-bottom: 1px solid var(--ray-color-border-base);
+}
+.org-task:last-child { border-bottom: 0; }
+.org-task__marker {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: var(--ray-space-6); height: var(--ray-space-6); flex: none;
+  margin-top: 2px;
+  border-radius: var(--ray-radius-pill);
+  background: var(--ray-color-surface-default);
+  color: var(--ray-color-text-tertiary);
+}
+.org-task__marker--done {
+  background: var(--ray-color-state-success-subtle);
+  color: var(--ray-color-state-success-medium);
+}
+.org-task__title {
+  font-size: var(--ray-text-label-md);
+  font-weight: var(--ray-weight-semibold);
+  color: var(--ray-color-text-primary);
+}
+.org-task__desc {
+  font-size: var(--ray-text-body-sm);
+  color: var(--ray-color-text-tertiary);
+  margin-top: var(--ray-space-1);
+  max-width: 68ch;
+}
+.org-task__foot {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: var(--ray-space-3);
+  margin-top: var(--ray-space-3);
+}
+
+/* --------------------------- accesos / tools ---------------------- */
+.org-tool {
+  display: flex;
+  gap: var(--ray-space-3);
+  padding: var(--ray-space-4);
+  background: var(--ray-card-low-bg);
+  border: 1px solid var(--ray-card-low-border);
+  border-radius: var(--ray-card-radius);
+  color: inherit;
+  font-weight: var(--ray-weight-regular);
+  text-decoration: none;
+  transition: border-color .15s ease, background-color .15s ease;
+}
+.org-tool:hover {
+  background: var(--ray-color-interaction-neutral-subtle);
+  border-color: var(--ray-color-border-hover);
+  text-decoration: none;
+}
+.org-tool__icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: var(--ray-space-8); height: var(--ray-space-8); flex: none;
+  border-radius: var(--ray-radius-lg);
+  background: var(--ray-color-interaction-accent-subtle);
+  color: var(--ray-color-interaction-accent-strong);
+}
+.org-tool__title {
+  font-size: var(--ray-text-label-md);
+  font-weight: var(--ray-weight-semibold);
+  color: var(--ray-color-text-primary);
+}
+.org-tool__desc {
+  font-size: var(--ray-text-caption);
+  color: var(--ray-color-text-tertiary);
+  margin-top: 2px;
+}
+
+/* ------------------------------ bloques --------------------------- */
+.org-block {
+  padding: var(--ray-space-4);
+  background: var(--ray-color-bg-subtle);
+  border: 1px solid var(--ray-color-border-base);
+  border-radius: var(--ray-radius-lg);
+}
+.org-block + .org-block { margin-top: var(--ray-space-3); }
+.org-block__title {
+  font-size: var(--ray-text-label-md);
+  font-weight: var(--ray-weight-semibold);
+}
+.org-block__meta {
+  font-size: var(--ray-text-caption);
+  color: var(--ray-color-text-tertiary);
+}
+
+/* ------------------------- valores enmascarados ------------------- */
+.org-secret {
+  display: block;
+  padding: var(--ray-space-3);
+  background: var(--ray-color-surface-default);
+  border-radius: var(--ray-radius-lg);
+  font-family: var(--ray-font-mono);
+  font-size: var(--ray-text-body-sm);
+  color: var(--ray-color-text-secondary);
+  word-break: break-all;
+}
+
+/* --------------------------- lista de roles ----------------------- */
+.org-role {
+  display: flex; flex-direction: column; gap: var(--ray-space-1);
+  padding: var(--ray-space-3) 0;
+  border-bottom: 1px solid var(--ray-color-border-base);
+}
+.org-role:last-child { border-bottom: 0; }
+.org-role__name {
+  font-size: var(--ray-text-label-md);
+  font-weight: var(--ray-weight-semibold);
+}
+.org-role__desc {
+  font-size: var(--ray-text-body-sm);
+  color: var(--ray-color-text-tertiary);
+  max-width: 70ch;
+}
+
+/* --------------------------- prosa resumida ----------------------- */
+.org-prose {
+  display: flex; flex-direction: column; gap: var(--ray-space-2);
+  font-size: var(--ray-text-body-md);
+  color: var(--ray-color-text-secondary);
+  max-width: 76ch;
+}
+.org-prose strong {
+  color: var(--ray-color-text-primary);
+  font-weight: var(--ray-weight-semibold);
+}
+
+/* --------------------------- celdas de tabla ---------------------- */
+.org-cell-main {
+  font-size: var(--ray-text-body-sm);
+  font-weight: var(--ray-weight-semibold);
+  color: var(--ray-color-text-primary);
+}
+.org-cell-sub {
+  font-size: var(--ray-text-caption);
+  color: var(--ray-color-text-tertiary);
+}
+.org-cell-actions {
+  display: flex; align-items: center; gap: var(--ray-space-2);
+  justify-content: flex-end;
+}
+
+/* ------------------------------ varios ---------------------------- */
+.org-readonly-value {
+  font-size: var(--ray-text-body-md);
+  color: var(--ray-color-text-primary);
+}
+.org-inline-note {
+  font-size: var(--ray-text-caption);
+  color: var(--ray-color-text-tertiary);
+}
+.org-threshold-preview {
+  font-size: var(--ray-text-body-sm);
+  font-weight: var(--ray-weight-semibold);
+  color: var(--ray-color-text-primary);
+  font-variant-numeric: tabular-nums;
+}
