@@ -152,3 +152,10 @@ definiciones de producto:
   YOL1 definen botones pill, radios y estados muy específicos, y el kit los
   implementa directo. El `Dialog` trae `role`, `aria-modal`, foco atrapado,
   cierre con Escape y bloqueo de scroll.
+
+## Demo Enterprise independiente en Vercel
+
+Ver [la guía de despliegue](docs/vercel-enterprise.md) para crear un proyecto nuevo
+conectado a `yol1-enterprise`, configurar las rutas SPA y probar Demo Control.
+Los despliegues automáticos por Git están desactivados; no publicar ni reutilizar
+el proyecto de SMB sin autorización.

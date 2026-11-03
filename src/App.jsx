@@ -6,7 +6,7 @@
    aprobado y cuenta en aprovisionamiento ve la pantalla de
    activación, y no un dashboard que miente sobre una cuenta activa.
    ============================================================= */
-import React from 'react'
+import React, { lazy, Suspense } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 
 import AppShell from './shell/AppShell'
@@ -38,7 +38,7 @@ import OrgProducts from './features/org/OrgProducts'
 import OrgCompliance from './features/org/OrgCompliance'
 import OrgPreferences from './features/org/OrgPreferences'
 
-import LegacyApp from './legacy/LegacyApp'
+const LegacyApp = lazy(() => import('./legacy/LegacyApp'))
 
 import './styles/tokens.css'
 import './styles/base.css'
@@ -112,7 +112,7 @@ function Shell() {
       </Route>
 
       {/* Prototipo anterior, preservado como referencia */}
-      <Route path="/legacy/*" element={<LegacyApp />} />
+      <Route path="/legacy/*" element={<div className="legacy-root"><Suspense fallback={<p role="status">Cargando prototipo anterior…</p>}><LegacyApp /></Suspense></div>} />
 
       <Route path="*" element={<NotFound />} />
     </Routes>

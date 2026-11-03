@@ -1,3 +1,4 @@
+@scope (.legacy-root) {
 /* ── Shell / phone frame ─────────────────────────────────────────────────── */
 .personas-shell {
   min-height: 100vh;
@@ -1696,3 +1697,5 @@
 }
 
 .picker-check { color: #2a7a1e; flex-shrink: 0; }
+
+}

@@ -112,7 +112,10 @@ function reducer(state, action) {
       return { ...state, signupStep: action.step }
 
     case 'signup/email':
-      return { ...state, user: { ...state.user, email: action.email }, otpAttempts: 0 }
+      return { ...state, user: { ...state.user, email: action.email }, otpAttempts: 0, userStatus: USER_STATUS.CREATED }
+
+    case 'signup/otpSent':
+      return { ...state, otpAttempts: 0, otpSentAt: Date.now(), userStatus: USER_STATUS.CREATED }
 
     case 'signup/otpAttempt':
       return { ...state, otpAttempts: state.otpAttempts + 1 }
@@ -160,7 +163,7 @@ function reducer(state, action) {
           }],
         },
         onboardingDraftId: `obd_${Math.random().toString(36).slice(2, 8)}`,
-        team: TEAM_MEMBERS.map((m, i) => (i === 0
+        team: TEAM_MEMBERS.slice(0, 1).map((m, i) => (i === 0
           ? { ...m, name: [state.user.firstName, state.user.lastName].filter(Boolean).join(' ') || m.name, email: state.user.email || m.email }
           : m)),
         signupStep: 0,
@@ -213,6 +216,7 @@ function reducer(state, action) {
         ...state,
         accountStatus: ACCOUNT_STATUS.PROVISIONING,
         provisioningStartedAt: new Date().toISOString(),
+        provisioningOutcome: action.outcome ?? ACCOUNT_STATUS.ACTIVE,
       }
 
     case 'account/status':
@@ -223,10 +227,10 @@ function reducer(state, action) {
           ? (state.accountActivatedAt ?? new Date().toISOString())
           : state.accountActivatedAt,
         // La cuenta habilitada trae consigo las cuentas virtuales de ejemplo.
-        virtualAccounts: action.status === ACCOUNT_STATUS.ACTIVE && state.virtualAccounts.length === 0
+        virtualAccounts: [ACCOUNT_STATUS.ACTIVE, ACCOUNT_STATUS.RESTRICTED].includes(action.status) && state.virtualAccounts.length === 0
           ? VIRTUAL_ACCOUNTS
           : state.virtualAccounts,
-        products: action.status === ACCOUNT_STATUS.ACTIVE
+        products: [ACCOUNT_STATUS.ACTIVE, ACCOUNT_STATUS.RESTRICTED].includes(action.status)
           ? { ...state.products, core_account: PRODUCT_STATUS.ACTIVE, virtual_accounts: PRODUCT_STATUS.ACTIVE }
           : state.products,
       }
@@ -320,12 +324,34 @@ const DemoStateContext = createContext(null)
 export function DemoStateProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, null, () => readPersisted() ?? initialState)
 
+  // La apertura pertenece al ciclo de vida de la entidad, no a una pantalla.
+  useEffect(() => {
+    if (state.organization.id && canProvisionAccount(state) && state.accountStatus === ACCOUNT_STATUS.NOT_PROVISIONED) {
+      dispatch({ type: 'account/startProvisioning' })
+    }
+  }, [state.organization.id, state.identityStatus, state.kybStatus, state.accountStatus])
+
+  useEffect(() => {
+    if (state.accountStatus !== ACCOUNT_STATUS.PROVISIONING) return
+    const elapsed = Date.now() - new Date(state.provisioningStartedAt ?? Date.now()).getTime()
+    const timer = setTimeout(() => dispatch({ type: 'account/status', status: state.provisioningOutcome ?? ACCOUNT_STATUS.ACTIVE }), Math.max(0, 5200 - elapsed))
+    return () => clearTimeout(timer)
+  }, [state.accountStatus, state.provisioningStartedAt, state.provisioningOutcome])
+
+  useEffect(() => {
+    const primary = state.organization.legalEntities.find(e => e.role === 'primary')
+    if (primary && primary.kybStatus !== state.kybStatus) {
+      dispatch({ type: 'org/details', patch: { legalEntities: state.organization.legalEntities.map(e => e.role === 'primary' ? { ...e, kybStatus: state.kybStatus, legalName: state.organization.legalName, country: state.organization.countryOfIncorporation } : e) } })
+    }
+  }, [state.kybStatus, state.organization.legalEntities])
+
   useEffect(() => { persist(state) }, [state])
 
   const actions = useMemo(() => ({
     // signup
     setSignupStep: step => dispatch({ type: 'signup/step', step }),
     setEmail: email => dispatch({ type: 'signup/email', email }),
+    sendOtp: () => dispatch({ type: 'signup/otpSent' }),
     registerOtpAttempt: () => dispatch({ type: 'signup/otpAttempt' }),
     verifyOtp: () => dispatch({ type: 'signup/otpVerified' }),
     setProfile: (firstName, lastName) => dispatch({ type: 'signup/profile', firstName, lastName }),
@@ -344,7 +370,7 @@ export function DemoStateProvider({ children }) {
     addLegalEntity: entity => dispatch({ type: 'org/addLegalEntity', entity }),
 
     // activation
-    startProvisioning: () => dispatch({ type: 'account/startProvisioning' }),
+    startProvisioning: outcome => dispatch({ type: 'account/startProvisioning', outcome }),
     setAccountStatus: status => dispatch({ type: 'account/status', status }),
 
     // desk

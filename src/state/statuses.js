@@ -162,7 +162,7 @@ export const canAccessOrgConsole = ({ userStatus }) =>
 
 /** Etapa del recorrido en la que está la organización, para redirigir desde `/`. */
 export function resolveStage(state) {
-  if (!state.user?.email) return 'signup'
+  if (!state.organization?.id) return 'signup'
   if (canAccessDesk(state)) return 'desk'
   if (state.accountStatus === ACCOUNT_STATUS.PROVISIONING || state.accountStatus === ACCOUNT_STATUS.FAILED) return 'activation'
   if (canProvisionAccount(state)) return 'activation'

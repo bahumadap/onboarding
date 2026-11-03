@@ -124,7 +124,7 @@ export default function CoreActivation() {
   /** Arranca la corrida simulada con el desenlace indicado. */
   const run = (outcome = ACCOUNT_STATUS.ACTIVE) => {
     clearTimers()
-    actions.startProvisioning()
+    actions.startProvisioning(outcome)
     setLiveStep(1)
     const schedule = (fn, ms) => { timers.current.push(window.setTimeout(fn, ms)) }
 
@@ -161,8 +161,7 @@ export default function CoreActivation() {
     setChecking(true)
     timers.current.push(window.setTimeout(() => {
       setChecking(false)
-      actions.setAccountStatus(ACCOUNT_STATUS.ACTIVE)
-      toast?.push({ tone: 'success', title: 'Cuenta vista habilitada', description: 'El aprovisionamiento había terminado bien.' })
+      toast?.push({ tone: 'info', title: 'Consulta simulada', description: 'El proceso actualiza automáticamente su resultado al terminar.' })
     }, 1300))
   }
 
@@ -286,7 +285,7 @@ export default function CoreActivation() {
           </h2>
           <p className="flow__lead">
             {status === ACCOUNT_STATUS.NOT_PROVISIONED
-              ? 'Las dos validaciones del onboarding están aprobadas, así que podemos pedir la apertura de la cuenta al proveedor core.'
+              ? 'Las dos validaciones están aprobadas. La apertura de la cuenta comienza automáticamente.'
               : accountMeta.description}
           </p>
         </div>
@@ -374,7 +373,7 @@ export default function CoreActivation() {
               <>
                 <Divider />
                 <div className="flow__actions">
-                  <Button variant="brand" onClick={() => run(ACCOUNT_STATUS.ACTIVE)}>Iniciar aprovisionamiento</Button>
+                  <p className="ray-body-sm" role="status">El aprovisionamiento comienza automáticamente al aprobar las validaciones.</p>
                   <Button variant="ghost" onClick={() => navigate('/onboarding')}>Volver al onboarding</Button>
                 </div>
               </>

@@ -10,7 +10,7 @@
    proveedor real queda marcado con un comentario.
    ============================================================= */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import {
   ArrowLeft, Building2, Check, FileCheck2, Mail, RefreshCw, ShieldCheck, UserRound,
 } from 'lucide-react'
@@ -19,6 +19,7 @@ import {
 } from '../../ui'
 import FlowLayout from '../../shell/FlowLayout'
 import { useDemoState } from '../../state/DemoState'
+import { resolveStage } from '../../state/statuses'
 import { COUNTRIES, INDUSTRIES } from '../../mock/countries'
 import { TERMS_SUMMARY, TERMS_VERSION } from '../../mock/terms'
 import './signup.css'
@@ -70,7 +71,9 @@ export default function SignupFlow() {
   const toast = useToast()
   const { state, actions } = useDemoState()
 
-  const step = Math.min(state.signupStep ?? 0, STEPS.length - 1)
+  const [passwordValidated, setPasswordValidated] = useState(false)
+  const requestedStep = Math.max(0, Math.min(state.signupStep ?? 0, STEPS.length - 1))
+  const step = !state.organization.id && requestedStep >= 5 && !passwordValidated ? 4 : requestedStep
   const current = STEPS[step]
 
   /* --- borrador local: la contraseña nunca entra al estado persistido --- */
@@ -102,23 +105,27 @@ export default function SignupFlow() {
 
   /* ------------------------------ OTP ------------------------------ */
   useEffect(() => {
-    if (current.id !== 'otp' || cooldown <= 0) return
-    const timer = setTimeout(() => setCooldown(c => c - 1), 1000)
-    return () => clearTimeout(timer)
-  }, [cooldown, current.id])
+    if (current.id !== 'otp') return
+    const update = () => setCooldown(Math.max(0, Math.ceil(RESEND_COOLDOWN_S - (Date.now() - (state.otpSentAt ?? 0)) / 1000)))
+    update()
+    const timer = setInterval(update, 1000)
+    return () => clearInterval(timer)
+  }, [current.id, state.otpSentAt])
 
   useEffect(() => {
     if (current.id !== 'otp') return
-    setOtpExpired(false)
-    const timer = setTimeout(() => setOtpExpired(true), OTP_TTL_S * 1000)
+    const remaining = OTP_TTL_S * 1000 - (Date.now() - (state.otpSentAt ?? 0))
+    setOtpExpired(remaining <= 0)
+    const timer = setTimeout(() => setOtpExpired(true), Math.max(0, remaining))
     return () => clearTimeout(timer)
-  }, [current.id, state.user.email])
+  }, [current.id, state.otpSentAt])
 
   const attemptsLeft = MAX_OTP_ATTEMPTS - state.otpAttempts
   const otpBlocked = attemptsLeft <= 0
 
   const sendOtp = useCallback((isResend) => {
     // Integración real: acá se llama al proveedor de OTP por correo.
+    actions.sendOtp()
     setOtp('')
     setOtpError(null)
     setOtpExpired(false)
@@ -126,7 +133,7 @@ export default function SignupFlow() {
     if (isResend) {
       toast?.push({ tone: 'info', title: 'Enviamos un código nuevo', description: `Revisa ${maskEmail(email)}.` })
     }
-  }, [email, toast])
+  }, [email, toast, actions])
 
   const goTo = useCallback(nextStep => {
     setErrors({})
@@ -228,6 +235,7 @@ export default function SignupFlow() {
         }
         // En el producto real acá se envía la credencial al backend.
         // En la demo no se guarda ni se persiste.
+        setPasswordValidated(true)
         goTo(5)
         return
       }
@@ -241,6 +249,8 @@ export default function SignupFlow() {
         actions.acceptTerms()
         await new Promise(r => setTimeout(r, 700))
         actions.completeSignup()
+        setPassword('')
+        setPasswordConfirm('')
         setBusy(false)
         goTo(6)
         return
@@ -250,6 +260,8 @@ export default function SignupFlow() {
         navigate('/onboarding')
     }
   }
+
+  if (state.organization.id && current.id !== 'done') return <Navigate to={{ signup: '/signup', onboarding: '/onboarding', activation: '/activation', desk: '/desk' }[resolveStage(state)]} replace />
 
   /* ---------------------------- contenido --------------------------- */
   const stepMeta = current.id === 'done'

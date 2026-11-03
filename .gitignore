@@ -2,3 +2,10 @@ node_modules/
 dist/
 .vercel/
 *.log
+
+# Local credentials must never enter the static bundle or Git.
+.env
+.env.*
+!.env.example
+*.pem
+*.key

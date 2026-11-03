@@ -134,6 +134,7 @@ export default function BusinessVerification() {
   }, [pendingObservations])
 
   const setValue = (sectionId, key, value) => {
+    if (state.kybSections[sectionId] === SECTION_STATUS.COMPLETE) actions.setKybSection(sectionId, SECTION_STATUS.IN_PROGRESS)
     setDraft(d => ({ ...d, [sectionId]: { ...d[sectionId], [key]: value } }))
     setErrors(e => (e[sectionId]?.[key] ? { ...e, [sectionId]: { ...e[sectionId], [key]: undefined } } : e))
   }

@@ -1,5 +1,6 @@
+@scope (.legacy-root) {
 /* ── Design tokens ───────────────────────────────────────────────────────── */
-:root {
+:scope {
   --ink:        #112e3c;
   --ink-muted:  #64777c;
   --ink-light:  #9aabaf;
@@ -953,4 +954,6 @@
 @media (max-width: 480px) {
   .landing-brand span { display: none; }
   .persona-flow span { min-width: 168px; }
+}
+
 }
