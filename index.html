@@ -1,0 +1,1076 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Onboarding Yol1</title>
+<meta name="description" content="Guía de onboarding para nuevas personas en Yol1: primeros pasos, accesos, herramientas y equipo." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23daff00'/%3E%3Ctext x='16' y='22' font-family='sans-serif' font-size='15' font-weight='700' fill='%230a332b' text-anchor='middle'%3Ey1%3C/text%3E%3C/svg%3E" />
+<script>
+  /* Tema aplicado antes del primer pintado para evitar parpadeo. */
+  (function () {
+    try {
+      var saved = window.localStorage.getItem('yol1-onboarding-theme');
+      if (saved === 'dark' || saved === 'light') {
+        document.documentElement.setAttribute('data-theme', saved);
+        return;
+      }
+    } catch (e) { /* almacenamiento bloqueado */ }
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  })();
+</script>
+<style>
+  /* ---------------------------------------------------------------
+     Design tokens — yol1-tokens.json
+     --------------------------------------------------------------- */
+  :root {
+    /* radius */
+    --ray-radius-none: 0px;
+    --ray-radius-sm: 2px;
+    --ray-radius-md: 4px;
+    --ray-radius-lg: 8px;
+    --ray-radius-xl: 16px;
+    --ray-radius-pill: 9999px;
+
+    /* typography */
+    --ray-font-display: "Söhne Breit", "Geist", system-ui, sans-serif;
+    --ray-font-sans: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+    /* light mode */
+    --ray-color-bg-default: #ffffff;
+    --ray-color-bg-subtle: #f9f6f1;
+    --ray-color-surface-alt: #ffffff;
+    --ray-color-surface-default: #f3f0ea;
+    --ray-color-surface-low: #e8e3da;
+    --ray-color-border-base: #d6d0c6;
+    --ray-color-border-hover: rgba(130, 147, 171, 0.40);
+    --ray-color-border-active: rgba(130, 147, 171, 0.56);
+    --ray-color-text-primary: #24211b;
+    --ray-color-text-secondary: #534f49;
+    --ray-color-text-tertiary: #6d685f;
+    --ray-color-text-inverse: #ffffff;
+    --ray-color-text-white: #ffffff;
+    --ray-color-interaction-brand-subtle: #f0ffc7;
+    --ray-color-interaction-brand-low: #afcbc4;
+    --ray-color-interaction-brand-medium: #1f7c6b;
+    --ray-color-interaction-brand-high: #006152;
+    --ray-color-interaction-brand-strong: #00483c;
+    --ray-color-interaction-accent-subtle: #f0ffc7;
+    --ray-color-interaction-accent-low: #ddff52;
+    --ray-color-interaction-accent-medium: #daff00;
+    --ray-color-interaction-accent-strong: #00483c;
+    --ray-color-interaction-neutral-subtle: color-mix(in srgb, var(--ray-color-surface-low) 50%, transparent);
+    --ray-color-interaction-neutral-low: var(--ray-color-surface-low);
+    --ray-color-state-info-subtle: #f6f6ff;
+    --ray-color-state-info-medium: #754cf0;
+    --ray-color-state-info-strong: #542eb7;
+    --ray-color-state-success-subtle: rgba(83, 201, 95, 0.10);
+    --ray-color-state-success-medium: #158225;
+    --ray-color-state-success-strong: #0d5711;
+    --ray-color-state-warning-subtle: rgba(255, 193, 0, 0.10);
+    --ray-color-state-warning-medium: #eaaa08;
+    --ray-color-state-warning-strong: #a15c07;
+    --ray-color-focus-ring: var(--ray-color-interaction-brand-high);
+
+    --ray-shadow-bottom: 0 4px 8px rgba(130, 147, 171, 0.16);
+    --ray-card-low-shadow: 0 1px 2px rgba(24, 29, 37, 0.06);
+    --ray-card-medium-shadow: 0 2px 8px rgba(24, 29, 37, 0.10);
+    --ray-card-high-shadow: 0 8px 24px rgba(24, 29, 37, 0.16);
+
+    --ray-button-primary-bg: #000000;
+    --ray-button-primary-bg-hover: #3b3731;
+    --ray-button-primary-bg-active: #534f49;
+    --ray-button-primary-text: #ffffff;
+    --ray-button-secondary-bg: #ffffff;
+    --ray-button-secondary-bg-hover: #f9f6f1;
+    --ray-button-secondary-bg-active: #f3f0ea;
+    --ray-button-secondary-text: #24211b;
+    --ray-button-secondary-border: #b0aaa0;
+    --ray-button-brand-bg: #daff00;
+    --ray-button-brand-bg-hover: #b5d500;
+    --ray-button-brand-bg-active: #98b300;
+    --ray-button-brand-text: #0a332b;
+    --ray-button-ghost-bg-hover: #f0ffc7;
+    --ray-button-ghost-text: #24211b;
+
+    --ray-card-low-bg: var(--ray-color-bg-default);
+    --ray-card-border: color-mix(in srgb, var(--ray-color-text-tertiary) 28%, var(--ray-color-bg-default));
+    --ray-card-high-border: color-mix(in srgb, var(--ray-color-text-tertiary) 40%, var(--ray-color-bg-default));
+    --ray-card-radius: 8px;
+  }
+
+  :root[data-theme="dark"] {
+    --ray-color-bg-default: #14110c;
+    --ray-color-bg-subtle: #24211b;
+    --ray-color-surface-alt: #24211b;
+    --ray-color-surface-default: #3b3731;
+    --ray-color-surface-low: #534f49;
+    --ray-color-border-base: #534f49;
+    --ray-color-text-primary: #f9f6f1;
+    --ray-color-text-secondary: #e8e3da;
+    --ray-color-text-tertiary: #b0aaa0;
+    --ray-color-text-inverse: #000000;
+    --ray-color-interaction-brand-subtle: #171a0b;
+    --ray-color-interaction-brand-low: #3b3f2f;
+    --ray-color-interaction-brand-medium: #98b300;
+    --ray-color-interaction-brand-high: #b5d500;
+    --ray-color-interaction-brand-strong: #daff00;
+    --ray-color-interaction-accent-subtle: #171a0b;
+    --ray-color-interaction-accent-low: #272b1b;
+    --ray-color-interaction-accent-medium: #b5d500;
+    --ray-color-interaction-accent-strong: #daff00;
+    --ray-color-state-info-subtle: #181331;
+    --ray-color-state-info-medium: #a192ff;
+    --ray-color-state-info-strong: #c1bbff;
+    --ray-color-state-success-subtle: rgba(83, 201, 95, 0.15);
+    --ray-color-state-success-medium: #0d5711;
+    --ray-color-state-success-strong: #73e085;
+    --ray-color-state-warning-subtle: rgba(255, 193, 0, 0.15);
+    --ray-color-state-warning-medium: #a15c07;
+    --ray-color-state-warning-strong: #fde272;
+
+    --ray-shadow-bottom: 0 4px 8px rgba(0, 0, 0, 0.55);
+    --ray-card-low-shadow: 0 1px 2px rgba(0, 0, 0, 0.40);
+    --ray-card-medium-shadow: 0 2px 8px rgba(0, 0, 0, 0.50);
+    --ray-card-high-shadow: 0 8px 24px rgba(0, 0, 0, 0.60);
+
+    --ray-button-primary-bg: #f9f6f1;
+    --ray-button-primary-bg-hover: #f3f0ea;
+    --ray-button-primary-bg-active: #e8e3da;
+    --ray-button-primary-text: #000000;
+    --ray-button-secondary-bg: #14110c;
+    --ray-button-secondary-bg-hover: #24211b;
+    --ray-button-secondary-bg-active: #3b3731;
+    --ray-button-secondary-text: #f9f6f1;
+    --ray-button-secondary-border: #6d685f;
+    --ray-button-brand-bg: #daff00;
+    --ray-button-brand-bg-hover: #ddff52;
+    --ray-button-brand-bg-active: #b5d500;
+    --ray-button-ghost-bg-hover: #272b1b;
+    --ray-button-ghost-text: #f9f6f1;
+  }
+
+  /* ---------------------------------------------------------------
+     Base
+     --------------------------------------------------------------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 88px; }
+  body {
+    margin: 0;
+    background: var(--ray-color-bg-default);
+    color: var(--ray-color-text-primary);
+    font-family: var(--ray-font-sans);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 { margin: 0; line-height: 1.2; letter-spacing: -0.02em; }
+  p { margin: 0; }
+  ul { margin: 0; padding: 0; list-style: none; }
+  a { color: inherit; text-decoration: none; }
+  :focus-visible { outline: 2px solid var(--ray-color-focus-ring); outline-offset: 2px; border-radius: var(--ray-radius-md); }
+
+  .container { width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+
+  /* ---------------------------------------------------------------
+     Primitives (shadcn-style)
+     --------------------------------------------------------------- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    height: 44px; padding: 0 22px;
+    border: 1px solid transparent; border-radius: var(--ray-radius-pill);
+    font-family: inherit; font-size: 14px; font-weight: 600; white-space: nowrap;
+    cursor: pointer; transition: background-color .15s ease, color .15s ease, border-color .15s ease, transform .15s ease;
+  }
+  .btn:active { transform: translateY(1px); }
+  .btn-sm { height: 36px; padding: 0 16px; font-size: 13px; }
+  .btn-primary { background: var(--ray-button-primary-bg); color: var(--ray-button-primary-text); }
+  .btn-primary:hover { background: var(--ray-button-primary-bg-hover); }
+  .btn-primary:active { background: var(--ray-button-primary-bg-active); }
+  .btn-brand { background: var(--ray-button-brand-bg); color: var(--ray-button-brand-text); }
+  .btn-brand:hover { background: var(--ray-button-brand-bg-hover); }
+  .btn-brand:active { background: var(--ray-button-brand-bg-active); }
+  .btn-secondary {
+    background: var(--ray-button-secondary-bg);
+    color: var(--ray-button-secondary-text);
+    border-color: var(--ray-button-secondary-border);
+  }
+  .btn-secondary:hover { background: var(--ray-button-secondary-bg-hover); }
+  .btn-ghost { background: transparent; color: var(--ray-button-ghost-text); }
+  .btn-ghost:hover { background: var(--ray-button-ghost-bg-hover); }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 12px; border-radius: var(--ray-radius-pill);
+    font-size: 12px; font-weight: 500; line-height: 1.5;
+  }
+  .badge-accent { background: var(--ray-color-interaction-accent-subtle); color: var(--ray-color-interaction-accent-strong); }
+  .badge-neutral { background: var(--ray-color-surface-default); color: var(--ray-color-text-secondary); }
+  .badge-success { background: var(--ray-color-state-success-subtle); color: var(--ray-color-state-success-medium); }
+
+  .tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 10px; border: 1px solid currentColor; border-radius: var(--ray-radius-pill);
+    font-size: 12px; font-weight: 500;
+  }
+  .tag-neutral { color: var(--ray-color-text-tertiary); }
+  .tag-brand { color: var(--ray-color-interaction-brand-strong); }
+
+  .card {
+    background: var(--ray-card-low-bg);
+    border: 1px solid var(--ray-card-border);
+    border-radius: var(--ray-card-radius);
+    box-shadow: var(--ray-card-low-shadow);
+  }
+  .card-pad { padding: 24px; }
+  .card-hover { transition: box-shadow .18s ease, border-color .18s ease, transform .18s ease; }
+  .card-hover:hover { box-shadow: var(--ray-card-medium-shadow); border-color: var(--ray-card-high-border); transform: translateY(-2px); }
+
+  .sep { height: 1px; background: var(--ray-color-border-base); border: 0; margin: 0; }
+
+  .icon-box {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px; border-radius: var(--ray-radius-lg);
+    background: var(--ray-color-interaction-accent-subtle);
+    color: var(--ray-color-interaction-brand-high);
+    flex: none;
+  }
+  svg { display: block; }
+
+  .eyebrow {
+    font-size: 12px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--ray-color-text-tertiary);
+  }
+  .muted { color: var(--ray-color-text-tertiary); }
+  .lead { color: var(--ray-color-text-secondary); font-size: 16px; }
+
+  /* ---------------------------------------------------------------
+     Header
+     --------------------------------------------------------------- */
+  header.site {
+    position: sticky; top: 0; z-index: 40;
+    background: color-mix(in srgb, var(--ray-color-bg-default) 85%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--ray-color-border-base);
+  }
+  .nav { display: flex; align-items: center; gap: 16px; height: 64px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -0.03em; font-size: 18px; }
+  .brand-mark {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; border-radius: var(--ray-radius-lg);
+    background: var(--ray-color-interaction-accent-medium); color: #0a332b;
+    font-size: 13px; font-weight: 700; letter-spacing: -0.02em;
+  }
+  .nav-links { display: none; gap: 4px; margin-left: 12px; flex: 1; }
+  .nav-links a {
+    padding: 8px 12px; border-radius: var(--ray-radius-lg);
+    font-size: 14px; font-weight: 500; color: var(--ray-color-text-secondary);
+    transition: background-color .15s ease, color .15s ease;
+  }
+  .nav-links a:hover { background: var(--ray-color-interaction-neutral-subtle); color: var(--ray-color-text-primary); }
+  .nav-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+  .theme-toggle {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px; border-radius: var(--ray-radius-pill);
+    border: 1px solid var(--ray-color-border-base); background: transparent;
+    color: var(--ray-color-text-secondary); cursor: pointer;
+    transition: background-color .15s ease;
+  }
+  .theme-toggle:hover { background: var(--ray-color-interaction-neutral-subtle); }
+  :root[data-theme="dark"] .icon-sun { display: none; }
+  :root:not([data-theme="dark"]) .icon-moon { display: none; }
+
+  /* ---------------------------------------------------------------
+     Sections
+     --------------------------------------------------------------- */
+  section { padding: 72px 0; }
+  section + section { border-top: 1px solid var(--ray-color-border-base); }
+  .section-head { max-width: 680px; margin-bottom: 40px; }
+  .section-head h2 { font-family: var(--ray-font-display); font-size: 32px; margin: 12px 0 12px; }
+  .section-head p { color: var(--ray-color-text-secondary); }
+
+  /* Hero */
+  .hero { padding: 80px 0 72px; background: var(--ray-color-bg-subtle); }
+  .hero h1 {
+    font-family: var(--ray-font-display);
+    font-size: clamp(36px, 7vw, 64px);
+    margin: 20px 0 20px;
+  }
+  .hero h1 em { font-style: normal; color: var(--ray-color-interaction-brand-high); }
+  .hero p.lead { font-size: 18px; max-width: 620px; }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+  .stats { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 56px; }
+  .stat .kpi { font-family: var(--ray-font-display); font-size: 32px; font-weight: 700; letter-spacing: -0.03em; }
+  .stat .kpi span { color: var(--ray-color-interaction-brand-high); }
+  .stat p { font-size: 13px; color: var(--ray-color-text-tertiary); margin-top: 4px; }
+
+  /* Checklist */
+  .checklist-layout { display: grid; grid-template-columns: 1fr; gap: 24px; align-items: start; }
+  .progress-card { padding: 24px; }
+  .progress-bar { height: 8px; border-radius: var(--ray-radius-pill); background: var(--ray-color-surface-low); overflow: hidden; margin: 16px 0 10px; }
+  .progress-fill { height: 100%; width: 0%; border-radius: var(--ray-radius-pill); background: var(--ray-color-interaction-accent-medium); transition: width .35s ease; }
+  .progress-count { font-family: var(--ray-font-display); font-size: 40px; font-weight: 700; letter-spacing: -0.03em; }
+  .check-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px 16px; border-radius: var(--ray-radius-lg);
+    cursor: pointer; transition: background-color .15s ease;
+  }
+  .check-item:hover { background: var(--ray-color-interaction-neutral-subtle); }
+  .check-item + .check-item { border-top: 1px solid var(--ray-color-border-base); }
+  .check-item input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .check-box {
+    width: 20px; height: 20px; margin-top: 2px; flex: none;
+    border: 1px solid var(--ray-color-text-tertiary); border-radius: var(--ray-radius-sm);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: transparent; transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+  }
+  .check-item input:checked ~ .check-box {
+    background: var(--ray-color-interaction-brand-medium);
+    border-color: var(--ray-color-interaction-brand-medium);
+    color: var(--ray-color-text-white);
+  }
+  :root[data-theme="dark"] .check-item input:checked ~ .check-box { color: #000; }
+  .check-item input:focus-visible ~ .check-box { outline: 2px solid var(--ray-color-focus-ring); outline-offset: 2px; }
+  .check-text strong { display: block; font-size: 14px; font-weight: 500; }
+  .check-text span { font-size: 13px; color: var(--ray-color-text-tertiary); }
+  .check-item input:checked ~ .check-text strong { text-decoration: line-through; color: var(--ray-color-text-tertiary); }
+
+  /* Tabs */
+  .tabs-list {
+    display: inline-flex; gap: 4px; padding: 4px;
+    background: var(--ray-color-surface-default); border-radius: var(--ray-radius-pill);
+    margin-bottom: 28px; max-width: 100%; overflow-x: auto;
+  }
+  .tab-trigger {
+    border: 0; background: transparent; cursor: pointer;
+    padding: 8px 18px; border-radius: var(--ray-radius-pill);
+    font-family: inherit; font-size: 14px; font-weight: 500; white-space: nowrap;
+    color: var(--ray-color-text-secondary);
+    transition: background-color .15s ease, color .15s ease;
+  }
+  .tab-trigger:hover { color: var(--ray-color-text-primary); }
+  .tab-trigger[aria-selected="true"] {
+    background: var(--ray-color-bg-default);
+    color: var(--ray-color-text-primary);
+    box-shadow: var(--ray-card-low-shadow);
+  }
+  .tab-panel[hidden] { display: none; }
+  .task-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+  .task-grid li { display: flex; gap: 12px; padding: 20px; }
+  .task-grid h4 { font-size: 16px; margin-bottom: 4px; }
+  .task-grid p { font-size: 14px; color: var(--ray-color-text-secondary); }
+
+  /* Grids */
+  .grid-3 { display: grid; grid-template-columns: 1fr; gap: 16px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr; gap: 16px; }
+  .tool-card h3 { font-size: 16px; margin: 16px 0 6px; }
+  .tool-card p { font-size: 14px; color: var(--ray-color-text-secondary); }
+  .tool-card .meta { margin-top: 16px; display: flex; align-items: center; gap: 8px; }
+
+  /* Stepper */
+  .stepper { position: relative; padding-left: 0; }
+  .step { display: flex; gap: 20px; position: relative; padding-bottom: 32px; }
+  .step:last-child { padding-bottom: 0; }
+  .step::before {
+    content: ""; position: absolute; left: 19px; top: 40px; bottom: 0;
+    width: 2px; background: var(--ray-color-border-base);
+  }
+  .step:last-child::before { display: none; }
+  .step-dot {
+    width: 40px; height: 40px; flex: none; border-radius: var(--ray-radius-pill);
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--ray-color-bg-default); border: 1px solid var(--ray-color-border-base);
+    color: var(--ray-color-text-secondary); font-size: 14px; font-weight: 600;
+    position: relative; z-index: 1;
+  }
+  .step.is-active .step-dot {
+    background: var(--ray-color-interaction-accent-medium);
+    border-color: var(--ray-color-interaction-accent-medium);
+    color: #0a332b;
+  }
+  .step-body { padding-top: 6px; }
+  .step-body h3 { font-size: 18px; margin-bottom: 6px; }
+  .step-body p { font-size: 14px; color: var(--ray-color-text-secondary); }
+  .step-body .when { font-size: 12px; color: var(--ray-color-text-tertiary); margin-bottom: 6px; }
+
+  /* People */
+  .person { display: flex; gap: 16px; padding: 20px; align-items: center; }
+  .avatar {
+    width: 48px; height: 48px; flex: none; border-radius: var(--ray-radius-pill);
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--ray-color-interaction-brand-high); color: #fff;
+    font-size: 15px; font-weight: 600; letter-spacing: -0.02em;
+  }
+  .person h3 { font-size: 15px; }
+  .person .role { font-size: 13px; color: var(--ray-color-text-tertiary); }
+  .person a.mail { font-size: 13px; font-weight: 500; color: var(--ray-color-interaction-brand-high); }
+  .person a.mail:hover { text-decoration: underline; }
+
+  /* Accordion */
+  .accordion { border-top: 1px solid var(--ray-color-border-base); }
+  .accordion details { border-bottom: 1px solid var(--ray-color-border-base); }
+  .accordion summary {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 20px 8px; cursor: pointer; list-style: none;
+    font-size: 15px; font-weight: 500;
+    border-radius: var(--ray-radius-lg);
+    transition: background-color .15s ease;
+  }
+  .accordion summary::-webkit-details-marker { display: none; }
+  .accordion summary:hover { background: var(--ray-color-interaction-neutral-subtle); }
+  .accordion summary .chev { flex: none; color: var(--ray-color-text-tertiary); transition: transform .2s ease; }
+  .accordion details[open] summary .chev { transform: rotate(180deg); }
+  .accordion .answer { padding: 0 8px 22px; font-size: 14px; color: var(--ray-color-text-secondary); max-width: 760px; }
+
+  /* CTA + footer */
+  .cta {
+    padding: 48px 32px; border-radius: var(--ray-radius-xl);
+    background: var(--ray-color-interaction-brand-strong);
+    color: var(--ray-color-text-white);
+    text-align: center;
+  }
+  :root[data-theme="dark"] .cta { background: var(--ray-color-surface-alt); border: 1px solid var(--ray-color-border-base); }
+  .cta h2 { font-family: var(--ray-font-display); font-size: 32px; margin-bottom: 12px; color: #fff; }
+  :root[data-theme="dark"] .cta h2 { color: var(--ray-color-text-primary); }
+  .cta p { color: rgba(255,255,255,.78); max-width: 520px; margin: 0 auto 28px; }
+  :root[data-theme="dark"] .cta p { color: var(--ray-color-text-secondary); }
+  footer.site { padding: 40px 0; border-top: 1px solid var(--ray-color-border-base); }
+  .footer-inner { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
+  .footer-inner p { font-size: 13px; color: var(--ray-color-text-tertiary); }
+  .footer-links { display: flex; gap: 20px; }
+  .footer-links a { font-size: 13px; font-weight: 500; color: var(--ray-color-text-secondary); }
+  .footer-links a:hover { color: var(--ray-color-text-primary); }
+
+  /* ---------------------------------------------------------------
+     Responsive
+     --------------------------------------------------------------- */
+  @media (min-width: 640px) {
+    .stats { grid-template-columns: repeat(3, 1fr); }
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .task-grid { grid-template-columns: repeat(2, 1fr); }
+    .footer-inner { flex-direction: row; align-items: center; justify-content: space-between; }
+  }
+  @media (min-width: 900px) {
+    .nav-links { display: flex; }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .checklist-layout { grid-template-columns: 320px 1fr; }
+    .progress-card { position: sticky; top: 88px; }
+    .section-head h2, .cta h2 { font-size: 40px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="container nav">
+    <a class="brand" href="#top">
+      <span class="brand-mark">y1</span>
+      <span>Yol1</span>
+    </a>
+    <nav class="nav-links" aria-label="Secciones">
+      <a href="#checklist">Checklist</a>
+      <a href="#primeros-pasos">Primeros pasos</a>
+      <a href="#herramientas">Herramientas</a>
+      <a href="#proceso">Proceso</a>
+      <a href="#equipo">Equipo</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="theme-toggle" type="button" id="themeToggle" aria-label="Cambiar tema">
+        <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <a class="btn btn-brand btn-sm" href="#checklist">Empezar</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <span class="badge badge-accent">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        Onboarding · edición 2026
+      </span>
+      <h1>Bienvenido/a a <em>Yol1</em>.<br />Partamos bien.</h1>
+      <p class="lead">
+        Esta guía reúne todo lo que necesitas en tus primeras semanas: accesos, herramientas,
+        cómo trabajamos y a quién preguntarle. Avanza a tu ritmo y marca lo que vayas completando.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-brand" href="#checklist">
+          Ver mi checklist
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a class="btn btn-secondary" href="#equipo">Conocer al equipo</a>
+      </div>
+
+      <ul class="stats">
+        <li class="card card-pad stat">
+          <div class="kpi"><span>30</span> días</div>
+          <p>Plan de onboarding estructurado, de la semana 1 al primer mes.</p>
+        </li>
+        <li class="card card-pad stat">
+          <div class="kpi"><span>6</span> accesos</div>
+          <p>Herramientas base que deberías tener activas el día 1.</p>
+        </li>
+        <li class="card card-pad stat">
+          <div class="kpi"><span>1</span> buddy</div>
+          <p>Alguien del equipo asignado para acompañarte en el proceso.</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Checklist -->
+  <section id="checklist">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Paso a paso</span>
+        <h2>Tu checklist de llegada</h2>
+        <p>Lo esencial de los primeros días. Se guarda en este navegador, así que puedes volver cuando quieras.</p>
+      </div>
+
+      <div class="checklist-layout">
+        <div class="card progress-card">
+          <span class="eyebrow">Progreso</span>
+          <div class="progress-count"><span id="progressPercent">0</span>%</div>
+          <div class="progress-bar" role="progressbar" aria-labelledby="progressLabel" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressBar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <p class="muted" id="progressLabel" style="font-size:13px">0 de 9 completados</p>
+          <hr class="sep" style="margin:20px 0" />
+          <p style="font-size:13px; color:var(--ray-color-text-secondary)">
+            ¿Te falta un acceso o algo no cuadra? Escríbele a tu buddy o a People; nadie espera que resuelvas esto solo/a.
+          </p>
+          <button class="btn btn-ghost btn-sm" type="button" id="resetChecklist" style="margin-top:16px">Reiniciar checklist</button>
+        </div>
+
+        <div class="card">
+          <ul id="checklist">
+            <li>
+              <label class="check-item">
+                <input type="checkbox" data-key="ck-1" />
+                <span class="check-box" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+                <span class="check-text">
+                  <strong>Activar tu correo @yol1.com</strong>
+                  <span>Primer inicio de sesión y verificación en dos pasos.</span>
+                </span>
+              </label>
+            </li>
+            <li>
+              <label class="check-item">
+                <input type="checkbox" data-key="ck-2" />
+                <span class="check-box" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+                <span class="check-text">
+                  <strong>Completar tu perfil interno</strong>
+                  <span>Foto, nombre como quieres que te llamen, rol y pronombres.</span>
+                </span>
+              </label>
+            </li>
+            <li>
+              <label class="check-item">
+                <input type="checkbox" data-key="ck-3" />
+                <span class="check-box" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+                <span class="check-text">
+                  <strong>Entrar a los canales del equipo</strong>
+                  <span>General, tu squad y los canales de tu área.</span>
+                </span>
+              </label>
+            </li>
+            <li>
+              <label class="check-item">
+                <input type="checkbox" data-key="ck-4" />
+                <span class="check-box" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+                <span class="check-text">
+                  <strong>Revisar firma de contrato y documentos</strong>
+                  <span>Contrato, anexos y datos para la liquidación de sueldo.</span>
+                </span>
+              </label>
+            </li>
+            <li>
+              <label class="check-item">
+                <input type="checkbox" data-key="ck-5" />
+                <span class="check-box" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+                <span class="check-text">
+                  <strong>Agendar 1:1 con tu líder</strong>
+                  <span>30 minutos en los primeros 3 días para alinear expectativas.</span>
+                </span>
+              </label>
+            </li>
+            <li>
+              <label class="check-item">
+                <input type="checkbox" data-key="ck-6" />
+                <span class="check-box" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+                <span class="check-text">
+                  <strong>Presentarte en el canal general</strong>
+                  <span>Quién eres, qué harás y algo que te guste fuera del trabajo.</span>
+                </span>
+              </label>
+            </li>
+            <li>
+              <label class="check-item">
+                <input type="checkbox" data-key="ck-7" />
+                <span class="check-box" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+                <span class="check-text">
+                  <strong>Leer cómo trabajamos</strong>
+                  <span>Rituales, horarios, política de vacaciones y trabajo remoto.</span>
+                </span>
+              </label>
+            </li>
+            <li>
+              <label class="check-item">
+                <input type="checkbox" data-key="ck-8" />
+                <span class="check-box" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+                <span class="check-text">
+                  <strong>Configurar tu entorno de trabajo</strong>
+                  <span>Equipo, accesos a repositorios o plataformas según tu rol.</span>
+                </span>
+              </label>
+            </li>
+            <li>
+              <label class="check-item">
+                <input type="checkbox" data-key="ck-9" />
+                <span class="check-box" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+                <span class="check-text">
+                  <strong>Cerrar tu primera tarea</strong>
+                  <span>Algo pequeño y real que te permita conocer el flujo completo.</span>
+                </span>
+              </label>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Primeros pasos (tabs) -->
+  <section id="primeros-pasos">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Línea de tiempo</span>
+        <h2>Qué esperar en tus primeras semanas</h2>
+        <p>Una referencia, no una camisa de fuerza: tu líder puede ajustar el ritmo según el rol.</p>
+      </div>
+
+      <div class="tabs-list" role="tablist" aria-label="Línea de tiempo del onboarding">
+        <button class="tab-trigger" role="tab" id="tab-dia1" aria-controls="panel-dia1" aria-selected="true">Día 1</button>
+        <button class="tab-trigger" role="tab" id="tab-semana1" aria-controls="panel-semana1" aria-selected="false">Semana 1</button>
+        <button class="tab-trigger" role="tab" id="tab-mes1" aria-controls="panel-mes1" aria-selected="false">Primer mes</button>
+      </div>
+
+      <div class="tab-panel" role="tabpanel" id="panel-dia1" aria-labelledby="tab-dia1">
+        <ul class="task-grid">
+          <li class="card">
+            <span class="icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v4M21 15v4a2 2 0 0 1-2 2h-4M9 21H5a2 2 0 0 1-2-2v-4M3 9V5a2 2 0 0 1 2-2h4"/></svg></span>
+            <div><h4>Bienvenida y setup</h4><p>Recibes tu equipo, cuentas y accesos base. Alguien de People te acompaña en la configuración.</p></div>
+          </li>
+          <li class="card">
+            <span class="icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+            <div><h4>Café con tu buddy</h4><p>Media hora informal para preguntar lo que sea, sin filtro ni agenda.</p></div>
+          </li>
+          <li class="card">
+            <span class="icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
+            <div><h4>Agenda de la semana</h4><p>Tu líder deja agendadas las reuniones clave y te explica los rituales del equipo.</p></div>
+          </li>
+          <li class="card">
+            <span class="icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8"/></svg></span>
+            <div><h4>Papeleo listo</h4><p>Contrato firmado y datos cargados para que tu primera liquidación salga sin sorpresas.</p></div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="tab-panel" role="tabpanel" id="panel-semana1" aria-labelledby="tab-semana1" hidden>
+        <ul class="task-grid">
+          <li class="card">
+            <span class="icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
+            <div><h4>Contexto del negocio</h4><p>Qué hace Yol1, quiénes son nuestros clientes y cómo se gana la plata.</p></div>
+          </li>
+          <li class="card">
+            <span class="icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
+            <div><h4>Primera entrega</h4><p>Una tarea acotada, con revisión, para conocer el flujo de trabajo de punta a punta.</p></div>
+          </li>
+          <li class="card">
+            <span class="icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+            <div><h4>Rondas de 1:1</h4><p>Conversaciones breves con las personas con las que vas a trabajar más seguido.</p></div>
+          </li>
+          <li class="card">
+            <span class="icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
+            <div><h4>Documentación clave</h4><p>Dónde vive la información y cómo buscar antes de preguntar (y cuándo preguntar igual).</p></div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="tab-panel" role="tabpanel" id="panel-mes1" aria-labelledby="tab-mes1" hidden>
+        <ul class="task-grid">
+          <li class="card">
+            <span class="icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></span>
+            <div><h4>Objetivos definidos</h4><p>Cierras el mes con metas claras y acordadas para el trimestre.</p></div>
+          </li>
+          <li class="card">
+            <span class="icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg></span>
+            <div><h4>Autonomía en tu área</h4><p>Tomas tareas sin necesidad de acompañamiento permanente.</p></div>
+          </li>
+          <li class="card">
+            <span class="icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-6 0v4M5 9h14l1 12H4z"/></svg></span>
+            <div><h4>Feedback de ida y vuelta</h4><p>Conversación de 30 días: cómo te ha ido y qué podemos mejorar nosotros.</p></div>
+          </li>
+          <li class="card">
+            <span class="icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></svg></span>
+            <div><h4>Aporte al proceso</h4><p>Nos cuentas qué faltó en tu onboarding: así mejora para quien venga después.</p></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Herramientas -->
+  <section id="herramientas">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Stack</span>
+        <h2>Herramientas y accesos</h2>
+        <p>Si algo no aparece en tu cuenta durante el día 1, avisa en el canal de soporte interno.</p>
+      </div>
+
+      <div class="grid-3">
+        <article class="card card-pad card-hover tool-card">
+          <span class="icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg></span>
+          <h3>Correo y calendario</h3>
+          <p>Tu cuenta @yol1.com, con calendario compartido y verificación en dos pasos obligatoria.</p>
+          <div class="meta"><span class="tag tag-brand">Día 1</span><span class="tag tag-neutral">Todos</span></div>
+        </article>
+
+        <article class="card card-pad card-hover tool-card">
+          <span class="icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+          <h3>Chat interno</h3>
+          <p>Canal general, canal de tu squad y mensajería directa. Respondemos en horario laboral.</p>
+          <div class="meta"><span class="tag tag-brand">Día 1</span><span class="tag tag-neutral">Todos</span></div>
+        </article>
+
+        <article class="card card-pad card-hover tool-card">
+          <span class="icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11H3v10h6zM15 3H9v18h6zM21 7h-6v14h6z"/></svg></span>
+          <h3>Gestor de tareas</h3>
+          <p>Donde vive el trabajo: tablero del equipo, tickets y prioridades del sprint.</p>
+          <div class="meta"><span class="tag tag-brand">Semana 1</span><span class="tag tag-neutral">Todos</span></div>
+        </article>
+
+        <article class="card card-pad card-hover tool-card">
+          <span class="icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span>
+          <h3>Base de conocimiento</h3>
+          <p>Procesos, decisiones y plantillas. Empieza por la carpeta "Cómo trabajamos".</p>
+          <div class="meta"><span class="tag tag-brand">Semana 1</span><span class="tag tag-neutral">Todos</span></div>
+        </article>
+
+        <article class="card card-pad card-hover tool-card">
+          <span class="icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+          <h3>Gestor de contraseñas</h3>
+          <p>Credenciales compartidas del equipo. Nunca por chat ni por correo, siempre acá.</p>
+          <div class="meta"><span class="tag tag-brand">Día 1</span><span class="tag tag-neutral">Todos</span></div>
+        </article>
+
+        <article class="card card-pad card-hover tool-card">
+          <span class="icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/></svg></span>
+          <h3>Repositorios y entornos</h3>
+          <p>Para roles técnicos: acceso al código, entornos de prueba y despliegues.</p>
+          <div class="meta"><span class="tag tag-brand">Semana 1</span><span class="tag tag-neutral">Según rol</span></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cómo trabajamos -->
+  <section id="cultura">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Cultura</span>
+        <h2>Cómo trabajamos</h2>
+        <p>Cuatro acuerdos que explican la mayoría de nuestras decisiones del día a día.</p>
+      </div>
+
+      <div class="grid-2">
+        <article class="card card-pad card-hover">
+          <span class="badge badge-neutral">01</span>
+          <h3 style="font-size:18px; margin:14px 0 8px">Contexto antes que control</h3>
+          <p style="font-size:14px; color:var(--ray-color-text-secondary)">Compartimos el porqué de las cosas y confiamos en que cada quien decide bien con buena información. Preguntar no es pérdida de tiempo.</p>
+        </article>
+        <article class="card card-pad card-hover">
+          <span class="badge badge-neutral">02</span>
+          <h3 style="font-size:18px; margin:14px 0 8px">Escribir lo que se decide</h3>
+          <p style="font-size:14px; color:var(--ray-color-text-secondary)">Si una decisión no está escrita, no existe. Documentamos corto y claro, para que nadie dependa de haber estado en la reunión.</p>
+        </article>
+        <article class="card card-pad card-hover">
+          <span class="badge badge-neutral">03</span>
+          <h3 style="font-size:18px; margin:14px 0 8px">Entregas pequeñas y seguido</h3>
+          <p style="font-size:14px; color:var(--ray-color-text-secondary)">Preferimos avances visibles cada semana antes que proyectos perfectos en seis meses. Equivocarse temprano sale barato.</p>
+        </article>
+        <article class="card card-pad card-hover">
+          <span class="badge badge-neutral">04</span>
+          <h3 style="font-size:18px; margin:14px 0 8px">Feedback directo y amable</h3>
+          <p style="font-size:14px; color:var(--ray-color-text-secondary)">Decimos las cosas de frente, sin rodeos y sin dejarlas pasar. Se le habla a la persona, no de la persona.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Proceso -->
+  <section id="proceso">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Hitos</span>
+        <h2>El proceso completo</h2>
+        <p>Desde la firma hasta la conversación de los 90 días.</p>
+      </div>
+
+      <ol class="stepper">
+        <li class="step is-active">
+          <span class="step-dot">1</span>
+          <div class="step-body">
+            <p class="when">Antes de empezar</p>
+            <h3>Preboarding</h3>
+            <p>Firma de contrato, envío de equipo y creación de cuentas. Recibes un correo con la fecha, hora y punto de encuentro de tu primer día.</p>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-dot">2</span>
+          <div class="step-body">
+            <p class="when">Día 1</p>
+            <h3>Bienvenida</h3>
+            <p>Setup de herramientas, presentación al equipo, café con tu buddy y una vuelta general por lo que hace cada área.</p>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-dot">3</span>
+          <div class="step-body">
+            <p class="when">Semana 1</p>
+            <h3>Inmersión</h3>
+            <p>Contexto de negocio, documentación clave, rondas de 1:1 y tu primera entrega acotada con revisión.</p>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-dot">4</span>
+          <div class="step-body">
+            <p class="when">Día 30</p>
+            <h3>Primera conversación de avance</h3>
+            <p>Revisamos cómo te ha ido, ajustamos expectativas y definimos tus objetivos del trimestre.</p>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-dot">5</span>
+          <div class="step-body">
+            <p class="when">Día 90</p>
+            <h3>Cierre del onboarding</h3>
+            <p>Evaluación conjunta, feedback en ambas direcciones y plan de desarrollo para los próximos meses.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Equipo -->
+  <section id="equipo">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Contactos</span>
+        <h2>A quién preguntarle</h2>
+        <p>Reemplaza estos datos por los contactos reales de tu equipo antes de publicar.</p>
+      </div>
+
+      <div class="grid-3">
+        <article class="card card-hover person">
+          <span class="avatar">PE</span>
+          <div>
+            <h3>People &amp; Cultura</h3>
+            <p class="role">Contrato, vacaciones, beneficios</p>
+            <a class="mail" href="mailto:people@yol1.com">people@yol1.com</a>
+          </div>
+        </article>
+        <article class="card card-hover person">
+          <span class="avatar">TI</span>
+          <div>
+            <h3>Soporte TI</h3>
+            <p class="role">Equipos, accesos, contraseñas</p>
+            <a class="mail" href="mailto:soporte@yol1.com">soporte@yol1.com</a>
+          </div>
+        </article>
+        <article class="card card-hover person">
+          <span class="avatar">BD</span>
+          <div>
+            <h3>Tu buddy</h3>
+            <p class="role">Dudas del día a día, sin filtro</p>
+            <a class="mail" href="mailto:buddy@yol1.com">buddy@yol1.com</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Preguntas</span>
+        <h2>Dudas frecuentes</h2>
+        <p>Lo que más nos preguntan en las primeras semanas.</p>
+      </div>
+
+      <div class="accordion">
+        <details open>
+          <summary>
+            ¿Cuál es el horario y cómo funciona el trabajo remoto?
+            <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </summary>
+          <p class="answer">Trabajamos con horario flexible dentro de una franja común para que coincidan las reuniones. Los detalles de días presenciales y remotos los define cada equipo; tu líder te los confirma en el 1:1 de la primera semana.</p>
+        </details>
+        <details>
+          <summary>
+            ¿Cuándo recibo mi primera liquidación de sueldo?
+            <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </summary>
+          <p class="answer">Según el cierre de mes de tu fecha de ingreso. Si entraste pasado el cierre, el primer pago puede ser proporcional. People te confirma las fechas exactas apenas firmes.</p>
+        </details>
+        <details>
+          <summary>
+            ¿Cómo pido vacaciones o un día administrativo?
+            <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </summary>
+          <p class="answer">Se solicita con anticipación a tu líder y queda registrado en el sistema de People. Para ausencias de última hora, avisa en el canal del equipo lo antes posible.</p>
+        </details>
+        <details>
+          <summary>
+            Me falta un acceso, ¿a quién le escribo?
+            <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </summary>
+          <p class="answer">A Soporte TI, idealmente por el canal de soporte para que quede registrado. Indica qué herramienta necesitas y para qué la vas a usar: así se asignan los permisos correctos a la primera.</p>
+        </details>
+        <details>
+          <summary>
+            ¿Qué se espera de mí en los primeros 30 días?
+            <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </summary>
+          <p class="answer">Entender el contexto, conocer a tu equipo y cerrar algunas tareas acotadas. No se espera que domines todo: se espera que preguntes, tomes notas y vayas ganando autonomía.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section>
+    <div class="container">
+      <div class="cta">
+        <h2>¿Quedó algo fuera?</h2>
+        <p>Este onboarding se mejora con lo que nos cuentas. Si algo te faltó, lo arreglamos para la próxima persona.</p>
+        <a class="btn btn-brand" href="mailto:people@yol1.com?subject=Feedback%20onboarding">Enviar feedback</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site">
+  <div class="container footer-inner">
+    <p>© <span id="year">2026</span> Yol1 · Documento interno</p>
+    <div class="footer-links">
+      <a href="#checklist">Checklist</a>
+      <a href="#herramientas">Herramientas</a>
+      <a href="#faq">FAQ</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---- Theme ---------------------------------------------------- */
+  var root = document.documentElement;
+  var STORAGE_THEME = 'yol1-onboarding-theme';
+
+  function readStore(key) {
+    try { return window.localStorage.getItem(key); } catch (e) { return null; }
+  }
+  function writeStore(key, value) {
+    try { window.localStorage.setItem(key, value); } catch (e) { /* modo privado */ }
+  }
+
+  document.getElementById('themeToggle').addEventListener('click', function () {
+    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    writeStore(STORAGE_THEME, next);
+  });
+
+  /* ---- Checklist ------------------------------------------------- */
+  var boxes = Array.prototype.slice.call(
+    document.querySelectorAll('#checklist input[type="checkbox"]')
+  );
+  var fill = document.getElementById('progressFill');
+  var bar = document.getElementById('progressBar');
+  var percentEl = document.getElementById('progressPercent');
+  var labelEl = document.getElementById('progressLabel');
+
+  function render() {
+    var done = boxes.filter(function (b) { return b.checked; }).length;
+    var pct = boxes.length ? Math.round((done / boxes.length) * 100) : 0;
+    fill.style.width = pct + '%';
+    percentEl.textContent = String(pct);
+    bar.setAttribute('aria-valuenow', String(pct));
+    labelEl.textContent = done + ' de ' + boxes.length + ' completados';
+  }
+
+  boxes.forEach(function (box) {
+    var key = 'yol1-onboarding-' + box.dataset.key;
+    if (readStore(key) === '1') { box.checked = true; }
+    box.addEventListener('change', function () {
+      writeStore(key, box.checked ? '1' : '0');
+      render();
+    });
+  });
+  render();
+
+  document.getElementById('resetChecklist').addEventListener('click', function () {
+    boxes.forEach(function (box) {
+      box.checked = false;
+      writeStore('yol1-onboarding-' + box.dataset.key, '0');
+    });
+    render();
+  });
+
+  /* ---- Tabs ------------------------------------------------------ */
+  var triggers = Array.prototype.slice.call(document.querySelectorAll('.tab-trigger'));
+
+  function selectTab(trigger) {
+    triggers.forEach(function (t) {
+      var selected = t === trigger;
+      t.setAttribute('aria-selected', selected ? 'true' : 'false');
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !selected;
+    });
+  }
+
+  triggers.forEach(function (trigger, index) {
+    trigger.addEventListener('click', function () { selectTab(trigger); });
+    trigger.addEventListener('keydown', function (event) {
+      var delta = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
+      if (!delta) { return; }
+      event.preventDefault();
+      var next = triggers[(index + delta + triggers.length) % triggers.length];
+      next.focus();
+      selectTab(next);
+    });
+  });
+
+  /* ---- Misc ------------------------------------------------------ */
+  document.getElementById('year').textContent = String(new Date().getFullYear());
+})();
+</script>
+</body>
+</html>
