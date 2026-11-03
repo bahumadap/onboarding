@@ -89,8 +89,7 @@ export default function Transactions() {
       <div className="page__head">
         <h1 className="page__title">Movimientos</h1>
         <p className="page__lead">
-          Historial de abonos y egresos de las cuentas habilitadas. Los montos positivos son
-          abonos y los negativos, egresos.
+          Consulta los abonos (+) y egresos (−) de tus cuentas.
         </p>
       </div>
 
@@ -100,7 +99,7 @@ export default function Transactions() {
             <EmptyState
               icon={<ArrowLeftRight size={20} aria-hidden="true" />}
               title="No hay cuentas habilitadas"
-              description="Sin una cuenta operativa no hay movimientos que consultar."
+              description="Activa una cuenta para consultar movimientos."
             />
           </CardBody>
         </Card>
@@ -110,7 +109,7 @@ export default function Transactions() {
           title="No pudimos cargar el historial"
           action={<Button variant="secondary" size="sm" onClick={retry}>Reintentar</Button>}
         >
-          <p className="ray-body-sm">El servicio de movimientos no respondió. Intenta de nuevo en unos segundos.</p>
+          <p className="ray-body-sm">No pudimos cargar los movimientos. Inténtalo de nuevo.</p>
         </Callout>
       ) : (
         <>
@@ -118,8 +117,7 @@ export default function Transactions() {
             <div style={{ marginBottom: 'var(--ray-space-4)' }}>
               <Callout tone="info" title="Cuentas fuera de este historial">
                 <p className="ray-body-sm">
-                  {hiddenAccounts.map(a => a.label).join(' y ')} dependen de un producto que no está
-                  activo, así que sus movimientos no se muestran.
+                  {hiddenAccounts.map(a => a.label).join(' y ')} requieren un producto activo para mostrar sus movimientos.
                 </p>
               </Callout>
             </div>
@@ -219,8 +217,8 @@ export default function Transactions() {
                       icon={<SearchX size={20} aria-hidden="true" />}
                       title={isFiltering ? 'Sin resultados para estos filtros' : 'Sin movimientos registrados'}
                       description={isFiltering
-                        ? 'Ningún movimiento coincide con los filtros aplicados.'
-                        : 'Cuando las cuentas registren abonos o egresos los vas a ver acá.'}
+                        ? 'Prueba otros filtros.'
+                        : 'Los abonos y egresos aparecerán aquí.'}
                       action={isFiltering
                         ? <Button variant="secondary" size="sm" onClick={clearFilters}>Limpiar filtros</Button>
                         : undefined}
@@ -280,14 +278,14 @@ export default function Transactions() {
             {detail.status === 'pending' && (
               <Callout tone="warning" title="Operación en curso">
                 <p className="ray-body-sm">
-                  El movimiento todavía no se liquida. El saldo disponible ya considera la reserva.
+                  Pendiente de liquidación. El saldo disponible ya descuenta los fondos reservados.
                 </p>
               </Callout>
             )}
             {detail.status === 'rejected' && (
               <Callout tone="danger" title="Operación rechazada">
                 <p className="ray-body-sm">
-                  El movimiento no se ejecutó y los fondos siguen en la cuenta de origen.
+                  No se ejecutó. Los fondos siguen en la cuenta de origen.
                 </p>
               </Callout>
             )}

@@ -588,3 +588,15 @@
 .dl dd { margin: 0; font-size: var(--ray-text-body-md); }
 @media (min-width: 640px) { .dl--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (min-width: 960px) { .dl--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+/* Progressive disclosure: native keyboard and screen reader semantics. */
+.content-details { min-width: 0; }
+.content-details__summary {
+  cursor: pointer;
+  color: var(--ray-color-text-primary);
+  font-weight: var(--ray-weight-medium);
+  padding: var(--ray-space-3) 0;
+}
+.content-details__body { padding: 0 0 var(--ray-space-4); }
+.content-details__body > * + * { margin-top: var(--ray-space-3); }
+.flow__aside .content-details__summary { color: inherit; }

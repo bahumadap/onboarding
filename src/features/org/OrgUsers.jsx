@@ -1,3 +1,4 @@
+import { ContentDetails } from '../../ui'
 /* =============================================================
    Config Org — usuarios y roles (/org/users).
 
@@ -41,8 +42,8 @@ export default function OrgUsers() {
 
   const warnLastAdmin = () => toast.push({
     tone: 'danger',
-    title: 'La organización necesita un Organization Admin',
-    description: 'Asigna el rol a otra persona activa antes de cambiar o desactivar a la última administradora.',
+    title: 'Debe quedar un administrador activo',
+    description: 'Asigna otro administrador antes de cambiar o desactivar al último.',
   })
 
   const changeRole = (member, nextRole) => {
@@ -64,7 +65,7 @@ export default function OrgUsers() {
       title: nextStatus === 'active' ? 'Acceso reactivado' : 'Acceso desactivado',
       description: nextStatus === 'active'
         ? `${member.name} puede volver a ingresar.`
-        : `${member.name} ya no puede ingresar a la consola.`,
+        : `${member.name} ya no tiene acceso a la organización.`,
     })
   }
 
@@ -72,11 +73,11 @@ export default function OrgUsers() {
     const next = {}
     if (!EMAIL_RE.test(email.trim())) next.email = 'Escribe un correo válido.'
     else if (state.team.some(m => m.email.toLowerCase() === email.trim().toLowerCase())) {
-      next.email = 'Esa persona ya tiene acceso a la organización.'
+      next.email = 'Este correo ya tiene acceso.'
     } else if (state.invitations.some(i => i.email.toLowerCase() === email.trim().toLowerCase())) {
-      next.email = 'Ya existe una invitación pendiente para ese correo.'
+      next.email = 'Este correo ya tiene una invitación pendiente.'
     }
-    if (!role) next.role = 'Elige el rol con el que entrará.'
+    if (!role) next.role = 'Selecciona un rol.'
     setErrors(next)
     if (Object.keys(next).length > 0) return
 
@@ -187,16 +188,14 @@ export default function OrgUsers() {
       <header className="page__head">
         <h1 className="page__title">Usuarios y roles</h1>
         <p className="page__lead">
-          Administra quién entra a la organización y con qué permisos. El rol define qué puede hacer
-          cada persona en el Merchant Desk y en esta consola.
+          Invita a tu equipo y asigna sus permisos.
         </p>
       </header>
 
       {activeAdmins.length === 1 && (
-        <Callout tone="warning" title="Hay un solo Organization Admin activo">
+        <Callout tone="warning" title="Solo hay un administrador activo">
           <p className="ray-body-sm">
-            Si esa persona pierde el acceso, nadie puede administrar la organización. Asigna el rol a
-            una segunda persona de confianza.
+            Asigna otro administrador para conservar el acceso si el actual no está disponible.
           </p>
         </Callout>
       )}
@@ -231,7 +230,7 @@ export default function OrgUsers() {
                 <EmptyState
                   icon={<UserPlus size={20} aria-hidden="true" />}
                   title="Todavía no hay personas registradas"
-                  description="Invita a tu equipo para que puedan operar, aprobar o consultar según su rol."
+                  description="Invita a tu equipo y asigna un rol a cada persona."
                   action={<Button variant="primary" size="sm" onClick={() => setInviteOpen(true)}>Invitar miembro</Button>}
                 />
               </CardBody>
@@ -244,7 +243,7 @@ export default function OrgUsers() {
         <div className="section__head">
           <div>
             <h2 className="section__title">Invitaciones pendientes</h2>
-            <p className="section__desc">Las invitaciones dejan de servir si las cancelas.</p>
+            <p className="section__desc">Cancelar invalida el enlace de invitación.</p>
           </div>
         </div>
 
@@ -259,7 +258,7 @@ export default function OrgUsers() {
                 <EmptyState
                   icon={<MailPlus size={20} aria-hidden="true" />}
                   title="No hay invitaciones pendientes"
-                  description="Cuando invites a alguien, su invitación aparece acá hasta que la acepte."
+                  description="Las invitaciones aparecerán aquí."
                 />
               </CardBody>
             )}
@@ -267,12 +266,13 @@ export default function OrgUsers() {
         </Card>
       </section>
 
+<ContentDetails summary="Permisos por rol">
       <section className="section">
         <div className="section__head">
           <div>
             <h2 className="section__title">Qué puede hacer cada rol</h2>
             <p className="section__desc">
-              Los límites de monto y la doble aprobación se configuran en permisos y aprobaciones.
+              Configura los límites en Permisos y aprobaciones.
             </p>
           </div>
           <Link className="btn btn--secondary btn--sm" to="/org/approvals">Configurar permisos</Link>
@@ -297,12 +297,13 @@ export default function OrgUsers() {
           </CardBody>
         </Card>
       </section>
+</ContentDetails>
 
       <Dialog
         open={inviteOpen}
         onClose={() => setInviteOpen(false)}
         title="Invitar a la organización"
-        description="La persona recibe un enlace y define su propia clave al aceptar."
+        description="Invitación simulada. No se envía un correo."
         footer={(
           <>
             <Button variant="ghost" size="sm" onClick={() => setInviteOpen(false)}>Cancelar</Button>

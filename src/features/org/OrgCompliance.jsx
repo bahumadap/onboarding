@@ -11,12 +11,12 @@ export default function OrgCompliance() {
   const kyb = KYB_STATUS_META[state.kybStatus]
   const identity = IDENTITY_STATUS_META[state.identityStatus]
   return <>
-    <header className="page__head"><h1 className="page__title">Documentación y compliance</h1><p className="page__lead">Expediente de la entidad principal, documentos declarados y aceptación de términos.</p></header>
+    <header className="page__head"><h1 className="page__title">Documentación y cumplimiento</h1><p className="page__lead">Consulta la verificación y los documentos de tu empresa.</p></header>
     <div className="grid grid-2">
       <Card><CardHeader title="Verificación empresarial" actions={<Badge tone={kyb.tone}>{kyb.label}</Badge>} /><CardBody>
         <p className="ray-body-sm">{kyb.description}</p><Link to="/onboarding/business">Revisar expediente KYB</Link>
       </CardBody></Card>
-      <Card><CardHeader title="Validación de identidad" actions={<Badge tone={identity.tone}>{identity.label}</Badge>} /><CardBody><Link to="/onboarding/identity">Ver validación de identidad</Link></CardBody></Card>
+      <Card><CardHeader title="Verificación de identidad" actions={<Badge tone={identity.tone}>{identity.label}</Badge>} /><CardBody><Link to="/onboarding/identity">Ver validación de identidad</Link></CardBody></Card>
     </div>
     <section className="section"><Card><CardHeader title="Secciones del expediente" /><CardBody><Table rows={KYB_SECTIONS} rowKey={r => r.id} columns={[
       { key: 'title', header: 'Sección', render: r => r.title },
@@ -29,7 +29,7 @@ export default function OrgCompliance() {
         { label: 'Aceptación', value: state.user.acceptedAt ? new Date(state.user.acceptedAt).toLocaleString('es-CL') : 'Pendiente' },
         { label: 'Expediente', value: state.onboardingDraftId || 'Pendiente' },
       ]} />
-      <p className="ray-body-sm text-secondary">Los documentos se declaran como parte de la simulación; no se han subido archivos ni firmado contratos bancarios.</p>
+      <p className="ray-body-sm text-secondary">Demo: no se suben documentos ni se firman contratos bancarios.</p>
     </CardBody></Card></section>
   </>
 }

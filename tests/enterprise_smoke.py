@@ -86,7 +86,7 @@ with sync_playwright() as p:
     page.locator('#password').fill('Empresa12345')
     page.locator('#passwordConfirm').fill('Empresa12345'); click('Continuar')
     page.locator('.checkbox').click(); click('Crear mi cuenta')
-    expect(page.get_by_text('Tu cuenta está creada', exact=True)).to_be_visible()
+    expect(page.get_by_role('heading', name='Registro completo', exact=True)).to_be_visible()
     assert 'Empresa12345' not in json.dumps(state())
     assert len(state()['team']) == 1
     click('Continuar con el onboarding')
@@ -94,23 +94,23 @@ with sync_playwright() as p:
     page.locator('#kyb-taxId').fill('76.123.456-0')
     page.locator('#kyb-entityType').select_option(index=1)
     page.locator('#kyb-address').fill('Dirección de prueba 123')
-    click('Marcar sección como completa')
+    click('Guardar sección')
     for field in ['reps', 'shareholders', 'ubos', 'ownership']:
         page.locator('#kyb-' + field).fill('Datos simulados')
-    click('Marcar sección como completa')
+    click('Guardar sección')
     for label in page.locator('.ob-section__body:visible .checkbox').all():
         label.click()
-    click('Marcar sección como completa')
+    click('Guardar sección')
     page.locator('#kyb-activity').fill('Servicios')
     page.locator('#kyb-volume').select_option(index=1)
     page.locator('#kyb-funds').select_option(index=1)
     page.locator('#kyb-counterparties').fill('Clientes simulados')
-    click('Marcar sección como completa')
+    click('Guardar sección')
     click('Enviar a revisión')
     click('Simular aprobación')
     check_state('accountStatus', 'not_provisioned')  # identity still missing
     goto('/onboarding/identity')
-    click('Iniciar validación')
+    click('Iniciar verificación')
     check_state('identityStatus', 'approved')
     check_state('accountStatus', 'provisioning')
     assert state()['products']['fx'] != 'active'
@@ -135,7 +135,7 @@ with sync_playwright() as p:
     click('Crear cuenta')
     expect(page.get_by_text('Recaudación demo', exact=True)).to_be_visible()
     goto('/desk/products')
-    page.get_by_role('button', name='Solicitar activación', exact=True).first.click()
+    page.get_by_role('button', name='Solicitar producto', exact=True).first.click()
     click('Enviar solicitud')
     page.wait_for_timeout(250)
     assert len(state()['productRequests']) == 1

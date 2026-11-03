@@ -21,7 +21,7 @@ import {
 import { MONTHLY_FLOW, formatCompact, formatMoney } from '../../mock/accounts'
 import { VA_STATUS_META } from '../../mock/virtualAccounts'
 import { TX_STATUS_META } from '../../mock/transactions'
-import { PRODUCT_STATUS, isProductOperable } from '../../state/statuses'
+import { ACCOUNT_STATUS_META, PRODUCT_STATUS, isProductOperable } from '../../state/statuses'
 import { ADDITIONAL_PRODUCTS } from '../../mock/products'
 import { useDemoState } from '../../state/DemoState'
 import {
@@ -87,7 +87,7 @@ export default function DeskOverview() {
           title="No pudimos cargar los movimientos"
           action={<Button variant="secondary" size="sm" onClick={retry}>Reintentar</Button>}
         >
-          <p className="ray-body-sm">El servicio de movimientos no respondió. Los saldos que ves pueden estar desactualizados.</p>
+          <p className="ray-body-sm">No pudimos actualizar los movimientos. Los saldos pueden estar desactualizados.</p>
         </Callout>
       </>
     )
@@ -102,7 +102,7 @@ export default function DeskOverview() {
         <div className="section__head">
           <div>
             <h2 className="section__title" id="sec-cuentas">Cuentas empresariales</h2>
-            <p className="section__desc">Saldo por moneda y estado de habilitación.</p>
+            <p className="section__desc">Saldos y estado por moneda.</p>
           </div>
         </div>
 
@@ -127,8 +127,7 @@ export default function DeskOverview() {
         <div style={{ marginTop: 'var(--ray-space-4)' }}>
           <Callout tone="info" title="Disponibilidad de monedas">
             <p className="ray-body-sm">
-              Las monedas que puede operar una empresa dependen de su país y del proveedor.
-              Las cuentas de esta demo son datos de ejemplo.
+              Monedas y cuentas de ejemplo. La disponibilidad real depende del país y del proveedor.
             </p>
           </Callout>
         </div>
@@ -162,12 +161,12 @@ export default function DeskOverview() {
             ) : !today ? (
               <EmptyState
                 title="Todavía no hay movimientos"
-                description="Cuando la cuenta registre abonos o egresos vas a ver acá el resumen del día."
+                description="Los abonos y egresos aparecerán aquí."
               />
             ) : (
               <div className="grid grid-4">
-                <Metric label="Abonos del día" value={formatMoney(today.inflow, 'CLP')} meta="Entradas confirmadas y en curso" />
-                <Metric label="Egresos del día" value={formatMoney(today.outflow, 'CLP')} meta="Salidas confirmadas y en curso" />
+                <Metric label="Abonos del día" value={formatMoney(today.inflow, 'CLP')} meta="Abonos confirmados y pendientes" />
+                <Metric label="Egresos del día" value={formatMoney(today.outflow, 'CLP')} meta="Egresos confirmados y pendientes" />
                 <Metric label="Movimientos" value={String(today.count)} meta="Operaciones registradas" />
                 <Metric
                   label="Pendientes"
@@ -184,7 +183,7 @@ export default function DeskOverview() {
       <section className="section" aria-labelledby="sec-flujo">
         <div className="section__head">
           <div>
-            <h2 className="section__title" id="sec-flujo">Entradas y salidas</h2>
+            <h2 className="section__title" id="sec-flujo">Abonos y egresos</h2>
             <p className="section__desc">Últimos seis meses, en millones de pesos.</p>
           </div>
         </div>
@@ -233,7 +232,7 @@ export default function DeskOverview() {
                       <Area
                         type="monotone"
                         dataKey="inflow"
-                        name="Entradas"
+                        name="Abonos"
                         stroke={CHART_COLORS.inflow}
                         strokeWidth={2}
                         fill="url(#deskInflow)"
@@ -241,7 +240,7 @@ export default function DeskOverview() {
                       <Area
                         type="monotone"
                         dataKey="outflow"
-                        name="Salidas"
+                        name="Egresos"
                         stroke={CHART_COLORS.outflow}
                         strokeWidth={2}
                         fill="url(#deskOutflow)"
@@ -249,7 +248,7 @@ export default function DeskOverview() {
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
-                <p className="desk-chart__foot">Serie de ejemplo, agregada sobre la cuenta vista en pesos chilenos.</p>
+                <p className="desk-chart__foot">Datos de ejemplo de la cuenta vista en CLP.</p>
               </>
             )}
           </CardBody>
@@ -261,14 +260,14 @@ export default function DeskOverview() {
         <div className="section__head">
           <div>
             <h2 className="section__title" id="sec-cv">Cuentas virtuales recientes</h2>
-            <p className="section__desc">Subcuentas creadas últimamente sobre la cuenta vista.</p>
+            <p className="section__desc">Últimas cuentas virtuales creadas.</p>
           </div>
           {vaOperable ? (
             <Button variant="secondary" size="sm" icon={<Layers size={15} aria-hidden="true" />} onClick={() => navigate('/desk/virtual-accounts')}>
               Gestionar cuentas virtuales
             </Button>
           ) : (
-            <Button variant="secondary" size="sm" disabled title="Las cuentas virtuales se habilitan con la cuenta vista activa">
+            <Button variant="secondary" size="sm" disabled title="Disponibles al activar la cuenta vista">
               Gestión no disponible
             </Button>
           )}
@@ -284,13 +283,13 @@ export default function DeskOverview() {
               <EmptyState
                 icon={<Layers size={20} aria-hidden="true" />}
                 title="Cuentas virtuales no habilitadas"
-                description="El producto de cuentas virtuales no está activo, así que no se pueden crear ni operar subcuentas."
+                description="Activa el producto para crear y usar cuentas virtuales."
               />
             ) : recentVirtual.length === 0 ? (
               <EmptyState
                 icon={<Layers size={20} aria-hidden="true" />}
-                title="Todavía no creaste cuentas virtuales"
-                description="Las cuentas virtuales te permiten separar saldos por usuario final, proyecto o flujo de cobro."
+                title="Sin cuentas virtuales"
+                description="Crea una cuenta virtual para separar saldos."
                 action={<Button variant="brand" size="sm" onClick={() => navigate('/desk/virtual-accounts')}>Crear la primera</Button>}
               />
             ) : (
@@ -321,7 +320,7 @@ export default function DeskOverview() {
         <div className="section__head">
           <div>
             <h2 className="section__title" id="sec-movimientos">Últimos movimientos</h2>
-            <p className="section__desc">Las cinco operaciones más recientes de las cuentas habilitadas.</p>
+            <p className="section__desc">Últimos 5 movimientos.</p>
           </div>
         </div>
 
@@ -370,7 +369,7 @@ export default function DeskOverview() {
                     <EmptyState
                       icon={<ArrowLeftRight size={20} aria-hidden="true" />}
                       title="Sin movimientos registrados"
-                      description="Cuando la cuenta reciba abonos o egresos los vas a ver acá."
+                      description="Los abonos y egresos aparecerán aquí."
                     />
                   </CardBody>
                 )}
@@ -391,7 +390,7 @@ export default function DeskOverview() {
           <Card level="medium">
             <CardHeader
               title="Productos que puedes solicitar"
-              description="Cada producto adicional tiene su propia solicitud, evaluación y activación."
+              description="Cada producto requiere evaluación y activación."
             />
             <Divider />
             <CardBody>
@@ -401,7 +400,7 @@ export default function DeskOverview() {
                 ))}
               </div>
               <p className="ray-body-sm text-secondary" style={{ marginTop: 'var(--ray-space-3)' }}>
-                Revisa requisitos, capacidades y plazos de evaluación antes de solicitar la activación.
+                Consulta los requisitos antes de solicitar un producto.
               </p>
             </CardBody>
             <CardFooter>
@@ -423,14 +422,15 @@ function PageHead() {
     <div className="page__head">
       <h1 className="page__title">Resumen operativo</h1>
       <p className="page__lead">
-        Saldos, actividad y movimientos de la organización. La administración de usuarios,
-        permisos y configuración de productos vive en Config Org.
+        Consulta los saldos y movimientos de tu empresa.
       </p>
     </div>
   )
 }
 
 function AccountCard({ account }) {
+  const { state } = useDemoState()
+  const accountMeta = ACCOUNT_STATUS_META[state.accountStatus]
   const navigate = useNavigate()
   const reason = inoperableReason(account)
 
@@ -449,7 +449,7 @@ function AccountCard({ account }) {
         </CardBody>
         <CardFooter>
           <Button variant="secondary" size="sm" onClick={() => navigate('/desk/products')}>
-            Ver el producto requerido
+            Ver producto
           </Button>
         </CardFooter>
       </Card>
@@ -466,7 +466,7 @@ function AccountCard({ account }) {
             <p className="ray-subtitle truncate">{account.label}</p>
             <p className="desk-id">{account.currency} · {account.number}</p>
           </div>
-          <Badge tone="success" dot>Operativa</Badge>
+          <Badge tone={accountMeta.tone} dot>{accountMeta.label}</Badge>
         </div>
 
         <p className="ray-display" style={{ fontSize: 'var(--ray-text-h3)', marginTop: 'var(--ray-space-4)' }}>

@@ -1,3 +1,4 @@
+import { ContentDetails } from '../../ui'
 /* =============================================================
    Config Org — permisos y aprobaciones (/org/approvals).
 
@@ -53,18 +54,18 @@ export default function OrgApprovals() {
 
   const save = () => {
     if (draft.initiatorRoles.length === 0) {
-      setError('Al menos un rol tiene que poder iniciar operaciones.')
-      toast.push({ tone: 'danger', title: 'Nadie podría operar', description: 'Elige al menos un rol que inicie operaciones.' })
+      setError('Selecciona al menos un rol iniciador.')
+      toast.push({ tone: 'danger', title: 'Nadie podría operar', description: 'Selecciona al menos un rol iniciador.' })
       return
     }
     if (draft.approverRoles.length === 0) {
-      setError('Al menos un rol tiene que poder aprobar.')
-      toast.push({ tone: 'danger', title: 'Nadie podría aprobar', description: 'Elige al menos un rol aprobador.' })
+      setError('Selecciona al menos un rol aprobador.')
+      toast.push({ tone: 'danger', title: 'Nadie podría aprobar', description: 'Selecciona al menos un rol aprobador.' })
       return
     }
     if (draft.dualApprovalEnabled && draft.dualApprovalThreshold <= 0) {
       setError('Define el monto desde el cual se exige doble aprobación.')
-      toast.push({ tone: 'danger', title: 'Falta el umbral', description: 'La doble aprobación necesita un monto de corte.' })
+      toast.push({ tone: 'danger', title: 'Falta el umbral', description: 'Ingresa un monto para la doble aprobación.' })
       return
     }
     setError('')
@@ -87,7 +88,7 @@ export default function OrgApprovals() {
     })
     setThresholdText(String(policy.dualApprovalThreshold))
     setError('')
-    toast.push({ tone: 'info', title: 'Cambios descartados', description: 'Volvimos a la política vigente.' })
+    toast.push({ tone: 'info', title: 'Cambios descartados', description: 'Se restauró la política guardada.' })
   }
 
   /** Matriz de capacidades derivada de la política guardada. */
@@ -106,14 +107,13 @@ export default function OrgApprovals() {
       <header className="page__head">
         <h1 className="page__title">Permisos y aprobaciones</h1>
         <p className="page__lead">
-          Define quién puede iniciar operaciones, quién las autoriza y desde qué monto hacen falta
-          dos personas. La política aplica a todas las cuentas de la organización.
+          Define quién inicia y aprueba operaciones. La política aplica a todas las cuentas.
         </p>
       </header>
 
       {/* ------------------------- resumen en prosa ------------------------- */}
       <Card level="medium">
-        <CardHeader title="Política vigente" description="Esto es lo que hoy puede hacer cada quien." />
+        <CardHeader title="Política vigente" description="Permisos actuales." />
         <CardBody>
           <div className="org-prose">
             <p>
@@ -136,8 +136,7 @@ export default function OrgApprovals() {
               )}
             </p>
             <p>
-              Los roles sin permiso de iniciar ni de aprobar solo consultan saldos, movimientos y
-              reportes en el Merchant Desk.
+              Los demás roles solo pueden consultar saldos y movimientos.
             </p>
           </div>
         </CardBody>
@@ -147,8 +146,7 @@ export default function OrgApprovals() {
         <div style={{ marginTop: 'var(--ray-space-4)' }}>
           <Callout tone="warning" title="El mismo rol inicia y aprueba">
             <p className="ray-body-sm">
-              {roleLabel(policy.approverRoles[0])} puede iniciar y aprobar. La doble aprobación igual
-              exige personas distintas, pero conviene separar los roles para dejar la traza más clara.
+              {roleLabel(policy.approverRoles[0])} puede iniciar y aprobar. La doble aprobación exige personas distintas.
             </p>
           </Callout>
         </div>
@@ -159,7 +157,7 @@ export default function OrgApprovals() {
         <Card>
           <CardHeader
             title="Quién inicia y quién aprueba"
-            description="Un rol puede estar en ambas listas, pero una misma persona nunca aprueba lo que inició."
+            description="Con doble aprobación, quien inicia una operación no puede aprobarla."
           />
           <CardBody>
             <div className="grid grid-2">
@@ -167,7 +165,7 @@ export default function OrgApprovals() {
                 label="Roles que pueden iniciar"
                 htmlFor="pol-initiators"
                 required
-                hint="Crean la operación y la dejan pendiente de autorización."
+                hint="Pueden crear operaciones."
               >
                 <MultiSelect
                   id="pol-initiators"
@@ -182,7 +180,7 @@ export default function OrgApprovals() {
                 label="Roles que pueden aprobar"
                 htmlFor="pol-approvers"
                 required
-                hint="Autorizan operaciones iniciadas por otras personas."
+                hint="Pueden aprobar operaciones."
               >
                 <MultiSelect
                   id="pol-approvers"
@@ -202,10 +200,10 @@ export default function OrgApprovals() {
                 onChange={e => { setDraft(d => ({ ...d, dualApprovalEnabled: e.target.checked })); setError('') }}
               />
               <Field
-                label="Monto desde el cual se exigen dos aprobaciones"
+                label="Monto desde el cual se exige doble aprobación"
                 htmlFor="pol-threshold"
                 error={error && draft.dualApprovalEnabled && draft.dualApprovalThreshold <= 0 ? error : undefined}
-                hint="Se expresa en pesos chilenos, la moneda de la cuenta vista principal."
+                hint="Monto en pesos chilenos (CLP)."
               >
                 <Input
                   id="pol-threshold"
@@ -229,7 +227,7 @@ export default function OrgApprovals() {
           <CardFooter>
             <div className="row between gap-3 wrap">
               <span className="org-inline-note">
-                {dirty ? 'Tienes cambios sin guardar.' : 'La política mostrada es la vigente.'}
+                {dirty ? 'Tienes cambios sin guardar.' : 'Sin cambios pendientes.'}
               </span>
               <div className="row gap-2">
                 <Button variant="ghost" size="sm" disabled={!dirty} onClick={reset}>Descartar</Button>
@@ -245,7 +243,7 @@ export default function OrgApprovals() {
         <div className="section__head">
           <div>
             <h2 className="section__title">Matriz de autorización</h2>
-            <p className="section__desc">Refleja la política guardada, no los cambios sin guardar.</p>
+            <p className="section__desc">Muestra los permisos guardados.</p>
           </div>
           <Link className="btn btn--secondary btn--sm" to="/org/users">Administrar personas</Link>
         </div>
@@ -278,14 +276,15 @@ export default function OrgApprovals() {
         </Card>
       </section>
 
-      <section className="section">
+      <ContentDetails summary="Cómo se aplica la política">
+        <section className="section">
         <Callout tone="info" title="Dónde se aplica esta política" icon={<ShieldCheck size={16} aria-hidden="true" />}>
           <p className="ray-body-sm">
-            Las aprobaciones se piden al momento de operar, en el Merchant Desk. Config Org define la
-            regla; el Desk la ejecuta sobre cada movimiento.
+            La política se aplica a las operaciones de Merchant Desk.
           </p>
         </Callout>
       </section>
+      </ContentDetails>
     </>
   )
 }

@@ -15,7 +15,7 @@ import {
 import { formatMoney } from '../../mock/accounts'
 import { TX_STATUS_META } from '../../mock/transactions'
 import { VA_STATUS_META } from '../../mock/virtualAccounts'
-import { PRODUCT_STATUS, PRODUCT_STATUS_META, isProductOperable } from '../../state/statuses'
+import { ACCOUNT_STATUS_META, PRODUCT_STATUS, PRODUCT_STATUS_META, isProductOperable } from '../../state/statuses'
 import { useDemoState } from '../../state/DemoState'
 import {
   BalanceBreakdown, SignedAmount, formatDateTime, inoperableReason,
@@ -75,7 +75,7 @@ export default function AccountDetail() {
         <BackLink />
         <div className="page__head">
           <h1 className="page__title">{account.label}</h1>
-          <p className="page__lead">Esta cuenta todavía no está habilitada para operar.</p>
+          <p className="page__lead">Esta cuenta aún no está activa.</p>
         </div>
         <Card level="low">
           <CardBody>
@@ -87,7 +87,7 @@ export default function AccountDetail() {
                 <div className="row wrap gap-2 center">
                   {productMeta && <Badge tone={productMeta.tone}>{account.requiredProduct?.name}: {productMeta.label.toLowerCase()}</Badge>}
                   <Button variant="brand" size="sm" onClick={() => navigate('/desk/products')}>
-                    Ir al catálogo de productos
+                    Ver productos
                   </Button>
                 </div>
               )}
@@ -109,10 +109,10 @@ export default function AccountDetail() {
             <h1 className="page__title">{account.label}</h1>
             <p className="page__lead">
               Cuenta {account.currency} terminada en {account.number.replace(/\D/g, '')}.
-              Los saldos y movimientos son datos de ejemplo.
+              Saldos y movimientos de ejemplo.
             </p>
           </div>
-          <Badge tone="success" dot>Operativa</Badge>
+          <Badge tone={ACCOUNT_STATUS_META[state.accountStatus].tone} dot>{ACCOUNT_STATUS_META[state.accountStatus].label}</Badge>
         </div>
       </div>
 
@@ -150,7 +150,7 @@ export default function AccountDetail() {
         <div className="section__head">
           <div>
             <h2 className="section__title" id="sec-datos">Datos de la cuenta</h2>
-            <p className="section__desc">Información necesaria para recibir y enviar fondos.</p>
+
           </div>
         </div>
         <Card level="low">
@@ -191,7 +191,7 @@ export default function AccountDetail() {
                 title="No pudimos cargar los movimientos"
                 action={<Button variant="secondary" size="sm" onClick={retry}>Reintentar</Button>}
               >
-                <p className="ray-body-sm">El servicio de movimientos no respondió.</p>
+                <p className="ray-body-sm">No pudimos actualizar los movimientos.</p>
               </Callout>
             </CardBody>
           ) : loading ? (
@@ -233,7 +233,7 @@ export default function AccountDetail() {
                   <EmptyState
                     icon={<ArrowLeftRight size={20} aria-hidden="true" />}
                     title="Esta cuenta no tiene movimientos"
-                    description="Cuando reciba abonos o egresos los vas a ver en esta cartola."
+                    description="Los abonos y egresos aparecerán aquí."
                   />
                 </CardBody>
               )}
@@ -262,7 +262,7 @@ export default function AccountDetail() {
               <EmptyState
                 icon={<Layers size={20} aria-hidden="true" />}
                 title="Cuentas virtuales no habilitadas"
-                description="El producto de cuentas virtuales no está activo para tu organización."
+                description="El producto de cuentas virtuales no está activo."
               />
             ) : loading ? (
               <div className="stack gap-3">
@@ -271,8 +271,8 @@ export default function AccountDetail() {
             ) : linkedVirtual.length === 0 ? (
               <EmptyState
                 icon={<Layers size={20} aria-hidden="true" />}
-                title="Sin cuentas virtuales en esta moneda"
-                description="Puedes crear subcuentas para separar saldos por usuario final, proyecto o flujo de cobro."
+                title="Sin cuentas virtuales"
+                description="Crea una cuenta virtual para separar saldos."
                 action={<Button variant="brand" size="sm" onClick={() => navigate('/desk/virtual-accounts')}>Crear cuenta virtual</Button>}
               />
             ) : (

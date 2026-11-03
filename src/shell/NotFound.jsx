@@ -16,7 +16,7 @@ export default function NotFound() {
         <EmptyState
           icon={<Compass size={20} aria-hidden="true" />}
           title="Esta página no existe"
-          description="El enlace puede estar mal escrito o apuntar a una sección que cambió de lugar."
+          description="Revisa la dirección o vuelve al inicio."
           action={<Button variant="brand" onClick={() => navigate('/')}>Volver al inicio</Button>}
         />
       </div>

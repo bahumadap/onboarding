@@ -110,7 +110,7 @@ export default function DemoControl() {
         open={open}
         onClose={() => setOpen(false)}
         title="Control de demo"
-        description="Mueve los estados del sistema sin backend. Las cuatro dimensiones son independientes."
+        description="Prueba estados simulados de usuario, verificaciones, cuenta y productos."
         wide
         footer={
           <>
@@ -132,7 +132,7 @@ export default function DemoControl() {
       >
         <Callout tone="brand" title="Escenario rápido">
           <p style={{ marginBottom: 10 }}>
-            Deja la organización aprobada, la cuenta vista activa y FX en evaluación, para entrar directo al Merchant Desk.
+            Abre Merchant Desk con la cuenta activa y FX en evaluación.
           </p>
           <Button
             size="sm"
@@ -151,13 +151,13 @@ export default function DemoControl() {
             onSelect={v => actions.patchState({ userStatus: v })}
           />
           <ChipGroup
-            label="2 · Validación de identidad"
+            label="2 · Verificación de identidad"
             options={asOptions(IDENTITY_STATUS_META)}
             value={state.identityStatus}
             onSelect={v => actions.setIdentityStatus(v)}
           />
           <ChipGroup
-            label="3 · KYB de la organización"
+            label="3 · Verificación de empresa"
             options={asOptions(KYB_STATUS_META)}
             value={state.kybStatus}
             onSelect={v => {

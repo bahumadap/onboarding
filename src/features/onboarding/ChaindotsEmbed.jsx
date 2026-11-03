@@ -26,17 +26,17 @@ export const CHAINDOTS_STEPS = [
   {
     id: 'document',
     title: 'Captura del documento',
-    copy: 'Pon tu cédula o pasaporte dentro del marco. El proveedor revisa que se lea completo y sin reflejos.',
+    copy: 'Coloca el documento completo dentro del marco, sin reflejos.',
   },
   {
     id: 'selfie',
     title: 'Selfie con prueba de vida',
-    copy: 'Mira a la cámara y sigue las indicaciones en pantalla. Tomamos solo lo necesario para comparar.',
+    copy: 'Mira a la cámara y sigue las indicaciones.',
   },
   {
     id: 'match',
     title: 'Validación contra registros',
-    copy: 'Chaindots compara el documento con la selfie y contrasta los datos con las fuentes disponibles.',
+    copy: 'Comparamos el documento y la selfie.',
   },
 ]
 
@@ -45,31 +45,31 @@ const RESULT_VIEW = {
     orb: 'done',
     icon: <CircleCheck size={28} aria-hidden="true" />,
     title: 'Identidad verificada',
-    copy: 'El proveedor confirmó tu identidad. Ya puedes volver al onboarding.',
+    copy: 'Verificación simulada completada.',
   },
   in_review: {
     orb: 'warn',
     icon: <Clock size={28} aria-hidden="true" />,
     title: 'Derivada a revisión manual',
-    copy: 'El proveedor no pudo resolverlo automáticamente y pasó tu caso a revisión. Suele tomar menos de 24 horas y te avisamos por correo.',
+    copy: 'Tu identidad requiere revisión manual. Consulta el estado aquí.',
   },
   observed: {
     orb: 'warn',
     icon: <CircleAlert size={28} aria-hidden="true" />,
     title: 'Hay un paso por repetir',
-    copy: 'La captura del documento quedó parcialmente ilegible. Repite la validación con mejor luz y el documento completo dentro del marco.',
+    copy: 'El documento no se lee completo. Repite la captura con buena luz.',
   },
   failed: {
     orb: 'error',
     icon: <AlertTriangle size={28} aria-hidden="true" />,
     title: 'La validación no se completó',
-    copy: 'El proveedor no pudo confirmar tu identidad con esta sesión. Puedes intentarlo de nuevo; si vuelve a fallar, tu ejecutivo puede validarte por otra vía.',
+    copy: 'No pudimos verificar tu identidad. Reintenta o contacta a tu ejecutivo.',
   },
   load_error: {
     orb: 'error',
     icon: <AlertTriangle size={28} aria-hidden="true" />,
     title: 'No pudimos cargar el verificador',
-    copy: 'La sesión con Chaindots no alcanzó a iniciarse, así que no se envió ningún dato. Revisa tu conexión y vuelve a intentarlo.',
+    copy: 'No se inició la verificación ni se enviaron datos. Vuelve a intentarlo.',
   },
 }
 
@@ -122,7 +122,7 @@ export default function ChaindotsEmbed({ scriptedOutcome = 'approved', onProgres
   return (
     <div className="ob-embed">
       <div className="ob-embed__bar">
-        <span>Verificador embebido de Chaindots</span>
+        <span>Chaindots · Simulación</span>
         {phase === 'loading' && <Badge tone="neutral" dot>Cargando</Badge>}
         {phase === 'running' && <Badge tone="info" dot>Sesión en curso</Badge>}
         {phase === 'result' && (
@@ -170,7 +170,7 @@ export default function ChaindotsEmbed({ scriptedOutcome = 'approved', onProgres
           <p className="ob-embed__headline">{result.title}</p>
           <p className="ob-embed__copy">{result.copy}</p>
           {onRetry && scriptedOutcome !== 'approved' && (
-            <Button variant="secondary" size="sm" onClick={onRetry}>Volver a intentar</Button>
+            <Button variant="secondary" size="sm" onClick={onRetry}>Reintentar</Button>
           )}
         </div>
       )}

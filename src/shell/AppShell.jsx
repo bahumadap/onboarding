@@ -36,7 +36,7 @@ const ORG_ITEMS = [
   { to: '/org/approvals', label: 'Permisos y aprobaciones', icon: ShieldCheck },
   { to: '/org/api', label: 'API e integraciones', icon: KeyRound },
   { to: '/org/products', label: 'Productos y servicios', icon: CreditCard },
-  { to: '/org/compliance', label: 'Documentación y compliance', icon: FileCheck2 },
+  { to: '/org/compliance', label: 'Documentación y cumplimiento', icon: FileCheck2 },
   { to: '/org/preferences', label: 'Preferencias', icon: Settings2 },
 ]
 
@@ -44,7 +44,7 @@ function NavItem({ item, disabled, onNavigate }) {
   const Icon = item.icon
   if (disabled) {
     return (
-      <span className="sidebar__item sidebar__item--disabled" aria-disabled="true" title="Disponible cuando la cuenta vista esté habilitada">
+      <span className="sidebar__item sidebar__item--disabled" aria-disabled="true" title="Disponible con una cuenta vista activa">
         <span className="sidebar__item-icon"><Icon size={17} aria-hidden="true" /></span>
         {item.label}
       </span>
@@ -135,7 +135,7 @@ export default function AppShell() {
           <div className="demo-note">
             <div>
               <p className="demo-note__title">Demo conceptual</p>
-              <p className="demo-note__body">Datos de ejemplo. No procesa operaciones reales.</p>
+              <p className="demo-note__body">Datos de ejemplo. Sin operaciones reales.</p>
             </div>
           </div>
           <div className="sidebar__user">

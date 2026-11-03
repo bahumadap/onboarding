@@ -93,7 +93,7 @@ export default function OrgAccounts() {
 
   const saveSettings = () => {
     if (!draft.alias.trim()) {
-      toast.push({ tone: 'danger', title: 'Falta el alias', description: 'El alias es el nombre con el que el equipo reconoce la cuenta.' })
+      toast.push({ tone: 'danger', title: 'Falta el alias', description: 'Ingresa un alias para identificar la cuenta.' })
       return
     }
     if (draft.roles.length === 0) {
@@ -127,8 +127,7 @@ export default function OrgAccounts() {
       <header className="page__head">
         <h1 className="page__title">Cuentas</h1>
         <p className="page__lead">
-          Administra la estructura de cuentas del grupo: a qué entidad jurídica pertenece cada una,
-          para qué se usa y quién puede usarla. Para ver saldos y movimientos, entra al Merchant Desk.
+          Asigna entidades, alias y permisos a las cuentas.
         </p>
       </header>
 
@@ -138,8 +137,7 @@ export default function OrgAccounts() {
         action={<Link className="btn btn--secondary btn--sm" to="/desk">Ir al Merchant Desk</Link>}
       >
         <p className="ray-body-sm">
-          Esta pantalla no muestra saldos ni permite mover fondos. Los abonos, egresos y la gestión
-          diaria de cuentas virtuales se hacen en el Desk.
+          Consulta saldos y opera cuentas virtuales en Merchant Desk.
         </p>
       </Callout>
 
@@ -156,7 +154,7 @@ export default function OrgAccounts() {
           <EmptyState
             icon={<Wallet size={20} aria-hidden="true" />}
             title="Todavía no hay cuentas en la organización"
-            description="Las cuentas aparecen cuando el aprovisionamiento termina. Mientras tanto no hay estructura que administrar."
+            description="Las cuentas aparecerán al completar la apertura."
           />
         </section>
       ) : groups.map(group => {
@@ -170,7 +168,7 @@ export default function OrgAccounts() {
                 <p className="section__desc">
                   {entity
                     ? `Constituida en ${countryLabel(entity.country)} · ${group.accounts.length} ${group.accounts.length === 1 ? 'cuenta' : 'cuentas'}`
-                    : 'Asigna estas cuentas a una entidad jurídica para dejar clara su titularidad.'}
+                    : 'Asigna una entidad jurídica a cada cuenta.'}
                 </p>
               </div>
             </div>
@@ -228,14 +226,13 @@ export default function OrgAccounts() {
               <Card level="medium" style={{ marginTop: 'var(--ray-space-4)' }}>
                 <CardHeader
                   title="Cuentas virtuales de esta entidad"
-                  description="Subcuentas colgadas de la cuenta vista. Se crean, suspenden y concilian en el Merchant Desk."
+                  description="Administra las cuentas virtuales en Merchant Desk."
                   actions={<Link className="btn btn--secondary btn--sm" to="/desk/virtual-accounts">Administrar en el Desk</Link>}
                 />
                 <CardBody>
                   {state.virtualAccounts.length === 0 ? (
                     <p className="ray-body-sm text-tertiary">
-                      Todavía no hay cuentas virtuales. Se crean desde el Desk, una por usuario final,
-                      proyecto o flujo de cobro.
+                      Crea cuentas virtuales en Merchant Desk.
                     </p>
                   ) : (
                     <DefinitionList
@@ -272,7 +269,7 @@ export default function OrgAccounts() {
         open={Boolean(editing)}
         onClose={() => setEditing(null)}
         title={editing ? `Configurar ${settingsOf(editing).alias}` : 'Configurar cuenta'}
-        description="Son datos administrativos. No cambian el estado de aprovisionamiento ni mueven fondos."
+        description="Estos cambios no mueven fondos ni modifican el estado de apertura."
         footer={(
           <>
             <Button variant="ghost" size="sm" onClick={() => setEditing(null)}>Cancelar</Button>
@@ -281,7 +278,7 @@ export default function OrgAccounts() {
         )}
       >
         <div className="stack gap-4">
-          <Field label="Alias" htmlFor="acc-alias" required hint="Cómo reconoce el equipo esta cuenta.">
+          <Field label="Alias" htmlFor="acc-alias" required hint="Nombre visible para tu equipo.">
             <Input
               id="acc-alias"
               value={draft.alias}
@@ -299,7 +296,7 @@ export default function OrgAccounts() {
           <Field
             label="Entidad jurídica titular"
             htmlFor="acc-entity"
-            hint="Define de qué sociedad del grupo es la cuenta."
+            hint="Sociedad titular de la cuenta."
           >
             <Select
               id="acc-entity"
@@ -312,7 +309,7 @@ export default function OrgAccounts() {
           <Field
             label="Roles que pueden usarla"
             htmlFor="acc-roles"
-            hint="Los límites de monto y la doble aprobación se definen en permisos y aprobaciones."
+            hint="Configura límites y doble aprobación en Permisos y aprobaciones."
           >
             <MultiSelect
               id="acc-roles"

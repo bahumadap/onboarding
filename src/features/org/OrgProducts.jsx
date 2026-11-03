@@ -67,7 +67,7 @@ export default function OrgProducts() {
       toast.push({
         tone: 'danger',
         title: 'Nadie podría usar el producto',
-        description: 'Asigna al menos un rol con acceso o suspende el producto.',
+        description: 'Asigna un rol con acceso o suspende el producto.',
       })
       return
     }
@@ -99,19 +99,17 @@ export default function OrgProducts() {
       <header className="page__head">
         <h1 className="page__title">Productos y servicios</h1>
         <p className="page__lead">
-          Administra los productos que la organización ya tiene aprobados: quién los usa, con qué
-          límites y si siguen habilitados. La operación diaria ocurre en el Merchant Desk.
+          Configura los permisos y límites de tus productos aprobados.
         </p>
       </header>
 
       <Callout
         tone="info"
-        title="Solicitar un producto es otra cosa"
+        title="Nuevos productos"
         action={<Link className="btn btn--secondary btn--sm" to="/desk/products">Ver catálogo</Link>}
       >
         <p className="ray-body-sm">
-          Las solicitudes y su evaluación viven en el catálogo del Desk. Acá solo administras lo que
-          ya quedó aprobado.
+          Solicita nuevos productos en el catálogo de Merchant Desk.
         </p>
       </Callout>
 
@@ -128,7 +126,7 @@ export default function OrgProducts() {
           <EmptyState
             icon={<Sparkles size={20} aria-hidden="true" />}
             title="Todavía no hay productos habilitados"
-            description="La cuenta vista y las cuentas virtuales se habilitan cuando termina el aprovisionamiento. El resto pasa por una evaluación propia."
+            description="La cuenta vista y las cuentas virtuales se habilitan al completar la apertura."
             action={<Link className="btn btn--primary btn--sm" to="/desk/products">Ver catálogo de productos</Link>}
           />
         ) : (
@@ -191,7 +189,7 @@ export default function OrgProducts() {
           <div>
             <h2 className="section__title">Todavía no habilitados</h2>
             <p className="section__desc">
-              Cada uno tiene su propia evaluación. Las solicitudes se hacen desde el catálogo del Desk.
+              Cada solicitud requiere evaluación.
             </p>
           </div>
         </div>
@@ -227,7 +225,7 @@ export default function OrgProducts() {
                       ? (p.unavailableReason ?? 'No disponible para esta organización.')
                       : p.reviewDays
                         ? `Evaluación de ${p.reviewDays}`
-                        : 'En proceso con el equipo de riesgo.'}
+                        : 'En evaluación.'}
                   </span>
                 ),
               },
@@ -263,7 +261,7 @@ export default function OrgProducts() {
         open={Boolean(editing)}
         onClose={() => setEditing(null)}
         title={editing ? `Configurar ${editing.name}` : 'Configurar producto'}
-        description="Define quién puede usar el producto y con qué límites internos."
+        description="Asigna permisos y límites internos."
         footer={(
           <>
             <Button variant="ghost" size="sm" onClick={() => setEditing(null)}>Cancelar</Button>
@@ -285,7 +283,7 @@ export default function OrgProducts() {
           <Field
             label="Límite interno por operación"
             htmlFor="prod-limit"
-            hint="Deja 0 para no agregar un límite propio sobre la política general."
+            hint="Ingresa 0 para aplicar solo el límite general."
           >
             <Input
               id="prod-limit"
@@ -305,8 +303,7 @@ export default function OrgProducts() {
             onChange={e => setDraft(d => ({ ...d, notifyOnUse: e.target.checked }))}
           />
           <p className="org-inline-note">
-            Estos límites se suman a la política de aprobaciones de la organización: siempre manda el
-            más restrictivo. <Link to="/org/approvals">Revisar permisos y aprobaciones</Link>
+            Se aplica el límite más restrictivo entre el producto y la política general. <Link to="/org/approvals">Revisar permisos y aprobaciones</Link>
           </p>
         </div>
       </Dialog>

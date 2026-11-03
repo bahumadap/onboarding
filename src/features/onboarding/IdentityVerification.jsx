@@ -1,3 +1,4 @@
+import { ContentDetails } from '../../ui'
 /* =============================================================
    Macroproceso B1 — validación de identidad del usuario.
 
@@ -32,14 +33,14 @@ const OUTCOME_TO_STATUS = {
 }
 
 const OUTCOME_TOAST = {
-  approved: { tone: 'success', title: 'Identidad verificada', description: 'Te llevamos de vuelta al onboarding.' },
-  in_review: { tone: 'info', title: 'Validación en revisión manual', description: 'Te avisamos por correo cuando tengamos el resultado.' },
-  observed: { tone: 'info', title: 'Queda un paso por repetir', description: 'Revisa la indicación del proveedor y vuelve a intentarlo.' },
-  failed: { tone: 'danger', title: 'La validación no se completó', description: 'Puedes intentarlo de nuevo desde esta misma pantalla.' },
+  approved: { tone: 'success', title: 'Identidad verificada', description: 'Volverás al onboarding.' },
+  in_review: { tone: 'info', title: 'Validación en revisión manual', description: 'Consulta el resultado en esta pantalla.' },
+  observed: { tone: 'info', title: 'Queda un paso por repetir', description: 'Revisa la observación y repite la captura.' },
+  failed: { tone: 'danger', title: 'La validación no se completó', description: 'Vuelve a iniciar la verificación.' },
   load_error: { tone: 'danger', title: 'No se pudo abrir el verificador', description: 'No se envió ningún dato. Revisa tu conexión.' },
 }
 
-/** Desenlaces alternativos: son parte de lo que la demo tiene que mostrar. */
+/** Otros resultados de la demo: son parte de lo que la demo tiene que mostrar. */
 const SIMULATIONS = [
   { outcome: 'in_review', label: 'Simular revisión manual', icon: <Clock size={14} aria-hidden="true" /> },
   { outcome: 'observed', label: 'Simular observación', icon: <Camera size={14} aria-hidden="true" /> },
@@ -48,9 +49,9 @@ const SIMULATIONS = [
 ]
 
 const REQUISITOS = [
-  { id: 'doc', title: 'Un documento vigente', description: 'Cédula de identidad o pasaporte, con los datos legibles.' },
-  { id: 'cam', title: 'Cámara disponible', description: 'La captura se hace en este mismo dispositivo, sin instalar nada.' },
-  { id: 'time', title: 'Dos o tres minutos', description: 'Si la interrumpes, puedes retomarla más tarde desde el hub.' },
+  { id: 'doc', title: 'Documento vigente', description: 'Cédula o pasaporte legible.' },
+  { id: 'cam', title: 'Cámara disponible', description: 'No requiere instalar una aplicación.' },
+  { id: 'time', title: 'Avance guardado', description: 'Puedes salir y retomar después.' },
 ]
 
 export default function IdentityVerification() {
@@ -93,8 +94,8 @@ export default function IdentityVerification() {
   return (
     <FlowLayout
       aside={{
-        title: 'Verificamos quién abre la cuenta',
-        body: 'La validación de identidad la realiza Chaindots dentro de esta misma pantalla. YOL1 no almacena las imágenes de la captura.',
+        title: 'Verifica tu identidad',
+        body: 'Verificación simulada con Chaindots. No se toman imágenes.',
         items: CHAINDOTS_STEPS.map((s, i) => ({ title: s.title, description: s.copy, marker: i + 1 })),
       }}
       wide
@@ -102,10 +103,9 @@ export default function IdentityVerification() {
     >
       <div className="ob-stack">
         <div className="ob-head">
-          <h2 className="flow__title">Valida tu identidad</h2>
+          <h2 className="flow__title">Verifica tu identidad</h2>
           <p className="flow__lead">
-            Necesitamos confirmar que eres quien dice ser antes de habilitar la cuenta de la
-            empresa. El proceso corre dentro de YOL1 y toma pocos minutos.
+            Verifica tu identidad para continuar con la apertura de la cuenta.
           </p>
         </div>
 
@@ -124,12 +124,12 @@ export default function IdentityVerification() {
         {!session && status === IDENTITY_STATUS.NOT_STARTED && (
           <Card>
             <CardBody>
-              <p className="ray-label" style={{ marginBottom: 'var(--ray-space-3)' }}>Antes de empezar, ten a mano</p>
+              <p className="ray-label" style={{ marginBottom: 'var(--ray-space-3)' }}>Qué necesitas</p>
               <Stepper
                 steps={REQUISITOS.map(r => ({ id: r.id, title: r.title, description: r.description, state: 'upcoming' }))}
               />
               <div className="flow__actions">
-                <Button variant="brand" onClick={() => startSession('approved')}>Iniciar validación</Button>
+                <Button variant="brand" onClick={() => startSession('approved')}>Iniciar verificación</Button>
                 <Button variant="ghost" onClick={() => navigate('/onboarding')}>Volver al onboarding</Button>
               </div>
             </CardBody>
@@ -140,12 +140,11 @@ export default function IdentityVerification() {
         {resumedWithoutSession && (
           <Callout
             tone="info"
-            title="Dejaste la validación a medio camino"
-            action={<Button size="sm" variant="primary" onClick={() => startSession('approved')}>Retomar validación</Button>}
+            title="Verificación sin terminar"
+            action={<Button size="sm" variant="primary" onClick={() => startSession('approved')}>Retomar verificación</Button>}
           >
             <p className="ray-body-sm">
-              La sesión anterior con el proveedor se cerró al salir de la pantalla. Al retomar se
-              abre una nueva y empiezas desde la captura del documento.
+              Al retomar, comenzarás desde la captura del documento.
             </p>
           </Callout>
         )}
@@ -157,20 +156,20 @@ export default function IdentityVerification() {
               <div className="ob-stage__top">
                 <span className="grow">
                   <p className="ob-stage__name">Resultado de la validación</p>
-                  <p className="ob-stage__desc">Registrado el {new Date().toLocaleDateString('es-CL')} por Chaindots.</p>
+                  <p className="ob-stage__desc">Resultado simulado · {new Date().toLocaleDateString('es-CL')}.</p>
                 </span>
                 <Badge tone={meta.tone} dot>{meta.label}</Badge>
               </div>
               <p className="ray-body-sm text-secondary" style={{ marginTop: 'var(--ray-space-3)' }}>
                 {status === IDENTITY_STATUS.APPROVED && 'Tu identidad está verificada. Esta etapa del onboarding quedó completa.'}
-                {status === IDENTITY_STATUS.IN_REVIEW && 'Tu caso está en revisión manual del proveedor. No hay nada más que hacer por ahora: te avisamos por correo.'}
+                {status === IDENTITY_STATUS.IN_REVIEW && 'Tu identidad requiere revisión manual. Consulta el estado aquí.'}
                 {status === IDENTITY_STATUS.OBSERVED && 'El proveedor pide repetir un paso de la captura. Inicia una nueva validación cuando puedas.'}
                 {status === IDENTITY_STATUS.FAILED && 'La última sesión no pudo confirmar tu identidad. Puedes intentarlo otra vez; si vuelve a fallar, tu ejecutivo puede validarte por otra vía.'}
               </p>
               <div className="flow__actions">
                 {status === IDENTITY_STATUS.APPROVED
                   ? <Button variant="primary" icon={<ArrowLeft size={15} aria-hidden="true" />} onClick={() => navigate('/onboarding')}>Volver al onboarding</Button>
-                  : <Button variant="primary" onClick={() => startSession('approved')}>Iniciar una nueva validación</Button>}
+                  : <Button variant="primary" onClick={() => startSession('approved')}>Reintentar verificación</Button>}
                 {status !== IDENTITY_STATUS.APPROVED && (
                   <Button variant="ghost" onClick={() => navigate('/onboarding')}>Volver al onboarding</Button>
                 )}
@@ -183,22 +182,22 @@ export default function IdentityVerification() {
         {session && status === IDENTITY_STATUS.APPROVED && (
           <Callout
             tone="success"
-            title="Listo, tu identidad quedó verificada"
+            title="Identidad verificada"
             action={<Button size="sm" variant="primary" onClick={() => navigate('/onboarding')}>Volver ahora</Button>}
           >
-            <p className="ray-body-sm">Te llevamos de vuelta al onboarding en unos segundos.</p>
+            <p className="ray-body-sm">Volverás al onboarding en unos segundos.</p>
           </Callout>
         )}
 
         {/* --------- controles de simulación --------- */}
-        <Card flat level="medium">
+        <ContentDetails summary="Probar otros resultados">
+          <Card flat level="medium">
           <CardBody>
             <div className="ob-stage__top">
               <span className="grow">
-                <p className="ray-label">Desenlaces alternativos</p>
+                <p className="ray-label">Otros resultados de la demo</p>
                 <p className="ob-stage__desc">
-                  La verificación de identidad no siempre termina aprobada. Estos controles abren una
-                  sesión que termina en el desenlace que elijas.
+                  Elige un resultado para probar la verificación.
                 </p>
               </span>
             </div>
@@ -220,20 +219,21 @@ export default function IdentityVerification() {
                   actions.setIdentityStatus(IDENTITY_STATUS.NOT_STARTED)
                 }}
               >
-                Reiniciar a no iniciada
+                Reiniciar verificación
               </Button>
             </div>
             {currentStep && (
               <p className="flow__footnote">
                 <CircleCheck size={12} aria-hidden="true" style={{ verticalAlign: '-2px', marginRight: 'var(--ray-space-1)' }} />
-                Último evento recibido del proveedor: {CHAINDOTS_STEPS.find(s => s.id === currentStep)?.title ?? currentStep}.
+                Último paso: {CHAINDOTS_STEPS.find(s => s.id === currentStep)?.title ?? currentStep}.
               </p>
             )}
           </CardBody>
         </Card>
+        </ContentDetails>
 
         <p className="flow__footnote">
-          Demo conceptual: las capturas son simuladas y no se envía información a ningún proveedor.
+          Simulación: no se toman imágenes ni se envían datos a Chaindots.
         </p>
       </div>
     </FlowLayout>

@@ -130,7 +130,7 @@ definiciones de producto:
   Compliance.
 - **Monedas por país**: las cuentas USD y PEN son datos de ejemplo. La
   disponibilidad real por jurisdicción no está definida.
-- **Roles**: Organization Admin, Operator, Approver y Viewer son
+- **Roles**: Administrador, Operador, Aprobador y Consulta son
   ilustrativos y configurables.
 - **Plazos de evaluación** de los productos adicionales son referenciales.
 - **Contraseñas**: el paso de credenciales valida requisitos pero no guarda
@@ -159,3 +159,9 @@ Ver [la guía de despliegue](docs/vercel-enterprise.md) para crear un proyecto n
 conectado a `yol1-enterprise`, configurar las rutas SPA y probar Demo Control.
 Los despliegues automáticos por Git están desactivados; no publicar ni reutilizar
 el proyecto de SMB sin autorización.
+
+## UX Writing
+
+La [guía editorial](docs/ux-writing.md) documenta la auditoría, el vocabulario,
+los cambios por módulo y los criterios para nuevos textos. Las ayudas secundarias
+se consultan bajo demanda; las restricciones financieras siguen visibles.

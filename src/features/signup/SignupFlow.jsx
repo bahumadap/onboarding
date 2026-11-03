@@ -49,12 +49,12 @@ const PASSWORD_RULES = [
 ]
 
 const ASIDE = {
-  title: 'Una cuenta empresarial para operar tu plata en un solo lugar.',
-  body: 'Crea tu organización en minutos. La validación regulatoria viene después, con acompañamiento.',
+  title: 'Tu cuenta empresarial, paso a paso.',
+  body: 'Registra tu empresa. Después, verifica sus datos.',
   items: [
-    { title: 'Registro', description: 'Creas tu usuario y tu organización.', marker: '1' },
-    { title: 'Onboarding', description: 'Validamos tu identidad y los datos de la empresa.', marker: '2' },
-    { title: 'Cuenta habilitada', description: 'Tu cuenta vista y tus cuentas virtuales quedan operativas.', marker: '3' },
+    { title: 'Registro', description: 'Crea tu usuario y empresa.', marker: '1' },
+    { title: 'Onboarding', description: 'Verifica tu identidad y empresa.', marker: '2' },
+    { title: 'Cuenta habilitada', description: 'Accede a tu cuenta vista y cuentas virtuales.', marker: '3' },
   ],
 }
 
@@ -131,7 +131,7 @@ export default function SignupFlow() {
     setOtpExpired(false)
     setCooldown(RESEND_COOLDOWN_S)
     if (isResend) {
-      toast?.push({ tone: 'info', title: 'Enviamos un código nuevo', description: `Revisa ${maskEmail(email)}.` })
+      toast?.push({ tone: 'info', title: 'Código de demo renovado', description: `Usa el código que aparece en pantalla.` })
     }
   }, [email, toast, actions])
 
@@ -152,7 +152,7 @@ export default function SignupFlow() {
     switch (current.id) {
       case 'email': {
         if (!EMAIL_RE.test(email.trim())) {
-          setErrors({ email: 'Escribe un correo válido, por ejemplo nombre@empresa.cl' })
+          setErrors({ email: 'Ingresa un correo válido: nombre@empresa.cl.' })
           return
         }
         setBusy(true)
@@ -198,7 +198,7 @@ export default function SignupFlow() {
 
       case 'profile': {
         if (!firstName.trim()) {
-          setErrors({ firstName: 'Necesitamos tu nombre para crear la cuenta.' })
+          setErrors({ firstName: 'Ingresa tu nombre.' })
           return
         }
         actions.setProfile(firstName.trim(), lastName.trim())
@@ -208,10 +208,10 @@ export default function SignupFlow() {
 
       case 'company': {
         const next = {}
-        if (!company.tradeName.trim()) next.tradeName = 'Escribe el nombre con el que opera tu empresa.'
-        if (!company.industry) next.industry = 'Elige la actividad económica principal.'
-        if (!company.countryOfIncorporation) next.countryOfIncorporation = 'Indica dónde está constituida la empresa.'
-        if (company.operatingCountries.length === 0) next.operatingCountries = 'Elige al menos un país donde quieras operar.'
+        if (!company.tradeName.trim()) next.tradeName = 'Ingresa el nombre de tu empresa.'
+        if (!company.industry) next.industry = 'Selecciona una industria.'
+        if (!company.countryOfIncorporation) next.countryOfIncorporation = 'Selecciona el país de constitución.'
+        if (company.operatingCountries.length === 0) next.operatingCountries = 'Selecciona al menos un país de operación.'
         if (Object.keys(next).length > 0) { setErrors(next); return }
         actions.setCompany({
           tradeName: company.tradeName.trim(),
@@ -226,11 +226,11 @@ export default function SignupFlow() {
       case 'password': {
         const unmet = PASSWORD_RULES.filter(r => !r.test(password))
         if (unmet.length > 0) {
-          setErrors({ password: 'La contraseña todavía no cumple los requisitos.' })
+          setErrors({ password: 'Usa 10 caracteres o más, mayúsculas, minúsculas y un número.' })
           return
         }
         if (password !== passwordConfirm) {
-          setErrors({ passwordConfirm: 'Las contraseñas no coinciden.' })
+          setErrors({ passwordConfirm: 'Repite la misma contraseña.' })
           return
         }
         // En el producto real acá se envía la credencial al backend.
@@ -242,7 +242,7 @@ export default function SignupFlow() {
 
       case 'terms': {
         if (!termsAccepted) {
-          setErrors({ terms: 'Necesitamos tu aceptación para crear la cuenta.' })
+          setErrors({ terms: 'Acepta los términos para crear tu cuenta.' })
           return
         }
         setBusy(true)
@@ -271,9 +271,9 @@ export default function SignupFlow() {
   const content = {
     email: (
       <>
-        <h1 className="flow__title" tabIndex={-1} ref={headingRef}>Crea tu cuenta de YOL1 Enterprise</h1>
+        <h1 className="flow__title" tabIndex={-1} ref={headingRef}>Crea tu cuenta</h1>
         <p className="flow__lead">
-          Empezamos con tu correo corporativo. Te enviaremos un código para verificarlo.
+          Usa tu correo de trabajo.
         </p>
         <div className="flow__fields">
           <Field label="Correo electrónico" htmlFor="email" error={errors.email} required>
@@ -294,7 +294,7 @@ export default function SignupFlow() {
           <Button type="submit" variant="brand" size="lg" block loading={busy}>Enviar código</Button>
         </div>
         <p className="flow__footnote">
-          ¿Te invitó alguien de tu equipo? Usa el enlace del correo de invitación para unirte a esa organización.
+          ¿Tienes una invitación? Usa el enlace que recibiste.
         </p>
       </>
     ),
@@ -318,7 +318,7 @@ export default function SignupFlow() {
 
           {otpExpired && !otpBlocked && (
             <Callout tone="warning" title="El código expiró">
-              Por seguridad los códigos duran tres minutos. Pide uno nuevo para continuar.
+              El código dura 3 minutos. Solicita uno nuevo.
             </Callout>
           )}
 
@@ -329,7 +329,7 @@ export default function SignupFlow() {
           )}
 
           <Callout tone="brand" title="Código de la demo">
-            Esta demo no envía correos. Usa <strong>{DEMO_OTP}</strong> para continuar, o escribe otro número para ver el manejo de errores.
+            Usa <strong>{DEMO_OTP}</strong> para continuar. No se envían correos.
           </Callout>
         </div>
 
@@ -362,7 +362,7 @@ export default function SignupFlow() {
       <>
         <h1 className="flow__title" tabIndex={-1} ref={headingRef}>¿Cómo te llamas?</h1>
         <p className="flow__lead">
-          Serás el administrador inicial de la organización. Más adelante podrás invitar al resto del equipo.
+          Serás el administrador de la organización.
         </p>
         <div className="flow__fields">
           <Field label="Nombre" htmlFor="firstName" error={errors.firstName} required>
@@ -388,23 +388,23 @@ export default function SignupFlow() {
           <Button type="submit" variant="brand" size="lg" block>Continuar</Button>
         </div>
         <p className="flow__footnote">
-          Ser el administrador inicial no implica ser representante legal, accionista ni beneficiario final: eso se determina durante el onboarding.
+          Ser administrador no te convierte en representante legal ni beneficiario final.
         </p>
       </>
     ),
 
     company: (
       <>
-        <h1 className="flow__title" tabIndex={-1} ref={headingRef}>Cuéntanos de tu empresa</h1>
+        <h1 className="flow__title" tabIndex={-1} ref={headingRef}>Datos de tu empresa</h1>
         <p className="flow__lead">
-          Con esto creamos tu organización. Los datos legales y la documentación vienen después.
+          Los documentos se solicitan después del registro.
         </p>
         <div className="flow__fields">
           <Field label="Nombre de la empresa" htmlFor="tradeName" error={errors.tradeName} required>
             <Input
               id="tradeName"
               autoFocus
-              placeholder="Como la conocen tus clientes"
+              placeholder="Ej. Empresa Demo"
               value={company.tradeName}
               invalid={Boolean(errors.tradeName)}
               icon={<Building2 size={15} aria-hidden="true" />}
@@ -412,7 +412,7 @@ export default function SignupFlow() {
             />
           </Field>
 
-          <Field label="Industria o actividad económica" htmlFor="industry" error={errors.industry} required>
+          <Field label="Industria" htmlFor="industry" error={errors.industry} required>
             <Select
               id="industry"
               options={INDUSTRIES}
@@ -423,7 +423,7 @@ export default function SignupFlow() {
           </Field>
 
           <Field label="País de constitución" htmlFor="country" error={errors.countryOfIncorporation} required
-            hint="Donde está legalmente constituida la sociedad.">
+            hint="País donde se constituyó legalmente.">
             <Select
               id="country"
               options={COUNTRIES}
@@ -434,11 +434,11 @@ export default function SignupFlow() {
           </Field>
 
           <Field
-            label="Países donde quieres operar con YOL1"
+            label="Países de operación"
             htmlFor="operating"
             error={errors.operatingCountries}
             required
-            hint="Puedes elegir varios. No necesitas tener una sociedad en cada país."
+            hint="Puedes elegir varios; no necesitas una sociedad en cada país."
           >
             <MultiSelect
               id="operating"
@@ -459,7 +459,7 @@ export default function SignupFlow() {
     password: (
       <>
         <h1 className="flow__title" tabIndex={-1} ref={headingRef}>Define tu contraseña</h1>
-        <p className="flow__lead">Con ella entrarás a la consola de tu organización.</p>
+        <p className="flow__lead">Usa una contraseña que no utilices en otros servicios.</p>
         <div className="flow__fields">
           <Field label="Contraseña" htmlFor="password" error={errors.password} required>
             <Input
@@ -505,9 +505,9 @@ export default function SignupFlow() {
 
     terms: (
       <>
-        <h1 className="flow__title" tabIndex={-1} ref={headingRef}>Términos del registro</h1>
+        <h1 className="flow__title" tabIndex={-1} ref={headingRef}>Términos y condiciones</h1>
         <p className="flow__lead">
-          Guardamos la versión que aceptas junto a tu usuario, con fecha y hora.
+          Revisa las condiciones antes de crear tu cuenta.
         </p>
         <div className="flow__fields">
           <div className="signup__terms">
@@ -537,9 +537,9 @@ export default function SignupFlow() {
 
     done: (
       <>
-        <h1 className="flow__title" tabIndex={-1} ref={headingRef}>Tu cuenta está creada</h1>
+        <h1 className="flow__title" tabIndex={-1} ref={headingRef}>Registro completo</h1>
         <p className="flow__lead">
-          Registramos tu usuario y tu organización. Todavía falta validar la información para habilitar la cuenta vista.
+          Tu empresa está registrada. Verifica tu identidad y empresa para habilitar la cuenta vista.
         </p>
 
         <div className="signup__summary">
@@ -549,7 +549,7 @@ export default function SignupFlow() {
               <b>{[state.user.firstName, state.user.lastName].filter(Boolean).join(' ') || 'Usuario'}</b>
               <span>{state.user.email} · administrador inicial</span>
             </span>
-            <span className="signup__summary-id">User</span>
+            <span className="signup__summary-id">Usuario</span>
           </div>
           <div className="signup__summary-row">
             <Building2 size={17} aria-hidden="true" className="text-brand" />
@@ -562,13 +562,13 @@ export default function SignupFlow() {
                 {state.organization.id ? ` · ${state.organization.id}` : ''}
               </span>
             </span>
-            <span className="signup__summary-id">Organization</span>
+            <span className="signup__summary-id">Empresa</span>
           </div>
           <div className="signup__summary-row">
             <FileCheck2 size={17} aria-hidden="true" className="text-brand" />
             <span className="grow">
               <b>Expediente de onboarding abierto</b>
-              <span>Pendiente de validación de identidad y empresa</span>
+              <span>Pendiente de verificación</span>
             </span>
             <span className="signup__summary-id">{state.onboardingDraftId}</span>
           </div>
@@ -580,7 +580,7 @@ export default function SignupFlow() {
           </Button>
         </div>
         <p className="flow__footnote">
-          Puedes salir y retomar cuando quieras: el avance queda guardado en tu expediente.
+          Tu avance queda guardado en este navegador.
         </p>
       </>
     ),
@@ -595,7 +595,7 @@ export default function SignupFlow() {
         </Button>
       )}
     >
-      <p className="flow__step-meta">{stepMeta}</p>
+      {current.id !== 'done' && <p className="flow__step-meta">{stepMeta}</p>}
       {current.id !== 'done' && (
         <div style={{ marginBottom: 'var(--ray-space-6)' }}>
           <StepsBar total={STEPS.length - 1} current={step} label={`Paso ${step + 1} de ${STEPS.length - 1}`} />
@@ -609,7 +609,7 @@ export default function SignupFlow() {
       {current.id === 'email' && (
         <p className="flow__footnote" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <ShieldCheck size={13} aria-hidden="true" />
-          Demo conceptual: no se envían correos ni se guardan contraseñas.
+          Demo: sin envío de correos ni contraseñas guardadas.
         </p>
       )}
     </FlowLayout>

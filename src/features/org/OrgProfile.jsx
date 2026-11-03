@@ -91,7 +91,7 @@ export default function OrgProfile() {
   /* ------------------------------ acciones ----------------------------- */
   const saveGeneral = () => {
     if (!general.tradeName.trim()) {
-      toast.push({ tone: 'danger', title: 'Falta el nombre comercial', description: 'Es el nombre con el que se muestra la organización en la consola.' })
+      toast.push({ tone: 'danger', title: 'Falta el nombre comercial', description: 'Ingresa el nombre comercial de tu empresa.' })
       return
     }
     actions.patchOrganization({
@@ -99,12 +99,12 @@ export default function OrgProfile() {
       industry: general.industry,
       economicActivity: general.economicActivity.trim(),
     })
-    toast.push({ tone: 'success', title: 'Información general actualizada', description: 'Los cambios ya se ven en toda la consola.' })
+    toast.push({ tone: 'success', title: 'Información general actualizada', description: 'Cambios guardados.' })
   }
 
   const saveOperating = () => {
     if (operating.length === 0) {
-      toast.push({ tone: 'danger', title: 'Declara al menos un país', description: 'Los países de operación definen las monedas y los controles aplicables.' })
+      toast.push({ tone: 'danger', title: 'Declara al menos un país', description: 'Selecciona al menos un país de operación.' })
       return
     }
     actions.patchOrganization({ operatingCountries: operating })
@@ -121,16 +121,16 @@ export default function OrgProfile() {
     if (contacts.billingEmail && !EMAIL_RE.test(contacts.billingEmail)) errors.billingEmail = 'Escribe un correo válido o deja el campo vacío.'
     setContactErrors(errors)
     if (Object.keys(errors).length > 0) {
-      toast.push({ tone: 'danger', title: 'Revisa los contactos', description: 'Hay correos con formato inválido.' })
+      toast.push({ tone: 'danger', title: 'Revisa los contactos', description: 'Revisa los correos marcados.' })
       return
     }
     actions.patchOrganization(contacts)
-    toast.push({ tone: 'success', title: 'Contactos actualizados', description: 'Usaremos estos datos para avisos operativos y de compliance.' })
+    toast.push({ tone: 'success', title: 'Contactos actualizados', description: 'Contactos guardados.' })
   }
 
   const submitRequest = () => {
     if (!requestField) { setRequestError('Elige el dato que necesitas actualizar.'); return }
-    if (requestReason.trim().length < 12) { setRequestError('Cuéntanos brevemente el motivo del cambio.'); return }
+    if (requestReason.trim().length < 12) { setRequestError('Ingresa el motivo del cambio.'); return }
     const field = LOCKED_FIELDS.find(f => f.value === requestField)
     actions.patchOrganization({
       updateRequests: [
@@ -152,7 +152,7 @@ export default function OrgProfile() {
     toast.push({
       tone: 'info',
       title: 'Solicitud de actualización enviada',
-      description: `Compliance revisará el cambio en ${field?.label.toLowerCase() ?? 'el dato legal'}. El expediente vuelve a revisión.`,
+      description: `Cumplimiento revisará el cambio en ${field?.label.toLowerCase() ?? 'el dato legal'}. El expediente vuelve a revisión.`,
     })
   }
 
@@ -176,7 +176,7 @@ export default function OrgProfile() {
     toast.push({
       tone: 'success',
       title: 'Entidad jurídica agregada',
-      description: 'Queda en borrador hasta que Compliance valide su documentación.',
+      description: 'La entidad se guardó como borrador.',
     })
   }
 
@@ -186,13 +186,11 @@ export default function OrgProfile() {
       <header className="page__head">
         <h1 className="page__title">Perfil de organización</h1>
         <p className="page__lead">
-          Acá vive la identidad del grupo empresarial: cómo se llama, dónde está constituido, en qué
-          países opera y con qué entidades jurídicas. Los países de operación son independientes del
-          país de constitución.
+          Administra los datos y entidades jurídicas de tu empresa.
         </p>
       </header>
 
-      <Callout tone={kybMeta.tone} title={`Validación de empresa: ${kybMeta.label.toLowerCase()}`}>
+      <Callout tone={kybMeta.tone} title={`Verificación de empresa: ${kybMeta.label.toLowerCase()}`}>
         <p className="ray-body-sm">{kybMeta.description}</p>
         <p className="ray-body-sm" style={{ marginTop: 'var(--ray-space-2)' }}>
           <Link to="/org/compliance">Revisar el expediente completo</Link>
@@ -204,12 +202,12 @@ export default function OrgProfile() {
         <Card>
           <CardHeader
             title="Información general"
-            description="Datos comerciales que puedes mantener al día sin pasar por una nueva revisión."
+            description="Actualiza los datos comerciales."
           />
           <CardBody>
             <div className="grid grid-2">
               <Field label="Nombre comercial" htmlFor="org-trade-name" required
-                hint="Es el nombre que se muestra en la consola y en los avisos.">
+                hint="Nombre visible para tu equipo.">
                 <Input
                   id="org-trade-name"
                   value={general.tradeName}
@@ -230,7 +228,7 @@ export default function OrgProfile() {
               <Field
                 label="Descripción de la actividad"
                 htmlFor="org-activity"
-                hint="En qué consiste la operación. Ayuda a explicar los flujos esperados."
+                hint="Describe los productos o servicios de tu empresa."
               >
                 <Textarea
                   id="org-activity"
@@ -259,11 +257,11 @@ export default function OrgProfile() {
         <Card>
           <CardHeader
             title="Presencia geográfica"
-            description="El país de constitución lo define la entidad jurídica. Los países de operación son dónde recibes y envías fondos."
+            description="El país de constitución es distinto de los países donde operas."
           />
           <CardBody>
             <div className="grid grid-2">
-              <Field label="País de constitución" hint="Se cambia solicitando una actualización del expediente legal.">
+              <Field label="País de constitución" hint="Solicita una actualización para cambiarlo.">
                 <span className="org-secret">
                   {org.countryOfIncorporation ? countryLabel(org.countryOfIncorporation) : 'Sin declarar'}
                 </span>
@@ -271,7 +269,7 @@ export default function OrgProfile() {
               <Field
                 label="Países de operación"
                 htmlFor="org-operating"
-                hint="Puedes operar en países donde no tienes una entidad jurídica constituida."
+                hint="Los países de operación pueden ser distintos del país de constitución."
               >
                 <MultiSelect
                   id="org-operating"
@@ -302,7 +300,7 @@ export default function OrgProfile() {
         <Card>
           <CardHeader
             title="Datos legales validados"
-            description="Compliance ya verificó estos datos. Son de solo lectura: editarlos obliga a revisar el expediente de nuevo."
+            description="Datos protegidos. Los cambios requieren una nueva revisión de cumplimiento."
             actions={<Badge tone="neutral" dot>Solo lectura</Badge>}
           />
           <CardBody>
@@ -320,9 +318,7 @@ export default function OrgProfile() {
             <div style={{ marginTop: 'var(--ray-space-4)' }}>
               <Callout tone="warning" title="Cambiar un dato legal reabre la revisión">
                 <p className="ray-body-sm">
-                  Razón social, identificación tributaria, tipo de sociedad, domicilio legal y
-                  estructura societaria se actualizan por solicitud. Al enviarla, el expediente
-                  vuelve a revisión de Compliance y algunos productos pueden quedar en pausa.
+                  Solicita el cambio de datos legales. Se revisará el expediente y algunos productos pueden quedar en pausa.
                 </p>
               </Callout>
             </div>
@@ -346,7 +342,7 @@ export default function OrgProfile() {
           <div className="section__head">
             <div>
               <h2 className="section__title">Solicitudes de actualización</h2>
-              <p className="section__desc">Cada solicitud abre una revisión del expediente legal.</p>
+              <p className="section__desc">Las solicitudes requieren revisión de cumplimiento.</p>
             </div>
           </div>
           {updateRequests.map(req => (
@@ -370,7 +366,7 @@ export default function OrgProfile() {
         <Card>
           <CardHeader
             title="Contactos de la organización"
-            description="A quién contactamos por temas operativos, de facturación y de compliance."
+            description="Contactos para operación, facturación y cumplimiento."
           />
           <CardBody>
             <div className="grid grid-3">
@@ -424,8 +420,7 @@ export default function OrgProfile() {
           <div>
             <h2 className="section__title">Entidades jurídicas</h2>
             <p className="section__desc">
-              Una organización puede agrupar varias sociedades. Cada entidad tiene su propia
-              validación y determina en qué país se abren sus cuentas.
+              Cada sociedad requiere su propia verificación.
             </p>
           </div>
           <Button variant="secondary" size="sm" icon={<Plus size={15} aria-hidden="true" />} onClick={() => setEntityOpen(true)}>
@@ -437,7 +432,7 @@ export default function OrgProfile() {
           <EmptyState
             icon={<Building2 size={20} aria-hidden="true" />}
             title="Todavía no hay entidades registradas"
-            description="La entidad principal se crea al completar el registro. Agrega filiales o sucursales si el grupo opera con más de una sociedad."
+            description="Agrega las sociedades que forman parte del grupo."
             action={<Button variant="primary" size="sm" onClick={() => setEntityOpen(true)}>Agregar entidad</Button>}
           />
         ) : (
@@ -470,7 +465,7 @@ export default function OrgProfile() {
         open={requestOpen}
         onClose={() => setRequestOpen(false)}
         title="Solicitar actualización de datos legales"
-        description="El cambio no se aplica de inmediato: Compliance abre una nueva revisión del expediente."
+        description="El cambio requiere una nueva revisión de cumplimiento."
         footer={(
           <>
             <Button variant="ghost" size="sm" onClick={() => setRequestOpen(false)}>Cancelar</Button>
@@ -492,7 +487,7 @@ export default function OrgProfile() {
             label="Motivo del cambio"
             htmlFor="req-reason"
             required
-            hint="Explica qué cambió y desde cuándo. Compliance puede pedir documentación de respaldo."
+            hint="Indica qué cambió y desde cuándo. Pueden solicitarse documentos de respaldo."
             error={requestError && requestField ? requestError : undefined}
           >
             <Textarea
@@ -509,7 +504,7 @@ export default function OrgProfile() {
         open={entityOpen}
         onClose={() => setEntityOpen(false)}
         title="Agregar entidad jurídica"
-        description="La entidad queda en borrador hasta que Compliance valide su documentación."
+        description="La entidad se guardará como borrador."
         footer={(
           <>
             <Button variant="ghost" size="sm" onClick={() => setEntityOpen(false)}>Cancelar</Button>

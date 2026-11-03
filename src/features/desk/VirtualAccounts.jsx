@@ -96,7 +96,7 @@ export default function VirtualAccounts() {
             <EmptyState
               icon={<Layers size={20} aria-hidden="true" />}
               title="Cuentas virtuales no habilitadas"
-              description="El producto de cuentas virtuales no está activo para tu organización, así que no se pueden crear ni operar subcuentas."
+              description="El producto debe estar activo para crear y usar cuentas virtuales."
               action={<Button variant="secondary" onClick={() => navigate('/desk/products')}>Ver catálogo de productos</Button>}
             />
           </CardBody>
@@ -130,7 +130,7 @@ export default function VirtualAccounts() {
           icon={<Plus size={15} aria-hidden="true" />}
           onClick={() => setCreateOpen(true)}
           disabled={availableCurrencies.length === 0}
-          title={availableCurrencies.length === 0 ? 'No hay cuentas habilitadas sobre las cuales crear subcuentas' : undefined}
+          title={availableCurrencies.length === 0 ? 'Requiere una cuenta vista activa' : undefined}
         >
           Crear cuenta virtual
         </Button>
@@ -140,7 +140,7 @@ export default function VirtualAccounts() {
         <div style={{ marginBottom: 'var(--ray-space-4)' }}>
           <Callout tone="warning" title="Sin cuentas habilitadas">
             <p className="ray-body-sm">
-              Para crear una cuenta virtual necesitas al menos una cuenta empresarial operativa.
+              Primero activa una cuenta empresarial.
             </p>
           </Callout>
         </div>
@@ -157,8 +157,8 @@ export default function VirtualAccounts() {
           <CardBody>
             <EmptyState
               icon={<Layers size={20} aria-hidden="true" />}
-              title="Todavía no creaste ninguna cuenta virtual"
-              description="Las cuentas virtuales separan saldos y movimientos por usuario final, proyecto o flujo de cobro."
+              title="Sin cuentas virtuales"
+              description="Crea una cuenta virtual para separar saldos y movimientos."
               action={<Button variant="brand" onClick={() => setCreateOpen(true)}>Crear la primera</Button>}
             />
           </CardBody>
@@ -226,7 +226,7 @@ export default function VirtualAccounts() {
                   icon={<SearchX size={20} aria-hidden="true" />}
                   title="Sin resultados para tu búsqueda"
                   description={isSearching
-                    ? 'Ninguna cuenta virtual coincide con el texto y el estado que elegiste.'
+                    ? 'Prueba otra búsqueda o cambia el estado.'
                     : 'No hay cuentas virtuales que mostrar.'}
                   action={(
                     <Button variant="secondary" size="sm" onClick={() => { setQuery(''); setStatus('all') }}>
@@ -302,8 +302,7 @@ function PageHead() {
     <div className="page__head">
       <h1 className="page__title">Cuentas virtuales</h1>
       <p className="page__lead">
-        Subcuentas con saldo y trazabilidad propios sobre la cuenta vista. Vienen con la
-        cuenta habilitada: no requieren una solicitud aparte.
+        Separa saldos y movimientos por cliente, proyecto o cobro.
       </p>
     </div>
   )
@@ -317,7 +316,7 @@ function CreateDialog({ open, onClose, onSubmit, currencies }) {
   const [touched, setTouched] = useState(false)
 
   const aliasError = touched && alias.trim().length === 0
-    ? 'El alias es obligatorio: identifica la cuenta en el listado y en la cartola.'
+    ? 'Ingresa un alias para identificar la cuenta.'
     : null
 
   const close = () => {
@@ -342,7 +341,7 @@ function CreateDialog({ open, onClose, onSubmit, currencies }) {
       open={open}
       onClose={close}
       title="Crear cuenta virtual"
-      description="La cuenta queda activa de inmediato y empieza con saldo cero."
+      description="Se crea activa, con saldo cero."
       footer={(
         <>
           <Button variant="ghost" onClick={close}>Cancelar</Button>
@@ -356,7 +355,7 @@ function CreateDialog({ open, onClose, onSubmit, currencies }) {
           required
           htmlFor="va-alias"
           error={aliasError}
-          hint="Por ejemplo, el nombre del usuario final o del proyecto."
+          hint="Usa el nombre del cliente o proyecto."
         >
           <Input
             id="va-alias"
@@ -368,7 +367,7 @@ function CreateDialog({ open, onClose, onSubmit, currencies }) {
           />
         </Field>
 
-        <Field label="Titular" htmlFor="va-holder" hint="Si lo dejas vacío usamos el alias.">
+        <Field label="Titular" htmlFor="va-holder" hint="Si lo omites, se usará el alias.">
           <Input
             id="va-holder"
             value={holder}

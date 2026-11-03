@@ -1,3 +1,4 @@
+import { ContentDetails } from '../../ui'
 /* =============================================================
    D · Merchant Desk — Catálogo de productos.
 
@@ -48,7 +49,7 @@ export default function ProductCatalog() {
     toast?.push({
       tone: 'success',
       title: 'Solicitud registrada',
-      description: `${product.name} quedó en estado solicitado. Te avisamos cuando la evaluación avance.`,
+      description: `${product.name} quedó en estado solicitado. Consulta su estado en Productos.`,
     })
   }
 
@@ -57,8 +58,7 @@ export default function ProductCatalog() {
       <div className="page__head">
         <h1 className="page__title">Productos</h1>
         <p className="page__lead">
-          Lo que tu organización ya puede operar y lo que puede solicitar. La configuración
-          detallada de cada producto se administra en Config Org.
+          Consulta tus productos y solicita nuevos servicios.
         </p>
       </div>
 
@@ -67,7 +67,7 @@ export default function ProductCatalog() {
         <div className="section__head">
           <div>
             <h2 className="section__title" id="sec-base">Incluidos con la cuenta habilitada</h2>
-            <p className="section__desc">Llegan con el onboarding aprobado: no requieren una solicitud aparte.</p>
+            <p className="section__desc">Se habilitan al activar la cuenta vista, sin una solicitud adicional.</p>
           </div>
         </div>
 
@@ -87,7 +87,7 @@ export default function ProductCatalog() {
         <div className="section__head">
           <div>
             <h2 className="section__title" id="sec-adicionales">Productos adicionales</h2>
-            <p className="section__desc">Cada uno tiene su propia solicitud, evaluación y activación.</p>
+            <p className="section__desc">Cada producto requiere evaluación y activación.</p>
           </div>
         </div>
 
@@ -143,11 +143,11 @@ function CoreCard({ product, status }) {
       />
       <Divider />
       <CardBody>
-        <ul className="desk-list">
+        <ContentDetails summary="Qué incluye"><ul className="desk-list">
           {product.capabilities.map(cap => (
             <li key={cap}><span className="desk-list__marker" aria-hidden="true" />{cap}</li>
           ))}
-        </ul>
+        </ul></ContentDetails>
       </CardBody>
       <CardFooter>
         {operable ? (
@@ -167,9 +167,9 @@ function CoreCard({ product, status }) {
       </CardFooter>
     </Card>
   )
-}
+          }
 
-function ProductCard({ product, status, request, onRequest }) {
+          function ProductCard({ product, status, request, onRequest }) {
   const meta = PRODUCT_STATUS_META[status]
 
   return (
@@ -181,7 +181,8 @@ function ProductCard({ product, status, request, onRequest }) {
       />
       <Divider />
       <CardBody>
-        <div className="grid grid-2">
+        <ContentDetails summary="Requisitos y características">
+          <div className="grid grid-2">
           <div>
             <p className="desk-balance__label">Requisitos</p>
             <ul className="desk-list" style={{ marginTop: 'var(--ray-space-2)' }}>
@@ -191,7 +192,7 @@ function ProductCard({ product, status, request, onRequest }) {
             </ul>
           </div>
           <div>
-            <p className="desk-balance__label">Capacidades</p>
+            <p className="desk-balance__label">Características</p>
             <ul className="desk-list" style={{ marginTop: 'var(--ray-space-2)' }}>
               {(product.capabilities ?? []).map(cap => (
                 <li key={cap}><span className="desk-list__marker" aria-hidden="true" />{cap}</li>
@@ -199,11 +200,12 @@ function ProductCard({ product, status, request, onRequest }) {
             </ul>
           </div>
         </div>
+        </ContentDetails>
 
         <p className="ray-caption text-tertiary" style={{ marginTop: 'var(--ray-space-4)' }}>
           {product.reviewDays
             ? `Plazo estimado de evaluación: ${product.reviewDays}.`
-            : 'El plazo de evaluación se define caso a caso.'}
+            : 'Plazo sujeto a evaluación.'}
         </p>
 
         <ProductStateNote product={product} status={status} request={request} />
@@ -213,16 +215,16 @@ function ProductCard({ product, status, request, onRequest }) {
       </CardFooter>
     </Card>
   )
-}
+          }
 
-/** Explica, en una frase, en qué punto del proceso está el producto. */
-function ProductStateNote({ product, status, request }) {
+          /** Explica, en una frase, en qué punto del proceso está el producto. */
+          function ProductStateNote({ product, status, request }) {
   if (status === PRODUCT_STATUS.NOT_AVAILABLE) {
     return (
       <div style={{ marginTop: 'var(--ray-space-4)' }}>
         <Callout tone="info" title="Por qué no está disponible" icon={<CircleSlash size={16} aria-hidden="true" />}>
           <p className="ray-body-sm">
-            {product.unavailableReason ?? 'Este producto todavía no se ofrece para el país de constitución de tu organización.'}
+            {product.unavailableReason ?? 'No disponible para el país de constitución de tu empresa.'}
           </p>
         </Callout>
       </div>
@@ -237,7 +239,7 @@ function ProductStateNote({ product, status, request }) {
             {request?.requestedAt
               ? `Enviada el ${formatDate(request.requestedAt)}. `
               : ''}
-            Vas a recibir un aviso cuando el equipo de riesgo resuelva la evaluación.
+            Consulta el estado de tu solicitud en este catálogo.
           </p>
           {request?.note && <p className="ray-caption text-tertiary">Nota enviada: {request.note}</p>}
         </Callout>
@@ -250,7 +252,7 @@ function ProductStateNote({ product, status, request }) {
       <div style={{ marginTop: 'var(--ray-space-4)' }}>
         <Callout tone="warning" title="Falta configurarlo">
           <p className="ray-body-sm">
-            La evaluación está aprobada. Para poder operar hay que terminar la configuración en Config Org.
+            Evaluación aprobada. Completa la configuración en Config Org para operar.
           </p>
         </Callout>
       </div>
@@ -262,7 +264,7 @@ function ProductStateNote({ product, status, request }) {
       <div style={{ marginTop: 'var(--ray-space-4)' }}>
         <Callout tone="danger" title="Solicitud rechazada">
           <p className="ray-body-sm">
-            La evaluación no prosperó. Tu ejecutivo puede explicarte los motivos y si corresponde volver a presentarla.
+            Solicitud rechazada. Contacta a tu ejecutivo para revisar el motivo.
           </p>
         </Callout>
       </div>
@@ -273,21 +275,21 @@ function ProductStateNote({ product, status, request }) {
     return (
       <div style={{ marginTop: 'var(--ray-space-4)' }}>
         <Callout tone="warning" title="Producto deshabilitado">
-          <p className="ray-body-sm">El producto fue deshabilitado para tu organización y no se puede operar.</p>
+          <p className="ray-body-sm">El producto está deshabilitado y no permite operar.</p>
         </Callout>
       </div>
     )
   }
 
   return null
-}
+          }
 
-/** El control que corresponde al estado: nunca un botón decorativo. */
-function ProductAction({ product, status, onRequest }) {
+          /** El control que corresponde al estado: nunca un botón decorativo. */
+          function ProductAction({ product, status, onRequest }) {
   if (status === PRODUCT_STATUS.AVAILABLE_TO_REQUEST) {
     return (
       <Button variant="brand" size="sm" icon={<Sparkles size={15} aria-hidden="true" />} onClick={onRequest}>
-        Solicitar activación
+        Solicitar producto
       </Button>
     )
   }
@@ -301,7 +303,7 @@ function ProductAction({ product, status, onRequest }) {
   }
 
   if (status === PRODUCT_STATUS.PENDING_CONFIGURATION) {
-    return <Link to="/org/products">Terminar configuración en Config Org</Link>
+    return <Link to="/org/products">Configurar en Config Org</Link>
   }
 
   if (status === PRODUCT_STATUS.ACTIVE) {
@@ -326,9 +328,9 @@ function ProductAction({ product, status, onRequest }) {
   }
 
   return <p className="ray-body-sm text-secondary">Sin acciones disponibles en este estado.</p>
-}
+          }
 
-function RequestDialog({ product, onClose, onConfirm }) {
+          function RequestDialog({ product, onClose, onConfirm }) {
   const [note, setNote] = useState('')
 
   const close = () => { setNote(''); onClose() }
@@ -339,7 +341,7 @@ function RequestDialog({ product, onClose, onConfirm }) {
       open={Boolean(product)}
       onClose={close}
       title={product ? `Solicitar ${product.name}` : 'Solicitar producto'}
-      description="Queda registrada la solicitud. La activación depende de la evaluación."
+      description="Solicitar no activa el producto: primero debe aprobarse la evaluación."
       footer={(
         <>
           <Button variant="ghost" onClick={close}>Cancelar</Button>
@@ -352,15 +354,15 @@ function RequestDialog({ product, onClose, onConfirm }) {
           <div>
             <p className="desk-balance__label">Qué pasa después</p>
             <ol className="desk-list" style={{ marginTop: 'var(--ray-space-2)' }}>
-              <li><span className="desk-list__marker" aria-hidden="true" />El producto pasa a estado solicitado y queda visible en este catálogo.</li>
-              <li><span className="desk-list__marker" aria-hidden="true" />El equipo de riesgo revisa los requisitos del producto.</li>
-              <li><span className="desk-list__marker" aria-hidden="true" />Si la evaluación aprueba, queda pendiente de configuración en Config Org.</li>
-              <li><span className="desk-list__marker" aria-hidden="true" />Recién ahí el producto se puede operar en el Merchant Desk.</li>
+              <li><span className="desk-list__marker" aria-hidden="true" />Registramos tu solicitud.</li>
+              <li><span className="desk-list__marker" aria-hidden="true" />Riesgo evalúa los requisitos.</li>
+              <li><span className="desk-list__marker" aria-hidden="true" />Si se aprueba, configuras el producto en Config Org.</li>
+              <li><span className="desk-list__marker" aria-hidden="true" />Después de activarlo, puedes usarlo en Merchant Desk.</li>
             </ol>
           </div>
 
           <div>
-            <p className="desk-balance__label">Requisitos que vamos a pedir</p>
+            <p className="desk-balance__label">Requisitos</p>
             <ul className="desk-list" style={{ marginTop: 'var(--ray-space-2)' }}>
               {(product.requirements ?? []).map(req => (
                 <li key={req}><span className="desk-list__marker" aria-hidden="true" />{req}</li>
@@ -372,14 +374,14 @@ function RequestDialog({ product, onClose, onConfirm }) {
             <p className="ray-body-sm">
               {product.reviewDays
                 ? `La evaluación demora ${product.reviewDays}.`
-                : 'El plazo de evaluación se define caso a caso con tu ejecutivo.'}
+                : 'Consulta el plazo con tu ejecutivo.'}
             </p>
           </Callout>
 
           <Field
             label="Contexto para la evaluación"
             htmlFor="req-note"
-            hint="Opcional. Cuéntanos qué vas a operar con este producto."
+            hint="Opcional. Indica cómo usarás el producto."
           >
             <Textarea
               id="req-note"
@@ -392,4 +394,4 @@ function RequestDialog({ product, onClose, onConfirm }) {
       )}
     </Dialog>
   )
-}
+          }

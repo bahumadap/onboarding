@@ -1,3 +1,4 @@
+import { ContentDetails } from '../../ui'
 /* =============================================================
    Macroproceso B2 — validación de empresa (KYB).
 
@@ -40,7 +41,7 @@ const FUNDS_OPTIONS = [
   { value: 'operations', label: 'Ingresos operacionales del giro' },
   { value: 'capital', label: 'Aportes de capital de los socios' },
   { value: 'financing', label: 'Financiamiento de terceros' },
-  { value: 'other', label: 'Otro origen (lo detalla Compliance)' },
+  { value: 'other', label: 'Otro origen' },
 ]
 
 const SECTION_ICON = {
@@ -85,8 +86,17 @@ function buildDraft(org) {
 
 /** Qué falta en cada sección. Devuelve un mapa campo → mensaje. */
 function validateSection(id, values) {
+  const messages = {
+    legalName: 'Ingresa la razón social.', taxId: 'Ingresa la identificación tributaria.',
+    entityType: 'Selecciona el tipo de sociedad.', country: 'Selecciona el país de constitución.',
+    legalAddress: 'Ingresa el domicilio legal.', representatives: 'Indica los representantes legales.',
+    shareholders: 'Indica los accionistas.', ubos: 'Indica los beneficiarios finales.',
+    ownership: 'Indica los porcentajes de participación.', economicActivity: 'Describe la actividad económica.',
+    monthlyVolume: 'Selecciona el volumen mensual.', fundsOrigin: 'Selecciona el origen de los fondos.',
+    counterparties: 'Indica de quién recibes y a quién envías fondos.',
+  }
   const required = (obj, keys) => Object.fromEntries(
-    keys.filter(k => !String(obj[k] ?? '').trim()).map(k => [k, 'Completa este dato para marcar la sección.']),
+    keys.filter(k => !String(obj[k] ?? '').trim()).map(k => [k, messages[k]]),
   )
   if (id === 'legal') return required(values, ['legalName', 'taxId', 'entityType', 'country', 'legalAddress'])
   if (id === 'structure') return required(values, ['representatives', 'shareholders', 'ubos', 'ownership'])
@@ -191,7 +201,7 @@ export default function BusinessVerification() {
       toast?.push({
         tone: 'success',
         title: 'Expediente enviado a revisión',
-        description: 'Compliance revisa la información y te avisamos del resultado.',
+        description: 'Consulta el estado de la revisión en este expediente.',
       })
     }, 900)
   }
@@ -211,7 +221,7 @@ export default function BusinessVerification() {
               placeholder="ArenaPlay Demo SpA" onChange={ev => setValue('legal', 'legalName', ev.target.value)} />
           </Field>
           <Field label="Número de identificación tributaria" required htmlFor="kyb-taxId" error={e.taxId}
-            hint="RUT en Chile; el formato cambia según la jurisdicción.">
+            hint="En Chile, ingresa el RUT de la empresa.">
             <Input id="kyb-taxId" value={v.taxId} disabled={locked} invalid={Boolean(e.taxId)}
               placeholder="76.543.210-K" onChange={ev => setValue('legal', 'taxId', ev.target.value)} />
           </Field>
@@ -235,18 +245,18 @@ export default function BusinessVerification() {
       return (
         <div className="ob-grid">
           <Field label="Representantes legales" required htmlFor="kyb-reps" error={e.representatives}
-            hint="Nombre y documento de cada persona con poder para operar la cuenta.">
+            hint="Nombre y documento de cada representante legal.">
             <Textarea id="kyb-reps" rows={3} value={v.representatives} disabled={locked} invalid={Boolean(e.representatives)}
-              placeholder="Benja Ahumada · 15.234.567-8 · gerente general" onChange={ev => setValue('structure', 'representatives', ev.target.value)} />
+              placeholder="Ej. Ana Pérez · documento · gerente general" onChange={ev => setValue('structure', 'representatives', ev.target.value)} />
           </Field>
           <Field label="Accionistas" required htmlFor="kyb-shareholders" error={e.shareholders}>
             <Textarea id="kyb-shareholders" rows={3} value={v.shareholders} disabled={locked} invalid={Boolean(e.shareholders)}
-              placeholder="Inversiones Norte SpA · 72% / Benja Ahumada · 28%" onChange={ev => setValue('structure', 'shareholders', ev.target.value)} />
+              placeholder="Ej. Sociedad A: 72%; Ana Pérez: 28%" onChange={ev => setValue('structure', 'shareholders', ev.target.value)} />
           </Field>
           <Field label="Beneficiarios finales" required htmlFor="kyb-ubos" error={e.ubos}
             hint="Personas naturales que controlan la sociedad, directa o indirectamente.">
             <Textarea id="kyb-ubos" rows={3} value={v.ubos} disabled={locked} invalid={Boolean(e.ubos)}
-              placeholder="Benja Ahumada · 28% directo / Carolina Soto · 36% vía Inversiones Norte SpA"
+              placeholder="Ej. Ana Pérez: 28% directo; Luis Soto: 36% indirecto"
               onChange={ev => setValue('structure', 'ubos', ev.target.value)} />
           </Field>
           <Field label="Porcentajes de participación" required htmlFor="kyb-ownership" error={e.ownership}
@@ -263,8 +273,7 @@ export default function BusinessVerification() {
         <div className="ob-docs">
           <Callout tone="info" title="Documentos demostrativos">
             <p className="ray-body-sm">
-              En esta demo no se carga ningún archivo: marca los documentos que ya tienes disponibles
-              para dejar la sección completa. El expediente real lo define Compliance.
+              Marca los documentos disponibles. No se suben archivos en esta demo.
             </p>
           </Callout>
           {DOCUMENT_FIELDS.map(field => (
@@ -293,7 +302,7 @@ export default function BusinessVerification() {
             disabled={locked} onChange={ev => setValue('activity', 'monthlyVolume', ev.target.value)} />
         </Field>
         <Field className="ob-grid__full" label="Países de operación" required htmlFor="kyb-op-countries"
-          error={e.operatingCountries} hint="Dónde cobras o pagas hoy, no solo dónde estás constituido.">
+          error={e.operatingCountries} hint="Países donde recibes o envías fondos.">
           {locked
             ? (
               <p className="ray-body-sm">
@@ -324,18 +333,17 @@ export default function BusinessVerification() {
     <FlowLayout
       wide
       aside={{
-        title: 'El expediente de tu empresa, en cuatro secciones',
-        body: 'Puedes completarlas en el orden que quieras y volver después: cada sección se guarda por separado.',
+        title: 'Datos y documentos de tu empresa',
+        body: 'Guarda cada sección para continuar después.',
         items: KYB_SECTIONS.map((s, i) => ({ title: s.title, description: s.description, marker: i + 1 })),
       }}
       topRight={<Badge tone={statusMeta.tone} dot>{statusMeta.label}</Badge>}
     >
       <div className="ob-stack">
         <div className="ob-head">
-          <h2 className="flow__title">Valida la información de tu empresa</h2>
+          <h2 className="flow__title">Verifica tu empresa</h2>
           <p className="flow__lead">
-            Con estos datos Compliance arma el expediente de {state.organization.tradeName || 'la organización'}.
-            Completa las cuatro secciones y envíalas a revisión cuando estén listas.
+            Completa las cuatro secciones y envía el expediente a revisión.
           </p>
         </div>
 
@@ -352,10 +360,9 @@ export default function BusinessVerification() {
         </Card>
 
         {state.kybStatus === KYB_STATUS.OBSERVED && pendingObservations.length > 0 && (
-          <Callout tone="warning" title="Compliance dejó observaciones por corregir">
+          <Callout tone="warning" title="Corrige las observaciones">
             <p className="ray-body-sm">
-              Revisa cada sección marcada, corrige lo indicado y márcala como corregida. Cuando no
-              queden observaciones podrás volver a enviar el expediente.
+              Corrige las secciones marcadas antes de volver a enviar el expediente.
             </p>
           </Callout>
         )}
@@ -363,8 +370,7 @@ export default function BusinessVerification() {
         {state.kybStatus === KYB_STATUS.REJECTED && (
           <Callout tone="danger" title="El expediente fue rechazado">
             <p className="ray-body-sm">
-              No podemos seguir con la apertura por esta vía. Escribe a tu ejecutivo para revisar el
-              motivo; los datos quedan guardados por si se retoma el caso.
+              No se puede abrir la cuenta. Contacta a tu ejecutivo. Tus datos quedan guardados.
             </p>
           </Callout>
         )}
@@ -372,7 +378,7 @@ export default function BusinessVerification() {
         {submitting && (
           <Callout tone="info" title="Enviando el expediente">
             <p className="ray-body-sm" role="status" aria-live="polite">
-              Estamos registrando la información en el expediente de Compliance.
+              Espera mientras se envía la información.
             </p>
           </Callout>
         )}
@@ -438,16 +444,12 @@ export default function BusinessVerification() {
                         </div>
                       )}
 
-                      <p className="ray-caption text-tertiary">
-                        {section.fields.length} datos en esta sección: {section.fields.join(', ')}.
-                      </p>
-
                       {renderFields(section.id)}
 
                       {!locked && (
                         <div className="flow__actions">
                           <Button variant="primary" icon={SECTION_ICON[section.id]} onClick={() => saveSection(section.id)}>
-                            {done ? 'Actualizar sección' : 'Marcar sección como completa'}
+                            {done ? 'Guardar cambios' : 'Guardar sección'}
                           </Button>
                           <Button variant="ghost" onClick={() => saveDraftOnly(section.id)}>Guardar borrador</Button>
                         </div>
@@ -466,14 +468,14 @@ export default function BusinessVerification() {
         </div>
 
         {/* -------------------- entidades jurídicas -------------------- */}
-        <Card flat>
+        <ContentDetails summary="Entidades del grupo">
+          <Card flat>
           <CardBody>
             <div className="ob-stage__top">
               <span className="grow">
                 <p className="ray-label">Entidades jurídicas de la organización</p>
                 <p className="ob-stage__desc">
-                  El foco del expediente es la entidad principal. Si el grupo tiene más sociedades,
-                  decláralas acá: cada una se valida por separado.
+                  Agrega otras sociedades del grupo. Cada una requiere su propia verificación.
                 </p>
               </span>
               <Button size="sm" variant="secondary" icon={<Plus size={14} aria-hidden="true" />} onClick={() => setEntityDialog(true)}>
@@ -485,8 +487,8 @@ export default function BusinessVerification() {
               {state.organization.legalEntities.length === 0 && (
                 <EmptyState
                   icon={<Building2 size={20} aria-hidden="true" />}
-                  title="Todavía no hay entidades declaradas"
-                  description="La entidad principal se crea al completar la identificación legal."
+                  title="Sin entidades jurídicas"
+                  description="Completa los datos legales de la entidad principal."
                 />
               )}
               {state.organization.legalEntities.map(entity => (
@@ -507,6 +509,7 @@ export default function BusinessVerification() {
             </div>
           </CardBody>
         </Card>
+        </ContentDetails>
 
         {/* -------------------------- envío --------------------------- */}
         {!locked && (
@@ -515,7 +518,7 @@ export default function BusinessVerification() {
               <p className="ray-label">Enviar el expediente a revisión</p>
               <p className="ray-body-sm text-secondary" style={{ marginTop: 'var(--ray-space-2)' }}>
                 {canSubmit
-                  ? 'Las cuatro secciones están completas y no quedan observaciones abiertas.'
+                  ? 'El expediente está listo para enviar.'
                   : pendingObservations.length > 0
                     ? `Quedan ${pendingObservations.length} observaciones por corregir antes de volver a enviar.`
                     : `Faltan ${KYB_SECTIONS.length - completeCount} secciones por completar.`}
@@ -542,16 +545,16 @@ export default function BusinessVerification() {
               <p className="ray-label">Expediente en revisión</p>
               <p className="ray-body-sm text-secondary" style={{ marginTop: 'var(--ray-space-2)' }}>
                 Enviado el {state.kybSubmittedAt ? new Date(state.kybSubmittedAt).toLocaleString('es-CL') : 'momento del envío'}.
-                Compliance revisa la información y te avisamos del resultado por correo.
+                El expediente está en revisión.
               </p>
               <Divider />
               <p className="ray-caption text-tertiary" style={{ marginTop: 'var(--ray-space-4)' }}>
-                Simulación del resultado de la revisión, para recorrer la demo sin esperar.
+                Elige un resultado de revisión para esta demo.
               </p>
               <div className="ob-sim" style={{ marginTop: 'var(--ray-space-3)' }}>
                 <Button size="sm" variant="secondary" onClick={() => {
                   actions.setKybStatus(KYB_STATUS.APPROVED, [])
-                  toast?.push({ tone: 'success', title: 'Validación de empresa aprobada', description: 'Ya puedes avanzar a la activación de la cuenta.' })
+                  toast?.push({ tone: 'success', title: 'Verificación de empresa aprobada', description: 'La apertura comienza cuando identidad y empresa están aprobadas.' })
                 }}>
                   Simular aprobación
                 </Button>
@@ -580,16 +583,13 @@ export default function BusinessVerification() {
             action={<Button size="sm" variant="brand" onClick={() => navigate('/onboarding')}>Volver al onboarding</Button>}
           >
             <p className="ray-body-sm">
-              El expediente quedó cerrado. Si cambia la estructura societaria, avísanos para
-              actualizarlo.
+              Si cambia la estructura societaria, solicita actualizar los datos legales.
             </p>
           </Callout>
         )}
 
         <p className="flow__footnote">
-          Los requisitos de KYB dependen de la jurisdicción, del proveedor y del equipo de
-          Compliance. Los campos de esta demo son demostrativos y no constituyen una aprobación
-          regulatoria.
+          Requisitos de ejemplo. Esta simulación no constituye una aprobación regulatoria.
         </p>
       </div>
 
@@ -597,7 +597,7 @@ export default function BusinessVerification() {
         open={entityDialog}
         onClose={() => setEntityDialog(false)}
         title="Agregar entidad jurídica"
-        description="Declara otra sociedad del grupo. Se valida por separado y no afecta el avance de la entidad principal."
+        description="Cada sociedad tiene una verificación independiente."
         footer={
           <>
             <Button variant="ghost" onClick={() => setEntityDialog(false)}>Cancelar</Button>
@@ -613,7 +613,7 @@ export default function BusinessVerification() {
                 })
                 setNewEntity({ legalName: '', country: '' })
                 setEntityDialog(false)
-                toast?.push({ tone: 'success', title: 'Entidad agregada', description: 'Queda en borrador hasta que completes su expediente.' })
+                toast?.push({ tone: 'success', title: 'Entidad agregada', description: 'La entidad se guardó como borrador.' })
               }}
             >
               Agregar entidad

@@ -2,23 +2,23 @@
 export const ROLES = [
   {
     value: 'org_admin',
-    label: 'Organization Admin',
-    description: 'Administra la organización completa: usuarios, cuentas, productos y políticas de aprobación.',
+    label: 'Administrador',
+    description: 'Administra usuarios, cuentas, productos y aprobaciones.',
   },
   {
     value: 'operator',
-    label: 'Operator',
-    description: 'Inicia operaciones y crea cuentas virtuales. No puede aprobar sus propios movimientos.',
+    label: 'Operador',
+    description: 'Inicia operaciones y crea cuentas virtuales. No aprueba sus propias operaciones.',
   },
   {
     value: 'approver',
-    label: 'Approver',
-    description: 'Aprueba operaciones iniciadas por otras personas, dentro de los límites definidos.',
+    label: 'Aprobador',
+    description: 'Aprueba operaciones de otras personas dentro de los límites asignados.',
   },
   {
     value: 'viewer',
-    label: 'Viewer',
-    description: 'Solo consulta: saldos, movimientos y reportes, sin capacidad de operar.',
+    label: 'Consulta',
+    description: 'Consulta saldos, movimientos y reportes. No puede operar.',
   },
 ]
 

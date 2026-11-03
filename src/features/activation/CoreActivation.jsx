@@ -1,3 +1,4 @@
+import { ContentDetails } from '../../ui'
 /* =============================================================
    Macroproceso C — Core Activation.
 
@@ -35,32 +36,32 @@ const SEQUENCE = [
   {
     id: 'kyb',
     title: 'Validaciones aprobadas',
-    description: 'Identidad del representante y expediente KYB aprobados por Compliance.',
+    description: 'Identidad y empresa aprobadas.',
   },
   {
     id: 'provisioning',
-    title: 'Aprovisionamiento en el core',
-    description: 'Pedimos la apertura de la cuenta vista al proveedor bancario.',
+    title: 'Apertura de cuenta',
+    description: 'Iniciamos la apertura de la cuenta vista.',
   },
   {
     id: 'validation',
     title: 'Validación del resultado',
-    description: 'Confirmamos identificadores, titular y moneda antes de habilitar la cuenta.',
+    description: 'Comprobamos titular, moneda y número de cuenta.',
   },
   {
     id: 'enabled',
     title: 'Cuenta vista habilitada',
-    description: 'La cuenta queda operativa para abonos, egresos y cartola.',
+    description: 'Cuenta disponible para operar.',
   },
   {
     id: 'capabilities',
-    title: 'Capacidades de cuentas virtuales',
-    description: 'Habilitamos la creación de subcuentas por usuario, proyecto o flujo.',
+    title: 'Cuentas virtuales',
+    description: 'Se habilitan las cuentas virtuales.',
   },
   {
     id: 'desk',
     title: 'Acceso al Merchant Desk',
-    description: 'La consola operativa queda disponible para tu equipo.',
+    description: 'Accede a saldos y movimientos.',
   },
 ]
 
@@ -69,7 +70,7 @@ const CAPABILITIES = [
     id: 'core_account',
     icon: <Building2 size={16} aria-hidden="true" />,
     name: 'Cuenta vista empresarial',
-    items: 'Saldo disponible y reservado · Cartola de movimientos · Abonos y egresos',
+    items: 'Saldo disponible y reservado · Movimientos · Abonos y egresos',
   },
   {
     id: 'virtual_accounts',
@@ -81,7 +82,7 @@ const CAPABILITIES = [
     id: 'desk',
     icon: <LayoutDashboard size={16} aria-hidden="true" />,
     name: 'Merchant Desk',
-    items: 'Vista de saldos · Transacciones · Catálogo de productos adicionales',
+    items: 'Saldos · Movimientos · Productos adicionales',
   },
 ]
 
@@ -89,16 +90,16 @@ const CAPABILITIES = [
 const FAILURE_COPY = {
   [ACCOUNT_STATUS.FAILED]: {
     tone: 'danger',
-    title: 'El aprovisionamiento no se completó',
-    body: 'El proveedor rechazó la apertura por un dato que no cuadra con el expediente. La cuenta no existe y no hay nada operativo todavía.',
-    next: 'Operaciones ya tiene el caso. Puedes reintentar desde acá: si vuelve a fallar, tu ejecutivo lo escala al proveedor.',
+    title: 'No se pudo abrir la cuenta',
+    body: 'La apertura falló. La cuenta aún no está habilitada.',
+    next: 'Reintenta. Si el error continúa, contacta a tu ejecutivo.',
     code: 'core.provisioning.rejected',
   },
   [ACCOUNT_STATUS.RESTRICTED]: {
     tone: 'warning',
-    title: 'La cuenta quedó activa con restricciones',
-    body: 'Puedes recibir abonos y revisar la cartola, pero los egresos están bloqueados hasta cerrar un requerimiento de Compliance.',
-    next: 'Revisa los requerimientos pendientes en Config Org. Al cerrarlos, la cuenta pasa a operar sin restricciones.',
+    title: 'Cuenta restringida',
+    body: 'Puedes recibir abonos y consultar movimientos. Los egresos están bloqueados.',
+    next: 'Revisa los requisitos pendientes en Config Org.',
     code: 'core.account.restricted',
   },
 }
@@ -135,7 +136,7 @@ export default function CoreActivation() {
         setLiveStep(null)
         toast?.push({
           tone: 'danger',
-          title: 'El aprovisionamiento falló',
+          title: 'No se pudo abrir la cuenta',
           description: 'La cuenta no quedó creada. Revisa el detalle en pantalla.',
         })
       }, 2800)
@@ -196,14 +197,14 @@ export default function CoreActivation() {
       {
         id: 'identity',
         icon: <UserRound size={16} aria-hidden="true" />,
-        label: 'Validación de identidad',
+        label: 'Verificación de identidad',
         meta: IDENTITY_STATUS_META[state.identityStatus],
         ok: state.identityStatus === IDENTITY_STATUS.APPROVED,
       },
       {
         id: 'kyb',
         icon: <ShieldCheck size={16} aria-hidden="true" />,
-        label: 'Validación de empresa (KYB)',
+        label: 'Verificación de empresa (KYB)',
         meta: KYB_STATUS_META[state.kybStatus],
         ok: state.kybStatus === KYB_STATUS.APPROVED,
       },
@@ -212,18 +213,17 @@ export default function CoreActivation() {
     return (
       <FlowLayout
         aside={{
-          title: 'La cuenta se activa cuando el onboarding está aprobado',
-          body: 'El aprovisionamiento arranca solo con identidad y KYB aprobados. Mientras tanto, no hay cuenta ni saldos.',
+          title: 'Completa las verificaciones',
+          body: 'La apertura requiere identidad y empresa aprobadas.',
           items: SEQUENCE.slice(0, 4).map((s, i) => ({ title: s.title, description: s.description, marker: i + 1 })),
         }}
         topRight={<Badge tone={accountMeta.tone} dot>{accountMeta.label}</Badge>}
       >
         <div className="ac-stack">
           <div className="ac-head">
-            <h2 className="flow__title">Todavía no podemos activar la cuenta</h2>
+            <h2 className="flow__title">Faltan verificaciones</h2>
             <p className="flow__lead">
-              Para abrir la cuenta vista necesitamos las dos validaciones del onboarding aprobadas.
-              Esto es lo que falta.
+              Completa las verificaciones pendientes para abrir la cuenta.
             </p>
           </div>
 
@@ -247,8 +247,7 @@ export default function CoreActivation() {
           </div>
 
           <p className="flow__footnote">
-            Las dos validaciones avanzan por separado. Puedes completar la que tengas lista sin
-            esperar a la otra.
+            Puedes completar las verificaciones en cualquier orden.
           </p>
         </div>
       </FlowLayout>
@@ -259,33 +258,32 @@ export default function CoreActivation() {
   const identifiers = [
     { label: 'Organización', value: state.organization.legalName || state.organization.tradeName || '—' },
     { label: 'País de la cuenta', value: state.organization.countryOfIncorporation ? countryLabel(state.organization.countryOfIncorporation) : '—' },
-    { label: 'Número de cuenta', value: deskReady ? '000-12-345678' : 'Se asigna al habilitar la cuenta' },
-    { label: 'Moneda', value: deskReady ? 'CLP' : 'Se define con el proveedor' },
+    { label: 'Número de cuenta', value: deskReady ? '000-12-345678' : 'Pendiente de apertura' },
+    { label: 'Moneda', value: deskReady ? 'CLP' : 'Pendiente de confirmación' },
   ]
 
   return (
     <FlowLayout
       wide
       aside={{
-        title: deskReady ? 'Tu cuenta vista está habilitada' : 'Estamos abriendo tu cuenta vista',
-        body: 'El aprovisionamiento lo ejecuta el proveedor core. Acá ves cada paso y el resultado real, sin adelantar nada.',
+        title: 'Tu cuenta vista empresarial',
+        body: 'Consulta el estado de apertura de tu cuenta.',
         items: SEQUENCE.map((s, i) => ({ title: s.title, description: s.description, marker: i + 1 })),
       }}
       topRight={<Badge tone={accountMeta.tone} dot>{accountMeta.label}</Badge>}
     >
       <div className="ac-stack">
         <div className="ac-head">
-          <p className="flow__step-meta">Macroproceso C · Activación de la cuenta</p>
           <h2 className="flow__title">
-            {status === ACCOUNT_STATUS.ACTIVE ? 'Tu cuenta vista quedó habilitada'
-              : status === ACCOUNT_STATUS.RESTRICTED ? 'Tu cuenta opera con restricciones'
-                : status === ACCOUNT_STATUS.FAILED ? 'El aprovisionamiento falló'
-                  : status === ACCOUNT_STATUS.PROVISIONING ? 'Estamos abriendo tu cuenta vista'
-                    : 'Activa tu cuenta vista empresarial'}
+            {status === ACCOUNT_STATUS.ACTIVE ? 'Cuenta vista activa'
+              : status === ACCOUNT_STATUS.RESTRICTED ? 'Cuenta restringida'
+                : status === ACCOUNT_STATUS.FAILED ? 'No se pudo abrir la cuenta'
+                  : status === ACCOUNT_STATUS.PROVISIONING ? 'Estamos abriendo tu cuenta'
+                    : 'Activación de cuenta vista'}
           </h2>
           <p className="flow__lead">
             {status === ACCOUNT_STATUS.NOT_PROVISIONED
-              ? 'Las dos validaciones están aprobadas. La apertura de la cuenta comienza automáticamente.'
+              ? 'Verificaciones aprobadas. La apertura comienza automáticamente.'
               : accountMeta.description}
           </p>
         </div>
@@ -297,7 +295,7 @@ export default function CoreActivation() {
             title={failure.title}
             action={status === ACCOUNT_STATUS.FAILED
               ? <Button size="sm" variant="primary" icon={<RefreshCcw size={14} aria-hidden="true" />} onClick={() => run(ACCOUNT_STATUS.ACTIVE)}>Reintentar</Button>
-              : <Button size="sm" variant="secondary" onClick={() => navigate('/desk')}>Entrar al Desk</Button>}
+              : <Button size="sm" variant="secondary" onClick={() => navigate('/desk')}>Ir a Merchant Desk</Button>}
           >
             <p className="ray-body-sm">{failure.body}</p>
             <p className="ray-body-sm" style={{ marginTop: 'var(--ray-space-2)' }}>{failure.next}</p>
@@ -309,22 +307,23 @@ export default function CoreActivation() {
           <Callout
             tone="success"
             title="Cuenta vista activa"
-            action={<Button size="sm" variant="brand" onClick={() => navigate('/desk')}>Abrir el Merchant Desk</Button>}
+            action={<Button size="sm" variant="brand" onClick={() => navigate('/desk')}>Ir a Merchant Desk</Button>}
           >
             <p className="ray-body-sm">
               Habilitada el {state.accountActivatedAt ? new Date(state.accountActivatedAt).toLocaleString('es-CL') : 'momento de la activación'}.
-              Las cuentas virtuales quedaron disponibles junto con la cuenta.
+              También tienes disponibles las cuentas virtuales.
             </p>
           </Callout>
         )}
 
         {/* ------------------------- secuencia -------------------------- */}
-        <Card>
+        <ContentDetails summary="Etapas de apertura">
+          <Card>
           <CardBody>
             <div className="ac-row">
               <span className="grow">
                 <p className="ac-title">Secuencia de activación</p>
-                <p className="ac-desc">Seis pasos, en orden. El estado que ves es el del proveedor, no una estimación.</p>
+                <p className="ac-desc">Etapas de la apertura simulada.</p>
               </span>
               <Badge tone={accountMeta.tone}>{accountMeta.label}</Badge>
             </div>
@@ -348,20 +347,19 @@ export default function CoreActivation() {
                 <Divider />
                 <div className="ac-stack" style={{ marginTop: 'var(--ray-space-4)' }}>
                   <p className="ray-body-sm text-secondary">
-                    El aprovisionamiento quedó corriendo en el proveedor. Al volver a esta pantalla
-                    no reiniciamos el proceso: consultamos el estado.
+                    La apertura sigue en curso aunque salgas de esta pantalla.
                   </p>
                   {checking
                     ? (
                       <div role="status" aria-live="polite">
                         <Skeleton height={14} width="70%" />
-                        <span className="sr-only">Consultando el estado del aprovisionamiento</span>
+                        <span className="sr-only">Consultando el estado de apertura</span>
                       </div>
                     )
                     : (
                       <div>
                         <Button variant="primary" loading={checking} onClick={checkStatus}>
-                          Consultar estado del aprovisionamiento
+                          Consultar estado
                         </Button>
                       </div>
                     )}
@@ -373,13 +371,14 @@ export default function CoreActivation() {
               <>
                 <Divider />
                 <div className="flow__actions">
-                  <p className="ray-body-sm" role="status">El aprovisionamiento comienza automáticamente al aprobar las validaciones.</p>
+                  <p className="ray-body-sm" role="status">La apertura comienza automáticamente.</p>
                   <Button variant="ghost" onClick={() => navigate('/onboarding')}>Volver al onboarding</Button>
                 </div>
               </>
             )}
           </CardBody>
         </Card>
+        </ContentDetails>
 
         {/* ------------------------ la cuenta -------------------------- */}
         <Card level={deskReady ? 'medium' : 'low'}>
@@ -392,8 +391,8 @@ export default function CoreActivation() {
                 <p className="ac-title">Cuenta vista empresarial</p>
                 <p className="ac-desc">
                   {deskReady
-                    ? 'Identificadores asignados por el proveedor core.'
-                    : 'Los identificadores se asignan recién cuando el proveedor confirma la apertura.'}
+                    ? 'Datos de ejemplo de la cuenta.'
+                    : 'Los datos estarán disponibles cuando la cuenta esté activa.'}
                 </p>
               </span>
             </div>
@@ -402,8 +401,7 @@ export default function CoreActivation() {
             </div>
             {status === ACCOUNT_STATUS.PROVISIONING && (
               <p className="flow__footnote">
-                Mientras el aprovisionamiento está en curso no hay saldos ni movimientos: la cuenta
-                todavía no existe en el core.
+                La cuenta aún no está activa: no tiene saldos ni movimientos disponibles.
               </p>
             )}
           </CardBody>
@@ -414,11 +412,11 @@ export default function CoreActivation() {
           <CardBody>
             <div className="ac-row">
               <span className="grow">
-                <p className="ac-title">Qué se habilita con la cuenta</p>
+                <p className="ac-title">Qué incluye la cuenta</p>
                 <p className="ac-desc">
                   {deskReady
-                    ? 'Disponible ahora para tu organización.'
-                    : 'Se habilita en conjunto cuando la cuenta queda operativa.'}
+                    ? 'Servicios incluidos.'
+                    : 'Disponibles al activar la cuenta.'}
                 </p>
               </span>
             </div>
@@ -453,7 +451,7 @@ export default function CoreActivation() {
                 </div>
                 <div className="flow__actions">
                   <Button variant="brand" icon={<LayoutDashboard size={15} aria-hidden="true" />} onClick={() => navigate('/desk')}>
-                    Entrar al Merchant Desk
+                    Ir a Merchant Desk
                   </Button>
                   <Button variant="ghost" onClick={() => navigate('/onboarding')}>Ver el onboarding</Button>
                 </div>
@@ -470,12 +468,12 @@ export default function CoreActivation() {
         </Card>
 
         {/* ------------------------ simulación -------------------------- */}
-        <Card flat level="medium">
+        <ContentDetails summary="Probar otros resultados">
+          <Card flat level="medium">
           <CardBody>
-            <p className="ray-label">Desenlaces del aprovisionamiento</p>
+            <p className="ray-label">Otros resultados de la demo</p>
             <p className="ac-desc">
-              Abrir una cuenta en el core no siempre sale bien. Estos controles corren la secuencia
-              hasta el desenlace que elijas.
+              Elige un resultado para probar la apertura.
             </p>
             <div className="ac-sim" style={{ marginTop: 'var(--ray-space-4)' }}>
               <Button size="sm" variant="secondary" icon={<CircleCheck size={14} aria-hidden="true" />} onClick={() => run(ACCOUNT_STATUS.ACTIVE)}>
@@ -485,14 +483,15 @@ export default function CoreActivation() {
                 Simular cuenta restringida
               </Button>
               <Button size="sm" variant="secondary" icon={<AlertTriangle size={14} aria-hidden="true" />} onClick={() => run(ACCOUNT_STATUS.FAILED)}>
-                Simular aprovisionamiento fallido
+                Simular error de apertura
               </Button>
               <Button size="sm" variant="ghost" onClick={() => { clearTimers(); setLiveStep(null); actions.setAccountStatus(ACCOUNT_STATUS.NOT_PROVISIONED) }}>
-                Volver a sin aprovisionar
+                Reiniciar apertura
               </Button>
             </div>
           </CardBody>
         </Card>
+        </ContentDetails>
 
         <p className="flow__footnote">
           Demo conceptual de YOL1 Enterprise. Los identificadores, saldos y cuentas virtuales son de

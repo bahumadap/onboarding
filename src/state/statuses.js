@@ -40,12 +40,12 @@ export const KYB_STATUS = {
 }
 
 export const KYB_STATUS_META = {
-  [KYB_STATUS.DRAFT]: { label: 'Borrador', tone: 'neutral', description: 'Aún no has enviado la información de la empresa.' },
-  [KYB_STATUS.PENDING]: { label: 'Información pendiente', tone: 'warning', description: 'Faltan datos o documentos para completar el expediente.' },
-  [KYB_STATUS.IN_REVIEW]: { label: 'En revisión', tone: 'info', description: 'Nuestro equipo está revisando la información enviada.' },
-  [KYB_STATUS.OBSERVED]: { label: 'Observado', tone: 'warning', description: 'Hay observaciones que debes corregir para continuar.' },
-  [KYB_STATUS.APPROVED]: { label: 'Aprobado', tone: 'success', description: 'La validación de empresa está aprobada.' },
-  [KYB_STATUS.REJECTED]: { label: 'Rechazado', tone: 'danger', description: 'La solicitud fue rechazada. Contacta a tu ejecutivo.' },
+  [KYB_STATUS.DRAFT]: { label: 'Borrador', tone: 'neutral', description: 'Completa y envía los datos de tu empresa.' },
+  [KYB_STATUS.PENDING]: { label: 'Información pendiente', tone: 'warning', description: 'Completa los datos o documentos pendientes.' },
+  [KYB_STATUS.IN_REVIEW]: { label: 'En revisión', tone: 'info', description: 'Información enviada a revisión.' },
+  [KYB_STATUS.OBSERVED]: { label: 'Observado', tone: 'warning', description: 'Corrige las observaciones para continuar.' },
+  [KYB_STATUS.APPROVED]: { label: 'Aprobado', tone: 'success', description: 'Empresa verificada.' },
+  [KYB_STATUS.REJECTED]: { label: 'Rechazado', tone: 'danger', description: 'Contacta a tu ejecutivo para revisar el rechazo.' },
 }
 
 /* ------------------------ Validación de identidad --------------------- */
@@ -60,7 +60,7 @@ export const IDENTITY_STATUS = {
 
 export const IDENTITY_STATUS_META = {
   [IDENTITY_STATUS.NOT_STARTED]: { label: 'No iniciada', tone: 'neutral' },
-  [IDENTITY_STATUS.IN_PROGRESS]: { label: 'En curso', tone: 'info' },
+  [IDENTITY_STATUS.IN_PROGRESS]: { label: 'En progreso', tone: 'info' },
   [IDENTITY_STATUS.IN_REVIEW]: { label: 'En revisión', tone: 'info' },
   [IDENTITY_STATUS.OBSERVED]: { label: 'Observada', tone: 'warning' },
   [IDENTITY_STATUS.APPROVED]: { label: 'Verificada', tone: 'success' },
@@ -77,11 +77,11 @@ export const ACCOUNT_STATUS = {
 }
 
 export const ACCOUNT_STATUS_META = {
-  [ACCOUNT_STATUS.NOT_PROVISIONED]: { label: 'Sin aprovisionar', tone: 'neutral', description: 'La cuenta vista todavía no ha sido solicitada al proveedor.' },
-  [ACCOUNT_STATUS.PROVISIONING]: { label: 'En aprovisionamiento', tone: 'info', description: 'Estamos abriendo tu cuenta vista empresarial.' },
-  [ACCOUNT_STATUS.ACTIVE]: { label: 'Activa', tone: 'success', description: 'Tu cuenta vista está habilitada para operar.' },
-  [ACCOUNT_STATUS.RESTRICTED]: { label: 'Restringida', tone: 'warning', description: 'La cuenta opera con restricciones. Revisa los requerimientos pendientes.' },
-  [ACCOUNT_STATUS.FAILED]: { label: 'Con error', tone: 'danger', description: 'El aprovisionamiento falló. El equipo de operaciones está revisando el caso.' },
+  [ACCOUNT_STATUS.NOT_PROVISIONED]: { label: 'Sin abrir', tone: 'neutral', description: 'La apertura comienza tras aprobar identidad y empresa.' },
+  [ACCOUNT_STATUS.PROVISIONING]: { label: 'En apertura', tone: 'info', description: 'Estamos abriendo tu cuenta vista.' },
+  [ACCOUNT_STATUS.ACTIVE]: { label: 'Activa', tone: 'success', description: 'Cuenta disponible para operar.' },
+  [ACCOUNT_STATUS.RESTRICTED]: { label: 'Restringida', tone: 'warning', description: 'Cuenta restringida. Revisa los requisitos pendientes.' },
+  [ACCOUNT_STATUS.FAILED]: { label: 'Con error', tone: 'danger', description: 'No se pudo abrir la cuenta. Reintenta o contacta a tu ejecutivo.' },
 }
 
 /** La cuenta solo se puede operar en estos estados. */
@@ -101,7 +101,7 @@ export const PRODUCT_STATUS = {
 
 export const PRODUCT_STATUS_META = {
   [PRODUCT_STATUS.NOT_AVAILABLE]: { label: 'No disponible', tone: 'neutral', action: null },
-  [PRODUCT_STATUS.AVAILABLE_TO_REQUEST]: { label: 'Disponible', tone: 'brand', action: 'Solicitar activación' },
+  [PRODUCT_STATUS.AVAILABLE_TO_REQUEST]: { label: 'Disponible', tone: 'brand', action: 'Solicitar producto' },
   [PRODUCT_STATUS.REQUESTED]: { label: 'Solicitado', tone: 'info', action: 'Ver solicitud' },
   [PRODUCT_STATUS.IN_REVIEW]: { label: 'En evaluación', tone: 'info', action: 'Ver solicitud' },
   [PRODUCT_STATUS.PENDING_CONFIGURATION]: { label: 'Pendiente de configuración', tone: 'warning', action: 'Configurar' },

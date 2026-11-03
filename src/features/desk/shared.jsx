@@ -117,15 +117,15 @@ export function inoperableReason(account) {
   if (account.operable) return null
   const name = account.requiredProduct?.name ?? 'el producto asociado'
   if (account.requiredProductStatus === PRODUCT_STATUS.NOT_AVAILABLE) {
-    return `Requiere ${name}, que todavía no está disponible para tu organización.`
+    return `Requiere ${name}, no disponible para tu empresa.`
   }
   if (account.requiredProductStatus === PRODUCT_STATUS.AVAILABLE_TO_REQUEST) {
-    return `Requiere ${name}. Puedes solicitar su activación desde el catálogo de productos.`
+    return `Requiere ${name}. Solicítalo en Productos.`
   }
   if (account.requiredProductStatus === PRODUCT_STATUS.REJECTED) {
-    return `La solicitud de ${name} fue rechazada. Contacta a tu ejecutivo para revisar el caso.`
+    return `Solicitud de ${name} rechazada. Contacta a tu ejecutivo.`
   }
-  return `Requiere ${name}, que sigue en proceso de activación.`
+  return `Requiere ${name}. Activación pendiente.`
 }
 
 /** Tokens de color para las series de recharts. */

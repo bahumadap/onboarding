@@ -46,10 +46,10 @@ export default function OrgApi() {
     actions.revealApiKeys(!revealed)
     toast.push({
       tone: revealed ? 'info' : 'warning',
-      title: revealed ? 'Credenciales ocultas de nuevo' : 'Mostrando un valor de demostración',
+      title: revealed ? 'Credenciales ocultas' : 'Valores de ejemplo visibles',
       description: revealed
-        ? 'Volvimos a enmascarar los valores.'
-        : 'No es una credencial real: la demo nunca expone secretos productivos.',
+        ? ''
+        : 'No son claves reales.',
     })
   }
 
@@ -61,7 +61,7 @@ export default function OrgApi() {
       toast.push({
         tone: 'danger',
         title: 'No pudimos copiar',
-        description: 'El navegador bloqueó el portapapeles. Selecciona el texto y cópialo a mano.',
+        description: 'No se pudo copiar. Selecciona el texto y cópialo manualmente.',
       })
     }
   }
@@ -71,7 +71,7 @@ export default function OrgApi() {
     toast.push({
       tone: 'info',
       title: 'Activación productiva solicitada',
-      description: 'El equipo técnico revisa la integración antes de emitir la clave productiva.',
+      description: 'Solicitud simulada. No se emitirá una clave real.',
     })
   }
 
@@ -80,15 +80,13 @@ export default function OrgApi() {
       <header className="page__head">
         <h1 className="page__title">API e integraciones</h1>
         <p className="page__lead">
-          Credenciales, webhooks y recursos para conectar tus sistemas. Integrarse es opcional: la
-          organización puede operar completa desde el dashboard.
+          Conecta tus sistemas. La integración es opcional.
         </p>
       </header>
 
-      <Callout tone="warning" title="Las credenciales de esta demo son ficticias">
+      <Callout tone="warning" title="Claves de ejemplo">
         <p className="ray-body-sm">
-          Nunca mostramos una clave real en pantalla. En producción, la clave completa se ve una sola
-          vez al emitirla y después queda enmascarada para siempre.
+          Estas claves no permiten acceder a servicios reales.
         </p>
       </Callout>
 
@@ -97,7 +95,7 @@ export default function OrgApi() {
         <div className="section__head">
           <div>
             <h2 className="section__title">Credenciales</h2>
-            <p className="section__desc">Un par de claves por ambiente. Sandbox y producción no se mezclan.</p>
+            <p className="section__desc">Claves separadas para pruebas y producción.</p>
           </div>
           <Button
             variant="secondary"
@@ -138,7 +136,7 @@ export default function OrgApi() {
                   {pending && (
                     <p className="org-inline-note" style={{ display: 'block', marginTop: 'var(--ray-space-3)' }}>
                       {productionRequestedAt
-                        ? `Activación solicitada el ${new Date(productionRequestedAt).toLocaleDateString('es-CL')}. Te avisamos al correo operativo.`
+                        ? `Activación solicitada el ${new Date(productionRequestedAt).toLocaleDateString('es-CL')}. Consulta el estado aquí.`
                         : 'La clave productiva se emite después de validar la integración en sandbox.'}
                     </p>
                   )}
@@ -177,7 +175,7 @@ export default function OrgApi() {
         <div className="section__head">
           <div>
             <h2 className="section__title">Webhooks</h2>
-            <p className="section__desc">Eventos que empujamos a tus endpoints, con su tasa de entrega.</p>
+            <p className="section__desc">Notificaciones de eventos a tus sistemas.</p>
           </div>
         </div>
 
@@ -243,7 +241,7 @@ export default function OrgApi() {
                   <EmptyState
                     icon={<Webhook size={20} aria-hidden="true" />}
                     title="Todavía no hay webhooks"
-                    description="Configura un endpoint para recibir abonos, cambios de estado de pagos y actualizaciones de compliance."
+                    description="Configura una URL para recibir eventos de cuentas, pagos y cumplimiento."
                   />
                 </CardBody>
               )}
@@ -257,7 +255,7 @@ export default function OrgApi() {
         <div className="section__head">
           <div>
             <h2 className="section__title">Recursos de integración</h2>
-            <p className="section__desc">Lo que está disponible hoy y lo que todavía estamos probando.</p>
+            <p className="section__desc">Recursos para integrar tus sistemas.</p>
           </div>
         </div>
 
@@ -274,8 +272,7 @@ export default function OrgApi() {
                 </div>
                 {resource.id === 'mcp' && (
                   <p className="org-inline-note" style={{ display: 'block', marginTop: 'var(--ray-space-3)' }}>
-                    Capacidad experimental: permitiría que un agente consulte saldos y movimientos con
-                    permisos acotados. Todavía no está habilitada para organizaciones.
+                    Experimental: consultas de saldos y movimientos mediante agentes. No está habilitado.
                   </p>
                 )}
               </CardBody>
@@ -287,8 +284,7 @@ export default function OrgApi() {
       <section className="section">
         <Callout tone="info" title="Seguridad de las credenciales" icon={<KeyRound size={16} aria-hidden="true" />}>
           <p className="ray-body-sm">
-            Guarda las claves en tu gestor de secretos, nunca en el repositorio. Si sospechas de una
-            filtración, revócala y emite una nueva: las claves anteriores dejan de funcionar al instante.
+            Guarda las claves reales en un gestor de secretos. Si se filtran, revócalas y genera nuevas.
           </p>
           <p className="ray-body-sm" style={{ marginTop: 'var(--ray-space-2)' }}>
             <Link to="/org/users">Revisar quién tiene acceso a la organización</Link>

@@ -124,6 +124,16 @@ export const Skeleton = ({ width = '100%', height = 14, radius, className }) => 
 
 /* ----------------------------- Field ------------------------------ */
 export function Field({ label, hint, error, required, htmlFor, children, className }) {
+  const messageId = useId()
+  const fields = React.Children.map(children, child => {
+    if (!React.isValidElement(child) || ![Input, Select, Textarea, MultiSelect, OtpInput].includes(child.type)) return child
+    const description = [child.props['aria-describedby'], (error || hint) ? messageId : null].filter(Boolean).join(' ')
+    return React.cloneElement(child, {
+      'aria-describedby': description || undefined,
+      'aria-required': required || child.props['aria-required'] || undefined,
+      'aria-invalid': error ? true : child.props['aria-invalid'],
+    })
+  })
   return (
     <div className={cx('field', className)}>
       {label && (
@@ -131,10 +141,10 @@ export function Field({ label, hint, error, required, htmlFor, children, classNa
           {label}{required && <span className="field__required" aria-hidden="true"> *</span>}
         </label>
       )}
-      {children}
+      {fields}
       {error
-        ? <span className="field__error"><CircleAlert size={13} aria-hidden="true" />{error}</span>
-        : hint ? <span className="field__hint">{hint}</span> : null}
+        ? <span id={messageId} className="field__error" role="alert"><CircleAlert size={13} aria-hidden="true" />{error}</span>
+        : hint ? <span id={messageId} className="field__hint">{hint}</span> : null}
     </div>
   )
 }
@@ -202,7 +212,7 @@ export const Switch = ({ label, className, ...rest }) => (
 )
 
 /* --------------------------- Multiselect -------------------------- */
-export function MultiSelect({ options = [], value = [], onChange, placeholder = 'Selecciona…', searchPlaceholder = 'Buscar…', id }) {
+export function MultiSelect({ options = [], value = [], onChange, placeholder = 'Selecciona…', searchPlaceholder = 'Buscar…', id, ...rest }) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const wrapRef = useRef(null)
@@ -237,6 +247,7 @@ export function MultiSelect({ options = [], value = [], onChange, placeholder = 
       <button
         type="button"
         id={id}
+        {...rest}
         className="multiselect__control"
         aria-expanded={open}
         aria-haspopup="listbox"
@@ -302,7 +313,7 @@ export function MultiSelect({ options = [], value = [], onChange, placeholder = 
 }
 
 /* ------------------------------ OTP ------------------------------- */
-export function OtpInput({ length = 6, value, onChange, invalid, disabled, label = 'Código de verificación' }) {
+export function OtpInput({ length = 6, value, onChange, invalid, disabled, label = 'Código de verificación', ...rest }) {
   const refs = useRef([])
   const chars = useMemo(() => value.padEnd(length, ' ').slice(0, length).split(''), [value, length])
 
@@ -344,7 +355,7 @@ export function OtpInput({ length = 6, value, onChange, invalid, disabled, label
   }
 
   return (
-    <div className={cx('otp', invalid && 'otp--invalid')} role="group" aria-label={label}>
+    <div className={cx('otp', invalid && 'otp--invalid')} role="group" aria-label={label} {...rest}>
       {Array.from({ length }, (_, i) => (
         <input
           key={i}
@@ -678,3 +689,13 @@ export const DefinitionList = ({ items = [], columns = 2, className }) => (
 )
 
 export { cx }
+
+/** Secondary guidance stays available without competing with the main action. */
+export function ContentDetails({ summary, children }) {
+  return (
+    <details className="content-details">
+      <summary className="content-details__summary">{summary}</summary>
+      <div className="content-details__body">{children}</div>
+    </details>
+  )
+}

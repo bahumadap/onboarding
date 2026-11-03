@@ -11,7 +11,7 @@ export const PRODUCT_CATALOG = [
   {
     id: 'core_account',
     name: 'Cuenta vista empresarial',
-    summary: 'La cuenta base de la organización: saldos, abonos y egresos en moneda local.',
+    summary: 'Recibe y envía fondos en moneda local.',
     core: true,
     initialStatus: PRODUCT_STATUS.NOT_AVAILABLE,
     capabilities: ['Saldo disponible y reservado', 'Cartola de movimientos', 'Abonos y egresos'],
@@ -19,7 +19,7 @@ export const PRODUCT_CATALOG = [
   {
     id: 'virtual_accounts',
     name: 'Cuentas virtuales',
-    summary: 'Subcuentas por usuario final, proyecto o flujo, con saldo y trazabilidad propios.',
+    summary: 'Separa saldos y movimientos por cliente, proyecto o cobro.',
     core: true,
     initialStatus: PRODUCT_STATUS.NOT_AVAILABLE,
     capabilities: ['Creación y cierre de cuentas', 'Asignación de saldos', 'Conciliación por cuenta'],
@@ -27,7 +27,7 @@ export const PRODUCT_CATALOG = [
   {
     id: 'fx',
     name: 'FX · Cambio de divisas',
-    summary: 'Conversión entre monedas con tipo de cambio referencial y liquidación en tus propias cuentas.',
+    summary: 'Cambia monedas con tipo de cambio referencial y liquidación en tus cuentas.',
     initialStatus: PRODUCT_STATUS.AVAILABLE_TO_REQUEST,
     requirements: ['Evaluación de perfil cambiario', 'Declaración de monedas a operar', 'Firma de anexo FX'],
     capabilities: ['Cotización por par de monedas', 'Órdenes de cambio', 'Liquidación multimoneda'],
@@ -36,7 +36,7 @@ export const PRODUCT_CATALOG = [
   {
     id: 'payouts',
     name: 'Payouts · Dispersión de fondos',
-    summary: 'Pagos masivos a terceros dentro y fuera del país, por archivo o por API.',
+    summary: 'Envía pagos masivos por archivo o API.',
     initialStatus: PRODUCT_STATUS.AVAILABLE_TO_REQUEST,
     requirements: ['Perfil transaccional declarado', 'Reglas de aprobación configuradas', 'Validación de beneficiarios'],
     capabilities: ['Carga masiva', 'Doble aprobación', 'Estado por beneficiario'],
@@ -45,7 +45,7 @@ export const PRODUCT_CATALOG = [
   {
     id: 'payment_initiation',
     name: 'Iniciación de pagos',
-    summary: 'Cobros iniciados desde la cuenta del pagador, sin tarjeta de por medio.',
+    summary: 'Recibe pagos desde la cuenta del pagador, sin tarjeta.',
     initialStatus: PRODUCT_STATUS.AVAILABLE_TO_REQUEST,
     requirements: ['Integración técnica', 'Revisión del flujo de cobro', 'Habilitación por jurisdicción'],
     capabilities: ['Links de cobro', 'Conciliación automática', 'Webhooks de pago'],

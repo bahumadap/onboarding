@@ -1,3 +1,4 @@
+import { ContentDetails } from '../ui'
 /* =============================================================
    Layout de los flujos previos a la consola: signup, onboarding y
    activación. Panel izquierdo fijo con el contexto del proceso y
@@ -22,6 +23,7 @@ export default function FlowLayout({
           <h1 className="flow__aside-title">{aside?.title}</h1>
           {aside?.body && <p className="flow__aside-body">{aside.body}</p>}
           {aside?.items && (
+            <ContentDetails summary="Etapas del proceso">
             <div className="flow__aside-list">
               {aside.items.map((item, i) => (
                 <div className="flow__aside-item" key={item.title}>
@@ -33,10 +35,11 @@ export default function FlowLayout({
                 </div>
               ))}
             </div>
+            </ContentDetails>
           )}
         </div>
         <p className="flow__aside-foot">
-          Demo conceptual de YOL1 Enterprise. Los datos son de ejemplo y no se procesan operaciones reales.
+          Demo de YOL1 Enterprise. Sin operaciones reales.
         </p>
       </aside>
 

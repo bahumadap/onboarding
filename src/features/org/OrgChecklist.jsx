@@ -33,7 +33,7 @@ const TOOLS = [
   { to: '/org/approvals', icon: ShieldCheck, title: 'Permisos y aprobaciones', desc: 'Quién inicia, quién aprueba y con qué límites.' },
   { to: '/org/api', icon: KeyRound, title: 'API e integraciones', desc: 'Credenciales, webhooks y recursos técnicos.' },
   { to: '/org/products', icon: CreditCard, title: 'Productos y servicios', desc: 'Configuración y permisos de los productos habilitados.' },
-  { to: '/org/compliance', icon: FileCheck2, title: 'Documentación y compliance', desc: 'Expediente KYB, documentos y contratos.' },
+  { to: '/org/compliance', icon: FileCheck2, title: 'Documentación y cumplimiento', desc: 'Expediente KYB, documentos y contratos.' },
   { to: '/org/preferences', icon: Settings2, title: 'Preferencias', desc: 'Visualización, notificaciones, seguridad e idioma.' },
 ]
 
@@ -50,16 +50,16 @@ function buildSteps(state) {
     {
       id: 'profile',
       kind: TASK_KIND.REQUIRED,
-      title: 'Revisar el perfil de la organización',
-      description: 'Confirma nombre comercial, actividad y países de operación. Los datos legales quedan como solo lectura: cambiarlos abre una nueva revisión.',
+      title: 'Revisar perfil',
+      description: 'Revisa nombre comercial, actividad y países de operación.',
       to: '/org/profile',
       cta: 'Revisar perfil',
     },
     {
       id: 'account',
       kind: TASK_KIND.AUTOMATIC,
-      title: 'Confirmar el estado de la cuenta empresarial',
-      description: 'Lo resuelve el sistema al aprovisionar la cuenta vista. No requiere ninguna acción de tu parte.',
+      title: 'Cuenta vista',
+      description: 'Se habilita automáticamente tras la aprobación.',
       to: '/org/accounts',
       cta: 'Ver cuentas',
       derived: state.accountStatus === ACCOUNT_STATUS.ACTIVE,
@@ -69,8 +69,8 @@ function buildSteps(state) {
     {
       id: 'invite',
       kind: TASK_KIND.REQUIRED,
-      title: 'Invitar a las personas del equipo',
-      description: 'Mientras seas la única persona con acceso, nadie más puede operar ni aprobar movimientos.',
+      title: 'Invitar al equipo',
+      description: 'Invita a quienes operan, aprueban o consultan.',
       to: '/org/users',
       cta: 'Invitar miembros',
       derived: hasTeam,
@@ -83,7 +83,7 @@ function buildSteps(state) {
       id: 'roles',
       kind: TASK_KIND.REQUIRED,
       title: 'Configurar roles y permisos',
-      description: 'Define quién inicia operaciones, quién las aprueba y desde qué monto se exige doble aprobación.',
+      description: 'Asigna permisos y límites de aprobación.',
       to: '/org/approvals',
       cta: 'Configurar permisos',
     },
@@ -91,7 +91,7 @@ function buildSteps(state) {
       id: 'virtual_account',
       kind: TASK_KIND.RECOMMENDED,
       title: 'Crear la primera cuenta virtual',
-      description: 'Las cuentas virtuales separan saldos por usuario final, proyecto o flujo de cobro. Se crean en el Merchant Desk.',
+      description: 'Separa saldos por cliente, proyecto o cobro.',
       to: '/desk/virtual-accounts',
       cta: 'Ir al Merchant Desk',
       derived: hasVirtual,
@@ -105,8 +105,8 @@ function buildSteps(state) {
     {
       id: 'api',
       kind: TASK_KIND.OPTIONAL,
-      title: 'Configurar las integraciones de API',
-      description: 'Solo si vas a operar desde tus propios sistemas. Puedes usar el dashboard sin integrar nada.',
+      title: 'Configurar API',
+      description: 'Opcional: conecta tus sistemas a YOL1.',
       to: '/org/api',
       cta: 'Ver credenciales',
     },
@@ -114,7 +114,7 @@ function buildSteps(state) {
       id: 'products',
       kind: TASK_KIND.OPTIONAL,
       title: 'Explorar otros productos',
-      description: 'FX, payouts e iniciación de pagos tienen su propia evaluación. Revisa cuáles aplican a tu operación.',
+      description: 'Revisa los requisitos de cada producto.',
       to: '/org/products',
       cta: 'Ver productos',
     },
@@ -186,9 +186,7 @@ export default function OrgChecklist() {
       <header className="page__head">
         <h1 className="page__title">Puesta en marcha</h1>
         <p className="page__lead">
-          La validación de empresa ya está resuelta. Lo que queda acá es configuración: dejar el
-          equipo, los permisos y las cuentas listos para operar. Esta consola no desaparece cuando
-          termines de configurarla.
+          Configura tu equipo, permisos y cuentas.
         </p>
       </header>
 
@@ -225,7 +223,7 @@ export default function OrgChecklist() {
           <div>
             <h2 className="section__title">Pasos de configuración</h2>
             <p className="section__desc">
-              Los pasos automáticos los resuelve el sistema. Los opcionales no bloquean el uso de la plataforma.
+              Las tareas opcionales no bloquean el uso de la cuenta.
             </p>
           </div>
         </div>
@@ -233,8 +231,7 @@ export default function OrgChecklist() {
         {stats.blocking === 0 && (
           <Callout tone="success" title="Configuración base lista">
             <p className="ray-body-sm">
-              Tu organización ya puede operar con los permisos definidos. Los pasos opcionales
-              siguen disponibles por si más adelante decides integrarte por API o sumar productos.
+              La configuración base está lista. Puedes continuar con las tareas opcionales.
             </p>
           </Callout>
         )}
@@ -267,7 +264,7 @@ export default function OrgChecklist() {
           <div>
             <h2 className="section__title">Herramientas de administración</h2>
             <p className="section__desc">
-              Config Org es permanente: acá administras la organización, no solo la pones en marcha.
+              Accede a la configuración cuando lo necesites.
             </p>
           </div>
         </div>
@@ -292,7 +289,7 @@ export default function OrgChecklist() {
         <Card level="medium">
           <CardHeader
             title="Operar es otra cosa"
-            description="Config Org configura y administra. Saldos, movimientos y cuentas virtuales se consultan y se operan en el Merchant Desk."
+            description="Para consultar saldos y movimientos, ve a Merchant Desk."
             actions={<Link className="btn btn--secondary btn--sm" to="/desk">Ir al Merchant Desk</Link>}
           />
           <CardBody>
