@@ -15,6 +15,7 @@ import { PRODUCT_CATALOG } from '../mock/products'
 import { TEAM_MEMBERS } from '../mock/team'
 import { VIRTUAL_ACCOUNTS } from '../mock/virtualAccounts'
 import { TERMS_VERSION } from '../mock/terms'
+import { restrictToChile } from './chileScope'
 
 /* --------------------------- persistencia --------------------------- */
 const STORAGE_KEY = 'yol1.enterprise'
@@ -318,11 +319,13 @@ function reducer(state, action) {
   }
 }
 
+const chileReducer = (state, action) => restrictToChile(reducer(state, action))
+
 /* ------------------------------ contexto ----------------------------- */
 const DemoStateContext = createContext(null)
 
 export function DemoStateProvider({ children }) {
-  const [state, dispatch] = useReducer(reducer, null, () => readPersisted() ?? initialState)
+  const [state, dispatch] = useReducer(chileReducer, null, () => restrictToChile(readPersisted() ?? initialState))
 
   // La apertura pertenece al ciclo de vida de la entidad, no a una pantalla.
   useEffect(() => {

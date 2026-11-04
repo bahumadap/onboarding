@@ -1,15 +1,6 @@
 /** Países de constitución y de operación disponibles en la demo. */
 export const COUNTRIES = [
   { value: 'CL', label: 'Chile', currency: 'CLP' },
-  { value: 'PE', label: 'Perú', currency: 'PEN' },
-  { value: 'MX', label: 'México', currency: 'MXN' },
-  { value: 'CO', label: 'Colombia', currency: 'COP' },
-  { value: 'AR', label: 'Argentina', currency: 'ARS' },
-  { value: 'BR', label: 'Brasil', currency: 'BRL' },
-  { value: 'EC', label: 'Ecuador', currency: 'USD' },
-  { value: 'UY', label: 'Uruguay', currency: 'UYU' },
-  { value: 'US', label: 'Estados Unidos', currency: 'USD' },
-  { value: 'ES', label: 'España', currency: 'EUR' },
 ]
 
 export const countryLabel = code => COUNTRIES.find(c => c.value === code)?.label ?? code

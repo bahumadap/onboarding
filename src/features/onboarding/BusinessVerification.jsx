@@ -623,7 +623,7 @@ export default function BusinessVerification() {
       >
         <div className="ob-grid">
           <Field label="Razón social" required htmlFor="entity-name">
-            <Input id="entity-name" value={newEntity.legalName} placeholder="ArenaPlay Perú SAC"
+            <Input id="entity-name" value={newEntity.legalName} placeholder="Empresa Chile SpA"
               onChange={ev => setNewEntity(n => ({ ...n, legalName: ev.target.value }))} />
           </Field>
           <Field label="País de constitución" required htmlFor="entity-country">

@@ -61,7 +61,7 @@ const operatingScenario = state => ({
     legalName: state.organization.legalName || 'ArenaPlay Demo SpA',
     industry: state.organization.industry || 'gaming',
     countryOfIncorporation: state.organization.countryOfIncorporation || 'CL',
-    operatingCountries: state.organization.operatingCountries?.length ? state.organization.operatingCountries : ['CL', 'PE'],
+    operatingCountries: ['CL'],
     taxId: state.organization.taxId || '76.543.210-K',
     entityType: state.organization.entityType || 'spa',
     legalAddress: state.organization.legalAddress || 'Av. Apoquindo 4500, of. 1201, Las Condes',
