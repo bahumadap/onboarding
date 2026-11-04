@@ -22,7 +22,7 @@ import {
   useDeskAccounts, useDeskLoad, useDeskTransactions,
 } from './shared'
 
-const COUNTRY_LABEL = { CL: 'Chile', US: 'Estados Unidos', PE: 'Perú' }
+const COUNTRY_LABEL = { CL: 'Chile', US: 'Estados Unidos' }
 
 export default function AccountDetail() {
   const { accountId } = useParams()

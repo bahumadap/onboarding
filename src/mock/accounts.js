@@ -29,24 +29,12 @@ export const ACCOUNTS = [
     balanceReserved: 0,
     requiresProduct: 'fx',
   },
-  {
-    id: 'acc_pen',
-    label: 'Cuenta PEN',
-    currency: 'PEN',
-    country: 'PE',
-    number: '**** 3312',
-    kind: 'fx',
-    balanceTotal: 84720,
-    balanceAvailable: 81220,
-    balanceReserved: 3500,
-    requiresProduct: 'fx',
-  },
+
 ]
 
 export const CURRENCY_FORMAT = {
   CLP: { locale: 'es-CL', currency: 'CLP', fractionDigits: 0 },
   USD: { locale: 'en-US', currency: 'USD', fractionDigits: 2 },
-  PEN: { locale: 'es-PE', currency: 'PEN', fractionDigits: 2 },
   EUR: { locale: 'es-ES', currency: 'EUR', fractionDigits: 2 },
 }
 
