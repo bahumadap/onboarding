@@ -9,3 +9,7 @@ Importar **onboarding-completo-figma.svg** en Figma Design para editar sus forma
 **onboarding-completo.pdf** contiene el mapa completo en una lámina vectorial amplia.
 
 La fuente y las limitaciones de la demo están documentadas en LEEME.md. Las exportaciones por proceso anteriores siguen disponibles. Generador: `python3 scripts/build_unified_bpmn.py` (requiere Chromium y Playwright). Visor bpmn-js con su atribución visible y licencia en vendor/LICENSE.bpmn-js.
+
+## Organización visual
+
+Cinco columnas grises de izquierda a derecha: Sign up, Verificaciones, Apertura de cuenta, Merchant Desk y Productos adicionales. Cada columna tiene título y propósito. Identidad y KYB se muestran dentro de Verificaciones. Configuración y acceso/Demo Control ocupan una franja inferior. Los fondos se incluyen en el HTML, SVG y PDF; los colores de actividades y decisiones se conservan.
